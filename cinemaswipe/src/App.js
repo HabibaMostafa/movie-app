@@ -6,8 +6,21 @@ import { BrowserRouter as Router, HashRouter, Route, Routes } from 'react-router
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 
+/* Sets the token used for authentication */
+function setToken(userToken) {
+  sessionStorage.setItem('token', JSON.stringify(userToken));
+}
+
+/* Gets the token used for authentication */
+function getToken() {
+  const tokenString = sessionStorage.getItem('token');
+  const userToken = JSON.parse(tokenString);
+  return userToken?.token
+}
+
+/* Main app */
 function App() {
-  const [token, setToken] = useState();
+  const token = getToken();
 
   /* If the user has not signed in yet, show login page*/
   if(!token) {
