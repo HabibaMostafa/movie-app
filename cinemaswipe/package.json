@@ -5,7 +5,7 @@
         "app": "concurrently \"npm run backend\" \"npm run frontend\"",
         "installapp": "npm install && echo \"\n.....Installing Backend.....\n\" && cd ./packages/backend && pwd && npm install && echo \"\n.....Installing React.....\n\" && cd ../react && pwd && npm install"
     },
-    "devDependencies": {
-        "concurrently": "^6.2.0"
+    "dependencies": {
+        "concurrently": "^7.0.0"
     }
 }

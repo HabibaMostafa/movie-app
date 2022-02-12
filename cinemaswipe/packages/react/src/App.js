@@ -5,22 +5,11 @@ import { BrowserRouter as Router, HashRouter, Route, Routes } from 'react-router
 
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
-
-/* Sets the token used for authentication */
-function setToken(userToken) {
-  sessionStorage.setItem('token', JSON.stringify(userToken));
-}
-
-/* Gets the token used for authentication */
-function getToken() {
-  const tokenString = sessionStorage.getItem('token');
-  const userToken = JSON.parse(tokenString);
-  return userToken?.token
-}
+import useToken from './components/App/useToken';
 
 /* Main app */
 function App() {
-  const token = getToken();
+  const { token, setToken, removeToken } = useToken();
 
   /* If the user has not signed in yet, show login page*/
   if(!token) {
@@ -29,6 +18,9 @@ function App() {
 
   return (
     <div className="wrapper">
+    <form>
+      <button onClick = {removeToken}> Logout</button>
+    </form>
         <Router>
           <Routes>
             <Route exact path="/" component={Home} />
