@@ -1,5 +1,11 @@
 {
     "scripts": {
+        "start" : "npm run app",
+        "dev": "concurrently \"npm run frontend\" \"npm run dev_backend\"",
+        "dev_backend": "cd ./packages/backend && npm run dev",
+        "install_backend": "cd ./packages/backend && npm install",
+        "install_frontend": "cd ./packages/react && npm install",
+        "install_all": "\"npm run install_backend\" &&  \"npm run install_frontend\" ",
         "frontend": "npm start --prefix ./packages/react",
         "backend": "npm start --prefix ./packages/backend",
         "app": "concurrently \"npm run backend\" \"npm run frontend\"",
