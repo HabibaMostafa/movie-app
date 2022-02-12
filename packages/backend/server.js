@@ -10,6 +10,11 @@ const port = process.env.PORT || 8080;
 
 app.use(cors());
 
+app.get("/", (req, res) => {
+    res.send("hi");
+});
+
+
 app.use("/login", (req, res) => {
     /* TODO: authenticate in database, create unique token */
 
@@ -25,6 +30,12 @@ app.use("/createUser", (req, res) => {
         token: "test123",
     });
 });
+
+
+app.get("*", (req, res) => {
+    res.send("404, RIP");
+});
+
 
 app.listen(port, () =>
     console.log(`API is running on port${port}`)
