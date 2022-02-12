@@ -8,6 +8,8 @@ const port = process.env.PORT || 8080;
 //     console.log(`Server running on port${port}`);
 // });
 
+app.set("port", port);
+
 app.use(cors());
 
 app.get("/", (req, res) => {
