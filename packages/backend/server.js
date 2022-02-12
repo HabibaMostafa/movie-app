@@ -27,5 +27,5 @@ app.use("/createUser", (req, res) => {
 });
 
 app.listen(port, () =>
-    console.log(`API is running on http://localhost:${port}/login`)
+    console.log(`API is running on port${port}`)
 );
