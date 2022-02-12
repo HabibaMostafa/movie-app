@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start" : "npm run app",
+        "start" : "npm run install_all && npm run app",
         "dev": "concurrently \"npm run frontend\" \"npm run dev_backend\"",
         "dev_backend": "cd ./packages/backend && npm run dev",
         "install_backend": "cd ./packages/backend && npm install",
