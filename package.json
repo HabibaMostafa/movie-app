@@ -1,17 +1,17 @@
 {
     "scripts": {
         "start" : "npm run backend",
-        "build": "npm run install_all && npm run frontend_production",
         "dev": "concurrently \"npm run frontend\" \"npm run dev_backend\"",
-        "install_all": "npm install && npm run install_backend &&  npm run install_frontend",
-        "altstart" : "concurrently \"npm run backend\" \"npm run frontend_production\"",
+        "build": "npm run install_all && npm run frontend_production",
+        "frontend": "npm start --prefix ./packages/react",
+        "frontend_production": "npm run build --prefix ./packages/react",
         "dev_backend": "cd ./packages/backend && npm run dev",
+        "backend": "npm start --prefix ./packages/backend",
+        "install_all": "npm install && npm run install_backend &&  npm run install_frontend",
         "install_backend": "cd ./packages/backend && npm install",
         "install_frontend": "cd ./packages/react && npm install",
-        "frontend_production": "npm run build --prefix ./packages/react",
-        "frontend": "npm start --prefix ./packages/react",
-        "backend": "npm start --prefix ./packages/backend",
         "app": "concurrently \"npm run backend\" \"npm run frontend\"",
+        "altstart" : "concurrently \"npm run backend\" \"npm run frontend_production\"",
         "installapp": "npm install && echo \"\n.....Installing Backend.....\n\" && cd ./packages/backend && pwd && npm install && echo \"\n.....Installing React.....\n\" && cd ../react && pwd && npm install"
     },
     "dependencies": {
