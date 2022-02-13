@@ -3,6 +3,8 @@ const cors = require("cors");
 const app = express();
 const path = require("path");
 
+const {tmdb} = require("./utils/tmdb");
+
 //3000 port for local, heroku's port depeneds on the server environment variable
 const port = process.env.PORT || 8080;
 // app.listen(port, () => {
@@ -38,8 +40,29 @@ app.use("/createUser", (req, res) => {
     });
 });
 
+// sample api get request
+app.use("/movies", (req, res) => {
+
+
+    // make request to api
+    const test = tmdb({},(error, response)=>{
+
+        if(error) {
+            console.log("Error! =(")
+            return;
+        }
+
+        res.send(response);
+    });
+
+
+
+
+});
+
+
 app.get("*", (req, res) => {
     res.send("404, RIP");
 });
 
-app.listen(port, () => console.log(`API is running on port${port}`));
+app.listen(port, () => console.log(`Server is running on port: ${port}`));
