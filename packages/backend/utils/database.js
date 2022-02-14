@@ -24,6 +24,7 @@
 //     }
 // );
 
+const { ObjectID } = require("bson");
 const { MongoClient, ObjectId } = require("mongodb");
 
 const admin = "master";
@@ -115,11 +116,23 @@ MongoClient.connect(
 
         ////////////////////////////////////////////////////////// READ EXAMPLES //////////////////////////////////////////////////////////
 
-        // read one document, search by username...
+        // read one document, search by username, if record is not found it is not an error, it will just return null instead of the target document
         db.collection("users").findOne(
             { name: "puppetmaster" },
             (error, user) => {
+                if (error) {
+                    return console.log("unable to fetch");
+                }
 
+                console.log(user);
+            }
+        );
+
+        // find by object id, (you need to create a new objectid obj with the target hex id as an argument)
+        // "620a87f2bbc55385f89b8b7c" belongs to the puppetmaster document
+        db.collection("users").findOne(
+            { _id: new ObjectID("620a87f2bbc55385f89b8b7c") },
+            (error, user) => {
                 if (error) {
                     return console.log("unable to fetch");
                 }
