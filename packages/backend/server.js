@@ -1,4 +1,4 @@
-import mongoDb from './utils/database';
+import MongoDb from './utils/database';
 import sha256 from 'sha256'
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
@@ -32,6 +32,12 @@ app.get("/", (req, res) => {
 // -- Login --
 app.use("/login", (req, res) => {
     /* TODO: authenticate in database, create unique token */
+
+    // mongodb
+    const mongoDb = new MongoDb();
+    mongoDb.start(() => {
+        console.log("mongoDb ready")
+    });
 
     try {
         let password = req.body.password;
@@ -82,12 +88,23 @@ app.use("/login", (req, res) => {
     } catch (err) {
         throw Error(err.message)
     }
+
+    // end mongodb
+    mongoDb.end(() => {
+        console.log("mongoDb closed")
+    });
 });
 
 
 // -- Create a new user --
-app.use("/createUser", (req, res) => {
+app.use("/signUp", (req, res) => {
     /* TODO: create in database, create unique token */
+
+    // Start mongodb
+    const mongoDb = new mongoDb();
+    mongoDb.start(() => {
+        console.log("mongoDb ready")
+    });
 
     try {
         // 1. Receive username and password
@@ -134,6 +151,11 @@ app.use("/createUser", (req, res) => {
     } catch (err) {
         throw Error(err.message)
     }
+
+    // end mongodb
+    mongoDb.end(() => {
+        console.log("mongoDb closed")
+    });
 });
 
 // sample api get request
@@ -150,10 +172,6 @@ app.use("/movies", (req, res) => {
 
         res.send(response);
     });
-
-
-
-
 });
 
 
