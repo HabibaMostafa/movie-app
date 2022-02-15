@@ -1,3 +1,8 @@
+import mongoDb from './utils/database';
+import sha256 from 'sha256'
+import crypto from 'crypto'
+import bcrypt from 'bcrypt'
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -24,20 +29,121 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
 
+// -- Login --
 app.use("/login", (req, res) => {
     /* TODO: authenticate in database, create unique token */
 
-    res.send({
-        token: "test123",
-    });
+    try {
+
+        let password = req.body.password;
+        let username = req.body.username;
+
+        let find_param = {'name':username}
+        //let user_info = {};
+
+        //find user
+        let results = null;
+        results = await mongoDb.collection("users").findOne(find_param)
+
+        if (!results) {
+            throw Error("no such user found")
+        }
+
+        //check password
+        if (!results.password){
+            throw Error("something must be wrong")
+        }
+
+        // let password2 = sha256(password)
+        let password2 = crypto.createHash('sha256').update(password).digest('hex');
+        let saved_hash = results.password
+
+        results = null
+        results = await bcrypt.compare(password2, saved_hash)
+        if (results !== true) {
+            throw Error("password is not okay")
+        }
+
+        //create login token
+        let login_token = makeid('4') + parseInt(new Date().getTime()).toString(36);
+
+        let upd_param = {
+            '$push':{
+                'loginTokens':login_token
+            }
+        }
+
+        //TODO: this is not a greate way of updating a users token. multiple users can
+        //   use the same name. should go off of user id. such as:
+        // create new token
+        //find_param = null
+        //find_param = {
+        //    _id: user_info._id
+        //}
+        
+        // update mongo
+        await mongoDbHelper.collection("users").update(find_param, upd_param)
+
+        res.send({
+            token: login_token,
+            //token: "test123",
+        });
+
+    } catch (err) {
+        throw Error(err.message)
+    }
 });
 
+
+// -- Create a new user --
 app.use("/createUser", (req, res) => {
     /* TODO: create in database, create unique token */
 
-    res.send({
-        token: "test123",
-    });
+    try {
+        // 1. Receive username and password
+        let password =  req.body.password;
+        let username =  req.body.username;
+
+        let find_param = {'name':username}
+
+        let results = null
+        results = await mongoDbHelper.collection("users").count(find_param)
+        if (results != 0){
+            throw Error("user already exist")
+        }
+
+        // bcrypt of password
+        // let password2 = sha256(password)
+        let password2 = crypto.createHash('sha256').update(password).digest('hex');
+        let bcrypt_hash = bcrypt.hashSync(password2, 10);
+
+        // login token which to use login
+        let login_token = makeid('4') + parseInt(new Date().getTime()).toString(36);
+
+        let insert_params = {
+            createdAt: new Date(),
+            password: bcrypt_hash,
+            name: username,
+            loginTokens: login_token,
+        }
+
+        // insert into database
+        results = null
+        results = await mongoDbHelper.collection("users").insert(insert_params)
+
+        console.log("results: ", results)
+
+        if ( results === null ) {
+            throw Error("could not create a user...")
+        }
+
+        res.send({
+            token: login_token,
+        });
+
+    } catch (err) {
+        throw Error(err.message)
+    }
 });
 
 // sample api get request

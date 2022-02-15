@@ -1,20 +1,11 @@
-/* Code used from tutorial: https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications 
-
-    let navigate = useNavigate();
-
-            <div>
-                <button onClick={() => {navigate("/Create");}}>New User? Create account</button>
-            </div>
-*/
+/* Code used from tutorial: https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications */
 
 import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { useParams, useNavigate } from "react-router-dom";
 
-import "./Login.css";
+import "./Create.css";
 
-async function loginUser(credentials) {
-    return fetch("/login", {
+async function createUser(credentials) {
+    return fetch("/createUser", {
         // return fetch('http://localhost:8080/login', {
         method: "POST",
         headers: {
@@ -24,13 +15,13 @@ async function loginUser(credentials) {
     }).then((data) => data.json());
 }
 
-export default function Login({ setToken }) {
+export default function Create({ setToken }) {
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = await loginUser({
+        const token = await createUser({
             username,
             password,
         });
@@ -38,8 +29,8 @@ export default function Login({ setToken }) {
     };
 
     return (
-        <div className="login-wrapper">
-            <h1>Please Log In</h1>
+        <div className="create-wrapper">
+            <h1>Please Create a New Account</h1>
             <form onSubmit={handleSubmit}>
                 <label>
                     <p>Username</p>
@@ -63,6 +54,3 @@ export default function Login({ setToken }) {
     );
 }
 
-Login.propTypes = {
-    setToken: PropTypes.func.isRequired,
-};
