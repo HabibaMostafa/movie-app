@@ -102,7 +102,7 @@ class Movie extends React.Component {
     render() {
 
             return (
-                <div>
+                <div className="movie-info">
                     <h1>{this.state.title}</h1>
                     <img src={this.state.poster_path} alt="Movie Poster"></img>
                     <p>{this.state.overview}</p>

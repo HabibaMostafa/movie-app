@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import logo from "../../logo-black.svg";
+import logo from "../../logo-white.png";
 
 import "./Login.css";
 
@@ -33,7 +33,7 @@ export default function Login({ setToken }) {
     return (
         <div className="login-wrapper">
             <img src={logo}/>
-            <h1>Please Log In</h1>
+            <h1>Log In</h1>
             <form onSubmit={handleSubmit}>
                 <label>
                     <p>Username</p>

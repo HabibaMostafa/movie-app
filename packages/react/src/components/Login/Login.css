@@ -11,11 +11,15 @@
 .authentication-btn {
   background-color: black;
   color: white;
-  stroke-width: 2rem;
   stroke: white;
   font-size: 16px;
-  padding: 8px 60px;
+  padding: 8px 50px;
   border-radius: 20px;
   margin: 10px 0px;
   cursor: pointer;
 }
+
+.login-wrapper {
+  background-image: url("movie-bg.png");
+  background-color: #cccccc;
+ }
