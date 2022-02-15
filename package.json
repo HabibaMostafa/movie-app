@@ -1,0 +1,31 @@
+{
+    "scripts": {
+        "start" : "npm run backend",
+        "dev": "concurrently \"npm run frontend\" \"npm run dev_backend\"",
+        "build": "npm run install_all && npm run frontend_production",
+        "frontend": "npm start --prefix ./packages/react",
+        "frontend_production": "npm run build --prefix ./packages/react",
+        "dev_backend": "cd ./packages/backend && npm run dev",
+        "backend": "npm start --prefix ./packages/backend",
+        "install_all": "npm install && npm run install_backend &&  npm run install_frontend",
+        "install_backend": "cd ./packages/backend && npm install",
+        "install_frontend": "cd ./packages/react && npm install",
+        "app": "concurrently \"npm run backend\" \"npm run frontend\"",
+        "altstart" : "concurrently \"npm run backend\" \"npm run frontend_production\"",
+        "installapp": "npm install && echo \"\n.....Installing Backend.....\n\" && cd ./packages/backend && pwd && npm install && echo \"\n.....Installing React.....\n\" && cd ../react && pwd && npm install"
+    },
+    "dependencies": {
+        "concurrently": "^7.0.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.2",
+        "@testing-library/jest-dom": "^5.16.2",
+        "@testing-library/react": "^12.1.2",
+        "@testing-library/user-event": "^13.5.0",
+        "nodemon": "^2.0.15",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-router-dom": "^6.2.1",
+        "react-scripts": "5.0.0",
+        "web-vitals": "^2.1.4"
+    }
+}
