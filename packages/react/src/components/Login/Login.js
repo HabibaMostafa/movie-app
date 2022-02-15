@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import logo from "../../logo-black.svg";
 
 import "./Login.css";
 
@@ -31,6 +32,7 @@ export default function Login({ setToken }) {
 
     return (
         <div className="login-wrapper">
+            <img src={logo}/>
             <h1>Please Log In</h1>
             <form onSubmit={handleSubmit}>
                 <label>
@@ -48,7 +50,7 @@ export default function Login({ setToken }) {
                     />
                 </label>
                 <div>
-                    <button type="submit">Submit</button>
+                    <button className="authentication-btn" type="submit">Submit</button>
                 </div>
             </form>
         </div>
