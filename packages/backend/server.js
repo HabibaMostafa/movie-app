@@ -34,12 +34,10 @@ app.use("/login", (req, res) => {
     /* TODO: authenticate in database, create unique token */
 
     try {
-
         let password = req.body.password;
         let username = req.body.username;
 
         let find_param = {'name':username}
-        //let user_info = {};
 
         //find user
         let results = null;
@@ -73,16 +71,8 @@ app.use("/login", (req, res) => {
             }
         }
 
-        //TODO: this is not a greate way of updating a users token. multiple users can
-        //   use the same name. should go off of user id. such as:
-        // create new token
-        //find_param = null
-        //find_param = {
-        //    _id: user_info._id
-        //}
-        
         // update mongo
-        await mongoDbHelper.collection("users").update(find_param, upd_param)
+        await mongoDb.collection("users").update(find_param, upd_param)
 
         res.send({
             token: login_token,
@@ -107,7 +97,7 @@ app.use("/createUser", (req, res) => {
         let find_param = {'name':username}
 
         let results = null
-        results = await mongoDbHelper.collection("users").count(find_param)
+        results = await mongoDb.collection("users").count(find_param)
         if (results != 0){
             throw Error("user already exist")
         }
@@ -129,7 +119,7 @@ app.use("/createUser", (req, res) => {
 
         // insert into database
         results = null
-        results = await mongoDbHelper.collection("users").insert(insert_params)
+        results = await mongoDb.collection("users").insert(insert_params)
 
         console.log("results: ", results)
 
