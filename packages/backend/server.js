@@ -32,7 +32,7 @@ app.use("/login", (req, res) => {
     });
 });
 
-app.use("/createUser", (req, res) => {
+app.use("/signUp", (req, res) => {
     /* TODO: create in database, create unique token */
 
     res.send({

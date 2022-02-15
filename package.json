@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start" : "npm run backend",
+        "start": "npm run backend",
         "dev": "concurrently \"npm run frontend\" \"npm run dev_backend\"",
         "build": "npm run install_all && npm run frontend_production",
         "frontend": "npm start --prefix ./packages/react",
@@ -11,7 +11,7 @@
         "install_backend": "cd ./packages/backend && npm install",
         "install_frontend": "cd ./packages/react && npm install",
         "app": "concurrently \"npm run backend\" \"npm run frontend\"",
-        "altstart" : "concurrently \"npm run backend\" \"npm run frontend_production\"",
+        "altstart": "concurrently \"npm run backend\" \"npm run frontend_production\"",
         "installapp": "npm install && echo \"\n.....Installing Backend.....\n\" && cd ./packages/backend && pwd && npm install && echo \"\n.....Installing React.....\n\" && cd ../react && pwd && npm install"
     },
     "dependencies": {
