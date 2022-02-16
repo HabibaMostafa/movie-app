@@ -1,8 +1,16 @@
-/* Code used from tutorial: https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications */
+/* Code used from tutorial: https://www.digitalocean.com/community/tutorials/how-to-add-login-authentication-to-react-applications 
+
+    let navigate = useNavigate();
+
+            <div>
+                <button onClick={() => {navigate("/Create");}}>New User? Create account</button>
+            </div>
+*/
 
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import logo from "../../logo-white.png";
+import { useParams, useNavigate } from "react-router-dom";
 
 import "./Login.css";
 import { Fragment } from "react/cjs/react.production.min";
