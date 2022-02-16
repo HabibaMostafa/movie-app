@@ -12,6 +12,10 @@ import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import useToken from "./components/App/useToken";
 import Movie from "./components/Movie/Movie";
+import Movies from './pages/Movies/Movies';
+import Friends from './pages/Friends/Friends';
+import Matches from './pages/Matches/Matches';
+import Navbar from './components/Navbar/Navbar';
 
 /* Main app */
 function App() {
@@ -27,13 +31,16 @@ function App() {
             {/* logout button */}
             <div className="wrapper">
                 <form>
-                    <button onClick={removeToken}> Logout</button>
+                    <button className="authentication-btn" onClick={removeToken}> Logout</button>
                 </form>
-
                 <Router>
-                    <Routes>
-                        <Route exact path="/" component={Home} />
-                    </Routes>
+                    <Navbar/>
+                        <Routes>
+                            <Route exact path="/" component={Home} />
+                            <Route path="/Movies" component={Movies} />
+                            <Route path="/Friends" component={Friends} />
+                            <Route path="/Matches" component={Matches} />
+                        </Routes>
                 </Router>
             </div>
             {/* Movie demo section */}
