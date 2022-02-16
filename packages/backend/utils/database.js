@@ -24,8 +24,6 @@
 //     }
 // );
 
-
-
 /////extra stuff you can ignore//////////
 // example generate a new objectid for a document
 // const id = new ObjectId();
@@ -57,7 +55,6 @@
 //     });
 // }
 
-
 // function test() {
 //     client.connect((error) => {
 //         if (error) {
@@ -75,8 +72,6 @@
 //             });
 //     });
 // }
-
-
 
 //////////////////////////////////////////////////////////////////// CREATE EXAMPLES////////////////////////////////////////////////////////////
 
@@ -141,7 +136,6 @@
 ////////////////////////////////////////////////////////// READ EXAMPLES //////////////////////////////////////////////////////////
 
 // read one document, search by username, if record is not found it is not an error, it will just return null instead of the target document
-
 
 // find by object id, (you need to create a new objectid obj with the target hex id as an argument)
 // "620a87f2bbc55385f89b8b7c" belongs to the puppetmaster document
@@ -214,12 +208,12 @@ const client = new MongoClient(connectionUri, {
 //    );
 //});
 
-
 //import mongodb  from 'mongodb';
 //import { v1 as uuidv1 } from 'uuid';
 
-export default class MongoDb {
-
+// class MongoDb {
+// export default class MongoDb {
+module.exports = class MongoDb {
     constructor() {
         this.url = connectionUri;
         this.db_name = databaseName;
@@ -255,10 +249,8 @@ export default class MongoDb {
     }
 
     collection(collectionName) {
-
-        let mongoDbCollection = this.db.collection(collectionName)
+        let mongoDbCollection = this.db.collection(collectionName);
         let collection = {
-
             //insert : (model) => { //TODO: insert many
             //  return new Promise((resolve, reject) => {
             //    if (!model._id){
@@ -271,69 +263,104 @@ export default class MongoDb {
             //  });
             //},
 
-            update: (find_param, upd_param, option_param) => { //TODO: update many
+            update: (find_param, upd_param, option_param) => {
+                //TODO: update many
                 return new Promise((resolve, reject) => {
-
                     if (!option_param) {
-                        mongoDbCollection.updateOne(find_param, upd_param, (err, result) => {
-                            if (err) { reject(err); }
-                            resolve(result);
-                        });
+                        mongoDbCollection.updateOne(
+                            find_param,
+                            upd_param,
+                            (err, result) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                resolve(result);
+                            }
+                        );
                     } else {
-                        mongoDbCollection.updateOne(find_param, upd_param, option_param, (err, result) => {
-                            if (err) { reject(err); }
-                            resolve(result);
-                        });
+                        mongoDbCollection.updateOne(
+                            find_param,
+                            upd_param,
+                            option_param,
+                            (err, result) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                resolve(result);
+                            }
+                        );
                     }
-
                 });
             },
 
-            find: (find_param, sort_param, skip, limit) => { //TODO: search
+            find: (find_param, sort_param, skip, limit) => {
+                //TODO: search
                 return new Promise((resolve, reject) => {
-
                     if (sort_param && skip && limit) {
+                        mongoDbCollection
+                            .find(find_param)
+                            .sort(sort_param)
+                            .skip(skip)
+                            .limit(limit)
+                            .toArray((err, docs) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                resolve(docs);
+                            });
+                    } else if ((sort_param, limit)) {
+                        mongoDbCollection
+                            .find(find_param)
+                            .sort(sort_param)
+                            .limit(limit)
+                            .toArray((err, docs) => {
+                                if (err) {
+                                    reject(err);
+                                }
 
-                        mongoDbCollection.find(find_param).sort(sort_param).skip(skip).limit(limit).toArray((err, docs) => {
-                            if (err) { reject(err); }
-                            resolve(docs);
-                        });
-
-                    } else if (sort_param, limit) {
-
-                        mongoDbCollection.find(find_param).sort(sort_param).limit(limit).toArray((err, docs) => {
-                            if (err) { reject(err); }
-
-                            resolve(docs);
-                        });
-
+                                resolve(docs);
+                            });
                     } else if (sort_param) {
-
-                        mongoDbCollection.find(find_param).sort(sort_param).toArray((err, docs) => {
-                            if (err) { reject(err); }
-                            resolve(docs);
-                        });
-
+                        mongoDbCollection
+                            .find(find_param)
+                            .sort(sort_param)
+                            .toArray((err, docs) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                resolve(docs);
+                            });
                     } else {
-
                         if (skip && limit) {
-
-                            mongoDbCollection.find(find_param).sort(sort_param).limit(limit).toArray((err, docs) => {
-                                if (err) { reject(err); }
-                                resolve(docs);
-                            });
+                            mongoDbCollection
+                                .find(find_param)
+                                .sort(sort_param)
+                                .limit(limit)
+                                .toArray((err, docs) => {
+                                    if (err) {
+                                        reject(err);
+                                    }
+                                    resolve(docs);
+                                });
                         } else if (limit) {
-
-                            mongoDbCollection.find(find_param).limit(limit).toArray((err, docs) => {
-                                if (err) { reject(err); }
-                                resolve(docs);
-                            });
+                            mongoDbCollection
+                                .find(find_param)
+                                .limit(limit)
+                                .toArray((err, docs) => {
+                                    if (err) {
+                                        reject(err);
+                                    }
+                                    resolve(docs);
+                                });
                         } else {
-
-                            mongoDbCollection.find(find_param).toArray((err, docs) => {
-                                if (err) { reject(err); }
-                                resolve(docs);
-                            });
+                            mongoDbCollection
+                                .find(find_param)
+                                .toArray((err, docs) => {
+                                    if (err) {
+                                        reject(err);
+                                    }
+                                    resolve(docs);
+                                });
                         }
                     }
                 });
@@ -342,16 +369,21 @@ export default class MongoDb {
             findById: (id) => {
                 return new Promise((resolve, reject) => {
                     mongoDbCollection.findOne({ _id: id }, (err, doc) => {
-                        if (err) { reject(err); }
+                        if (err) {
+                            reject(err);
+                        }
                         resolve(doc);
                     });
                 });
             },
 
-            delete: (id) => { //TODO: delete many
+            delete: (id) => {
+                //TODO: delete many
                 return new Promise((resolve, reject) => {
                     mongoDbCollection.removeOne({ _id: id }, (err, result) => {
-                        if (err) { reject(err); }
+                        if (err) {
+                            reject(err);
+                        }
                         resolve(result);
                     });
                 });
@@ -360,7 +392,9 @@ export default class MongoDb {
             findOne: (param) => {
                 return new Promise((resolve, reject) => {
                     mongoDbCollection.findOne(param, (err, doc) => {
-                        if (err) { reject(err); }
+                        if (err) {
+                            reject(err);
+                        }
                         resolve(doc);
                     });
                 });
@@ -369,67 +403,70 @@ export default class MongoDb {
             count: (param) => {
                 return new Promise((resolve, reject) => {
                     mongoDbCollection.countDocuments(param, (err, doc) => {
-                        if (err) { reject(err); }
+                        if (err) {
+                            reject(err);
+                        }
                         resolve(doc);
                     });
                 });
             },
 
             get_find_cusor: (find_param, sort_param, skip, limit) => {
-
                 return new Promise((resolve, reject) => {
-
                     if (sort_param && skip && limit) {
-
-                        let cursor = mongoDbCollection.find(find_param).sort(sort_param).skip(skip).limit(limit)
-                        resolve(cursor)
-
-                    } else if (sort_param, limit) {
-
-                        let cursor = mongoDbCollection.find(find_param).sort(sort_param).limit(limit)
-                        resolve(cursor)
-
+                        let cursor = mongoDbCollection
+                            .find(find_param)
+                            .sort(sort_param)
+                            .skip(skip)
+                            .limit(limit);
+                        resolve(cursor);
+                    } else if ((sort_param, limit)) {
+                        let cursor = mongoDbCollection
+                            .find(find_param)
+                            .sort(sort_param)
+                            .limit(limit);
+                        resolve(cursor);
                     } else if (sort_param) {
-
-                        let cursor = mongoDbCollection.find(find_param).sort(sort_param)
-                        resolve(cursor)
-
+                        let cursor = mongoDbCollection
+                            .find(find_param)
+                            .sort(sort_param);
+                        resolve(cursor);
                     } else {
-
                         if (skip && limit) {
-
-                            let cursor = mongoDbCollection.find(find_param).sort(sort_param).limit(limit)
-                            resolve(cursor)
-
+                            let cursor = mongoDbCollection
+                                .find(find_param)
+                                .sort(sort_param)
+                                .limit(limit);
+                            resolve(cursor);
                         } else if (limit) {
-
-                            let cursor = mongoDbCollection.find(find_param).limit(limit)
-                            resolve(cursor)
+                            let cursor = mongoDbCollection
+                                .find(find_param)
+                                .limit(limit);
+                            resolve(cursor);
                         } else {
-
-                            let cursor = mongoDbCollection.find(find_param)
-                            resolve(cursor)
-
+                            let cursor = mongoDbCollection.find(find_param);
+                            resolve(cursor);
                         }
                     }
                 });
             },
 
             get_next_from_cusor: (cursor) => {
-
                 // console.log("cursor: ", cursor)
 
                 return new Promise((resolve, reject) => {
                     cursor.next((err, item) => {
                         if (err) {
-                            reject(err)
+                            reject(err);
                         } else {
-                            resolve(item)
+                            resolve(item);
                         }
-                    })
+                    });
                 });
             },
-        }
+        };
         return collection;
     }
-}
+};
+
+// module.exports = {MongoDb};
