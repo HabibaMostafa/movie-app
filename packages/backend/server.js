@@ -95,8 +95,8 @@ app.use("/login", (req, res) => {
     });
 });
 
-
 // -- Create a new user --
+
 app.use("/signUp", (req, res) => {
     /* TODO: create in database, create unique token */
 
