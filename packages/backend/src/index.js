@@ -16,12 +16,12 @@ const buildPath = "../react/build";
 
 app.set("port", port);
 
-app.use(express.static(path.join(__dirname, buildPath)));
-app.use(express.json());
-app.use(cors());
-
 // express will parse all incoming raw JSON data to an object
 app.use(express.json());
+app.use(express.static(path.join(__dirname, buildPath)));
+
+app.use(cors());
+
 
 ////////////////// POST //////////////////
 
@@ -106,9 +106,10 @@ app.post("/signup", (req, res) => {
     newUser
         .save()
         .then((newUser) => {
-
             if (newUser.length != 1) {
-                return res.status(400).send("error: invalid new user credentials");
+                return res
+                    .status(400)
+                    .send("error: invalid new user credentials");
             }
 
             const returnToken = {
@@ -175,6 +176,29 @@ app.post("/movies", (req, res) => {
         res.send(response);
     });
 });
+
+
+
+
+
+
+
+
+// app.use(express.static("client/build"));
+
+// app.get("*", (req, res) => {
+
+// res.sendFile(path.resolve(__dirname, "client", "build", "index.html")});
+
+
+
+
+
+app.get("*", (req, res) => {
+    res.send("404, RIP");
+});
+
+
 
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`);
