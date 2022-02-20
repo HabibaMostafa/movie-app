@@ -12,7 +12,7 @@ const port = process.env.PORT || 8080;
 const tmdb = require("./utils/tmdb");
 const path = require("path");
 const cors = require("cors");
-const buildPath = "../react/build";
+const buildPath = "../../react/build";
 
 app.set("port", port);
 
