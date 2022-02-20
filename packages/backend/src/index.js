@@ -106,19 +106,21 @@ app.post("/signup", (req, res) => {
     newUser
         .save()
         .then((newUser) => {
-            if (newUser.length != 1) {
-                return res
-                    .status(400)
-                    .send("error: invalid new user credentials");
-            }
+            // if (newUser.length != 1) {
+            //     return res
+            //         .status(400)
+            //         .send("error: invalid new user credentials");
+            // }
 
-            const returnToken = {
-                username: newUser[0].username,
-                _id: newUser[0]._id,
-                state: "loggedIn",
-            };
+            res.status(201).send(newUser);
 
-            res.status(201).send(returnToken);
+            // const returnToken = {
+            //     username: newUser[0].username,
+            //     _id: newUser[0]._id,
+            //     state: "loggedIn",
+            // };
+
+            // res.status(201).send(returnToken);
         })
         .catch((e) => {
             res.status(401).send();
