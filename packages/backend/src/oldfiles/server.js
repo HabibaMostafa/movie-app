@@ -3,8 +3,7 @@
 // import crypto from 'crypto'
 // import bcrypt from 'bcrypt'
 
-const MongoDb = require("./utils/database");
-const { tmdb } = require("./utils/tmdb");
+const MongoDb = require("../database/database");
 
 // const sha256 = require("sha256");
 
@@ -12,19 +11,22 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
 const express = require("express");
-const cors = require("cors");
 const app = express();
-const path = require("path");
+const port = process.env.PORT || 8080;
 
 //3000 port for local, heroku's port depeneds on the server environment variable
-const port = process.env.PORT || 8080;
 // app.listen(port, () => {
-//     console.log(`Server running on port${port}`);
-// });
-
+    //     console.log(`Server running on port${port}`);
+    // });
+    
+const { tmdb } = require("../utils/tmdb ");
+const path = require("path");
+const cors = require("cors");
 const buildPath = "../react/build";
 
 app.use(express.static(path.join(__dirname, buildPath)));
+
+app.use(express.json());
 
 app.set("port", port);
 
@@ -35,9 +37,22 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
 
+// debugging
+app.post("/login", (req, res) => {
+    console.log(req.body);
+
+    const username = req.body.username;
+    const password = req.body.username;
+    res.send({
+        token: "123"
+    });
+});
+
 // -- Login --
-app.use("/login", async (req, res) => {
+app.post("/login!!!!", async (req, res) => {
     /* TODO: authenticate in database, create unique token */
+
+    // console.log(req);
 
     // mongodb
     const mongoDb = new MongoDb();
@@ -54,7 +69,8 @@ app.use("/login", async (req, res) => {
         //find user
         let results = null;
         // results = mongoDb.collection("users").findOne(find_param);
-        results = await mongoDb.collection("users").findOne(find_param);
+        //results = await mongoDb.collection("users").findOne(find_param);
+        results = mongoFindOne(mongoDb, find_param);
 
         if (!results) {
             throw Error("no such user found");
@@ -74,7 +90,9 @@ app.use("/login", async (req, res) => {
 
         results = null;
         // results = bcrypt.compare(password2, saved_hash);
-        results = await bcrypt.compare(password2, saved_hash);
+        //results = await bcrypt.compare(password2, saved_hash);
+        results = mongoCompair(bcrypt, password2, saved_hash);
+
         if (results !== true) {
             throw Error("password is not okay");
         }
@@ -91,7 +109,8 @@ app.use("/login", async (req, res) => {
 
         // update mongo
         // mongoDb.collection("users").update(find_param, upd_param);
-        await mongoDb.collection("users").update(find_param, upd_param);
+        //await mongoDb.collection("users").update(find_param, upd_param);
+        mongoUpdate(mongoDb, find_param, upd_param);
 
         res.send({
             token: login_token,
@@ -106,6 +125,26 @@ app.use("/login", async (req, res) => {
         console.log("mongoDb closed");
     });
 });
+
+async function mongoFindOne(mongoDb, find_param) {
+    return await mongoDb.collection("users").findOne(find_param);
+}
+
+async function mongoCompair(bcrypt, password2, saved_hash) {
+    return await bcrypt.compare(password2, saved_hash);
+}
+
+async function mongoUpdate(mongoDb, find_param, upd_param) {
+    await mongoDb.collection("users").update(find_param, upd_param);
+}
+
+async function mongoCount(mongoDb, find_param) {
+    return await mongoDb.collection("users").count(find_param);
+}
+
+async function mongoInsert(mongoDb, insert_params) {
+    return await mongoDb.collection("users").insert(insert_params);
+}
 
 // -- Create a new user --
 
@@ -127,7 +166,9 @@ app.use("/signUp", (req, res) => {
 
         let results = null;
         // results = mongoDb.collection("users").count(find_param);
-        results = await mongoDb.collection("users").count(find_param);
+        //results = await mongoDb.collection("users").count(find_param);
+        results = mongoCount(mongoDb, find_param);
+        
         if (results != 0) {
             throw Error("user already exist");
         }
@@ -154,7 +195,8 @@ app.use("/signUp", (req, res) => {
         // insert into database
         results = null;
         // results = mongoDb.collection("users").insert(insert_params);
-        results = await mongoDb.collection("users").insert(insert_params);
+        //results = await mongoDb.collection("users").insert(insert_params);
+        results = mongoInsert(mongoDb, insert_params)
 
         console.log("results: ", results);
 
