@@ -1,13 +1,12 @@
-import React from 'react'
+import React from "react";
+import Navbar from "../../components/Navbar/Navbar";
 const Matches = () => {
-  return (
-    <div className="container">
-    
-      <h1 className="text-center" style={{paddingTop: "30%"}}>
-        Matches
-      </h1>
+    return (
       
-    </div>
-  )
-}
+        <div className="container">
+            <Navbar />
+            <h1>Matches</h1>
+        </div>
+    );
+};
 export default Matches;

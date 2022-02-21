@@ -12,75 +12,13 @@ async function movieDemo(callback) {
     });
 }
 
-// why javascript doesnt have randint function, =/
-// min incl, max excl...
-// function getRandInt(min, max) {
-//     min = Math.ceil(min);
-//     max = Math.floor(max);
-//     return Math.floor(Math.random() * (max - min + 1)) + min;
-// }
-
-// const api_response = movieDemo((res) => {
-//     res.then(function (data) {
-//         console.log(data.body.results.length);
-
-//         const random_movie =
-//             data.body.results[getRandInt(0, data.body.results.length)];
-//         const { title, poster_path, backdrop_path } = random_movie;
-
-//         console.log(title);
-//         console.log(poster_path);
-//         console.log(backdrop_path);
-//         // return <p>Movie here!!!...</p>;
-//     });
-// });
-
-// this is getting called twice! idkwhy
 class Movie extends React.Component {
-    // idk why but I had to do a callback, + .then to access the data
-    // return movieDemo((res) => {
-
-    // const api_response = movieDemo((res) => {
-    //     res.then(function (data) {
-    //         console.log(data.body.results.length);
-
-    //         const random_movie =
-    //             data.body.results[getRandInt(0, data.body.results.length)];
-    //         const { title, poster_path, backdrop_path } = random_movie;
-
-    //         console.log(title);
-    //         console.log(poster_path);
-    //         console.log(backdrop_path);
-    //         // return <p>Movie here!!!...</p>;
-    //     });
-
-    // });
-
     constructor(props) {
         super(props);
         this.state = {};
     }
 
     componentDidMount() {
-        // send HTTP request
-        // save it to the state
-
-        // const getMovieData = async () => {
-        //     const movieData = await fetch("/movies", {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //         },
-        //         body: JSON.stringify(),
-        //     }).then((data) => data.json());
-
-        //     return movieData;
-        // };
-
-        // const fetched = getMovieData();
-
-        // console.log(fetched);
-
         fetch("/movies", {
             method: "POST",
             headers: {
@@ -94,6 +32,7 @@ class Movie extends React.Component {
                 const min = Math.ceil(0);
                 const max = Math.floor(data.body.results.length - 1);
                 const index = Math.floor(Math.random() * (max - min + 1)) + min;
+                const coverSize = 300;
 
                 const mov = data.body.results[index];
 
@@ -117,7 +56,7 @@ class Movie extends React.Component {
     render() {
         return (
             <div className="movie-info">
-                <h1>{this.state.title}</h1>
+                <h3>{this.state.title}</h3>
                 <img src={this.state.poster_path} alt="Movie Poster"></img>
                 <p>{this.state.overview}</p>
             </div>

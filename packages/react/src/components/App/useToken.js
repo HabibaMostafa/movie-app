@@ -14,12 +14,10 @@ export default function useToken() {
     const [token, setToken] = useState(getToken());
 
     const saveToken = (userToken) => {
-        // might not need to stringigy
+
         sessionStorage.setItem("token", JSON.stringify(userToken));
 
         const aToken = sessionStorage.getItem("token");
-
-        console.log(aToken);
 
         setToken(aToken);
     };
@@ -28,10 +26,18 @@ export default function useToken() {
         sessionStorage.removeItem("token");
     };
 
+    
+
+    const getTokenObj = () => {
+        const tokenObj = JSON.parse(token.toString());
+        return tokenObj;
+    }
+
     return {
         setToken: saveToken,
         removeToken: removeToken,
         token,
         getToken: getToken,
+        getTokenObj,
     };
 }

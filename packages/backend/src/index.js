@@ -22,7 +22,6 @@ app.use(express.static(path.join(__dirname, buildPath)));
 
 app.use(cors());
 
-
 ////////////////// POST //////////////////
 
 //create a new user
@@ -70,8 +69,6 @@ app.post("/login", (req, res) => {
                 return res.status(401).send("error: invalid login");
             }
 
-            // still send the same old token for now
-
             const returnToken = {
                 name: user[0].name,
                 username: user[0].username,
@@ -79,8 +76,6 @@ app.post("/login", (req, res) => {
                 _id: user[0]._id,
                 state: "loggedIn",
             };
-
-            // res.status(201).send(returnToken);
 
             res.status(200).send(returnToken);
         })
@@ -106,21 +101,7 @@ app.post("/signup", (req, res) => {
     newUser
         .save()
         .then((newUser) => {
-            // if (newUser.length != 1) {
-            //     return res
-            //         .status(400)
-            //         .send("error: invalid new user credentials");
-            // }
-
             res.status(201).send(newUser);
-
-            // const returnToken = {
-            //     username: newUser[0].username,
-            //     _id: newUser[0]._id,
-            //     state: "loggedIn",
-            // };
-
-            // res.status(201).send(returnToken);
         })
         .catch((e) => {
             res.status(401).send();
@@ -129,7 +110,6 @@ app.post("/signup", (req, res) => {
 
 ////////////////// GET //////////////////
 app.get("/", (req, res) => {
-    // res.send("hi");
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
 
@@ -179,28 +159,15 @@ app.post("/movies", (req, res) => {
     });
 });
 
-
-
-
-
-
-
-
 // app.use(express.static("client/build"));
 
 // app.get("*", (req, res) => {
 
 // res.sendFile(path.resolve(__dirname, "client", "build", "index.html")});
 
-
-
-
-
 app.get("*", (req, res) => {
     res.send("404, RIP");
 });
-
-
 
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`);
