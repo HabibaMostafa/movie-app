@@ -116,7 +116,17 @@ app.get("/", (req, res) => {
 app.get("/users", (req, res) => {
     User.find({})
         .then((users) => {
-            res.send(users);
+            // copy the object but ignore password and __v
+
+            usersNoPsw = [];
+
+            users.forEach((user) => {
+                const { _id, name, username } = user;
+                const record = { _id, name, username };
+                usersNoPsw.push(record);
+            });
+
+            res.send(usersNoPsw);
         })
         .catch((e) => {
             res.status(500).send();

@@ -1,17 +1,5 @@
 import React from "react";
 
-async function movieDemo(callback) {
-    fetch("/movies", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(),
-    }).then((data) => {
-        callback(data.json());
-    });
-}
-
 class Movie extends React.Component {
     constructor(props) {
         super(props);
@@ -49,7 +37,6 @@ class Movie extends React.Component {
 
                 console.log(this.state.title);
 
-                //// console.log(data.body.results[0]);
             });
         });
     }

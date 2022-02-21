@@ -1,19 +1,20 @@
 import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import useToken from "../../components/App/useToken";
-import Home from "../Home/Home";
+import FriendsList from "../../components/Friends/FriendsList";
 
 const Friends = () => {
     const { token, setToken, getTokenObj } = useToken();
+    const tokenObj = getTokenObj();
+    const userID = tokenObj._id;
 
-    if (token === null) {
-        return <Home />;
-    }
+    const testNames = ["fred", "george", "ron", "percy"];
 
     return (
         <div className="friendsContainer">
             <Navbar />
             <h1>Friends</h1>
+            <FriendsList _id={userID} />
         </div>
     );
 };
