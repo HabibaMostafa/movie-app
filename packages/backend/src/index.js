@@ -112,11 +112,14 @@ app.post("/signup", (req, res) => {
 // makes a new document in the friend table
 app.post("/friend", (req, res) => {
     const { user1, user2, status } = req.body;
-    console.log(user1, user2, status);
+
 
     if (user1.length < 1 || user2.length < 1 || status.length < 1) {
         return res.status(400).send();
     }
+
+    //////////////////////////////////////////////////////////////////////////////TODO see if theres an existing request between the two users where
+    ////////////////////////////////////////////////////////////////////////////// user 2 was the requestor, instead of making a new one just set that request to be accepted
 
     // create a new friends record and fill it with the
     // data contained in the post request
@@ -136,6 +139,36 @@ app.post("/friend", (req, res) => {
         .catch((e) => {
             res.status(400).send(e);
         });
+});
+
+// gets a list of people the user is not friends with and has not requested.
+app.post("/friend/not-friends", (req, res) => {
+    const { user } = req.body;
+
+    if (user.length < 1) {
+        return res.status(400).send();
+    }
+
+    // get users list minus requesting user
+    // check friends list to see if there are any records where user1 is the requestor,
+    // if there are push user2 ids into another array
+    // remove elements from the users list where the _id is equal to one of the ids in the second array
+    getNonFriends(user).then((result) => {
+        res.send(result);
+    });
+});
+
+//get a list of users the user is friends with.
+app.post("/friend/user-friends", (req, res) => {
+    const { user } = req.body;
+
+    if (user.length < 1) {
+        return res.status(400).send();
+    }
+
+    getFriends(user).then((result) => {
+        res.send(result);
+    });
 });
 
 // get the friend requests that i sent
@@ -228,7 +261,7 @@ app.post("/movies", (req, res) => {
 
 //helper functions
 
-// RIP had to make this one async, used in POST /friend/from-me
+// gets an array of friend request documents the user made
 const getRequestsFromUser = async (user) => {
     let requestsFromMe = [];
 
@@ -251,17 +284,17 @@ const getRequestsFromUser = async (user) => {
     return requestsFromMe;
 };
 
-// returns a objects where the friend request ID and user info (-minus password) are combined
+// gets an array of pending friend request documents to the user
 const getRequestsToUser = async (user) => {
     let requestsToUser = [];
 
-    const requestsUserMade = await Friend.find({
+    const requests = await Friend.find({
         user2: user,
         status: "pending",
     }).exec();
 
     // now make a consolidated list using the req id, user2(request accepter
-    for (let request of requestsUserMade) {
+    for (let request of requests) {
         const requestId = request._id.toString();
         const userId = request.user1;
         await mergeFromUserInfoRequests(requestId, userId).then(
@@ -274,6 +307,7 @@ const getRequestsToUser = async (user) => {
     return requestsToUser;
 };
 
+// returns a objects where the friend request ID and user info (-minus password) are combined
 const mergeFromUserInfoRequests = async (requestId, userId) => {
     // combine the requestid and user id into a new object
     // also ignore the __v and password.
@@ -289,39 +323,90 @@ const mergeFromUserInfoRequests = async (requestId, userId) => {
     return consolidated;
 };
 
-// .then((data) => {
+// get a list of all users on the database excluding an inputted userid
+const getListExcludeUser = async (userId) => {
+    const userList = await User.find({ _id: { $ne: userId } }).exec();
 
-//     data.forEach((friendReq) => {
-//         const { _id, user2 } = friendReq;
+    return userList;
+};
 
-//         // rebug
+const getFriends = async (userId) => {
+    // list of all users minus the passed userId
+    // const userList = await getListExcludeUser(userId);
 
-//         // do a User query for the other user
-//         await User.findById(user2).then((result) => {
-//             console.log(result);
+    const acceptedRequests = await getAcceptedRequests(userId);
 
-//             const { name = "not found", username = "not found" } =
-//                 result;
-//             const consolidated = {
-//                 requestId: _id,
-//                 userId: result._id,
-//                 user: user2,
-//                 name,
-//                 username,
-//             };
+    // extract the frend's id from the requests array
+    let friendsList = [];
+    for (let request of acceptedRequests) {
 
-//             // // add the consolidated record to the obj array
-//             requestsFromMe.push(consolidated);
-//             // console.log(consolidated);
-//         });
-//     });
-//     console.log(requestsFromMe);
-// })
-// .catch((e) => {
-//     res.status(400).send(e);
-// });
+        let toAdd = undefined;
+
+        if (request.user1 === userId) {
+            toAdd = request.user2;
+            // acceptedUsers.push(request.user2);
+        } else {
+            toAdd = request.user1;
+            // acceptedUsers.push(request.user1);
+        }
+
+        if (toAdd === undefined) {
+            return;
+        }
+
+        const requestId = request._id.toString();
+
+        await mergeFromUserInfoRequests(requestId, toAdd).then((result) => {
+            friendsList.push(result);
+        });
+    }
+
+    return friendsList;
+};
+
+const getAcceptedRequests = async (userID) => {
+    const accepted = await Friend.find({
+        $and: [
+            { $or: [{ user1: userID }, { user2: userID }] },
+            { status: "accepted" },
+        ],
+    }).exec();
+
+    // console.log(accepted)
+
+    return accepted;
+};
+
+// get a list of users an inputter user is not friends with.
+const getNonFriends = async (userId) => {
+    // list of all users minus the passed userId
+    const userList = await getListExcludeUser(userId);
+
+    // list of pending friend requests from the passed userID
+    const usersRequests = await getRequestsFromUser(userId);
+
+    // populate the "alreadyRequested" array with userID's the
+    // inputter user had already made a friend requested
+    let alreadyRequested = [];
+    for (let request of usersRequests) {
+        alreadyRequested.push(request.userId);
+    }
+
+    let nonFriends = [];
+    // compare userList to alreadyRequested list, if the id
+    // is in alreadyRequested, remove from array
+    for (let user of userList) {
+        if (!alreadyRequested.includes(user._id.toString())) {
+            nonFriends.push(user);
+        }
+    }
+
+    return nonFriends;
+    // });
+};
+
 app.get("*", (req, res) => {
-    res.send("404, RIP");
+    res.status(404).send("404, RIP");
 });
 
 app.listen(port, () => {
