@@ -3,6 +3,7 @@ require("./database/mongoose");
 // load database models
 const User = require("./database/models/user");
 const Vote = require("./database/models/vote");
+const Friend = require("./database/models/friend");
 
 const express = require("express");
 
@@ -108,6 +109,62 @@ app.post("/signup", (req, res) => {
         });
 });
 
+// makes a new document in the friend table
+app.post("/friend", (req, res) => {
+    const { user1, user2, status } = req.body;
+    console.log(user1, user2, status);
+
+    if (user1.length < 1 || user2.length < 1 || status.length < 1) {
+        return res.status(400).send();
+    }
+
+    // create a new friends record and fill it with the
+    // data contained in the post request
+    const newFriend = new Friend({
+        user1,
+        user2,
+        status,
+    });
+
+    // try to save the new friend document in the database
+    newFriend
+        .save()
+        .then((newFriend) => {
+            // if it was successful, send back a 201
+            res.status(201).send(newFriend);
+        })
+        .catch((e) => {
+            res.status(400).send(e);
+        });
+});
+
+// get the friend requests that i sent
+app.post("/friend/from-me", (req, res) => {
+    const { user } = req.body;
+
+    if (user === undefined || user.length < 1) {
+        return res.status(400).send();
+    }
+
+    // perform a query on the Friend collection where user1 equals
+    // the user1 that was contained in the post request data
+    getRequestsFromUser(user).then((result) => {
+        res.status(200).send(result);
+    });
+});
+
+// get my pending friend requests
+app.post("/friend/to-me", (req, res) => {
+    const { user } = req.body;
+
+    if (user === undefined || user.length < 1) {
+        return res.status(400).send();
+    }
+    getRequestsToUser(user).then((result) => {
+        res.status(200).send(result);
+    });
+});
+
 ////////////////// GET //////////////////
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
@@ -118,7 +175,7 @@ app.get("/users", (req, res) => {
         .then((users) => {
             // copy the object but ignore password and __v
 
-            usersNoPsw = [];
+            let usersNoPsw = [];
 
             users.forEach((user) => {
                 const { _id, name, username } = user;
@@ -169,12 +226,100 @@ app.post("/movies", (req, res) => {
     });
 });
 
-// app.use(express.static("client/build"));
+//helper functions
 
-// app.get("*", (req, res) => {
+// RIP had to make this one async, used in POST /friend/from-me
+const getRequestsFromUser = async (user) => {
+    let requestsFromMe = [];
 
-// res.sendFile(path.resolve(__dirname, "client", "build", "index.html")});
+    const requestsUserMade = await Friend.find({
+        user1: user,
+        status: "pending",
+    }).exec();
 
+    // now make a consolidated list using the req id, user2(request accepter
+    for (let request of requestsUserMade) {
+        const requestId = request._id.toString();
+        const userId = request.user2;
+        await mergeFromUserInfoRequests(requestId, userId).then(
+            (consolidated) => {
+                requestsFromMe.push(consolidated);
+            }
+        );
+    }
+
+    return requestsFromMe;
+};
+
+// returns a objects where the friend request ID and user info (-minus password) are combined
+const getRequestsToUser = async (user) => {
+    let requestsToUser = [];
+
+    const requestsUserMade = await Friend.find({
+        user2: user,
+        status: "pending",
+    }).exec();
+
+    // now make a consolidated list using the req id, user2(request accepter
+    for (let request of requestsUserMade) {
+        const requestId = request._id.toString();
+        const userId = request.user1;
+        await mergeFromUserInfoRequests(requestId, userId).then(
+            (consolidated) => {
+                requestsToUser.push(consolidated);
+            }
+        );
+    }
+
+    return requestsToUser;
+};
+
+const mergeFromUserInfoRequests = async (requestId, userId) => {
+    // combine the requestid and user id into a new object
+    // also ignore the __v and password.
+    const userRecord = await User.findById(userId).exec();
+
+    const consolidated = {
+        requestId,
+        userId,
+        name: userRecord.name,
+        username: userRecord.username,
+    };
+
+    return consolidated;
+};
+
+// .then((data) => {
+
+//     data.forEach((friendReq) => {
+//         const { _id, user2 } = friendReq;
+
+//         // rebug
+
+//         // do a User query for the other user
+//         await User.findById(user2).then((result) => {
+//             console.log(result);
+
+//             const { name = "not found", username = "not found" } =
+//                 result;
+//             const consolidated = {
+//                 requestId: _id,
+//                 userId: result._id,
+//                 user: user2,
+//                 name,
+//                 username,
+//             };
+
+//             // // add the consolidated record to the obj array
+//             requestsFromMe.push(consolidated);
+//             // console.log(consolidated);
+//         });
+//     });
+//     console.log(requestsFromMe);
+// })
+// .catch((e) => {
+//     res.status(400).send(e);
+// });
 app.get("*", (req, res) => {
     res.send("404, RIP");
 });

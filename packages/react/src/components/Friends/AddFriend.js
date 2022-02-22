@@ -1,9 +1,10 @@
 import React from "react";
+import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import "./FriendsList.css";
+import "./AddFriend.css";
 
-class FriendsList extends React.Component {
+class AddFriend extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -12,6 +13,8 @@ class FriendsList extends React.Component {
 
     componentDidMount() {
         // get the entire userlist which the current user can filter
+
+        // create a different end point that will get a list of users this current user is not friends with (excluding own id)
         fetch("/users", {
             method: "GET",
             headers: {
@@ -29,22 +32,41 @@ class FriendsList extends React.Component {
 
     // note idk why but you gotta use this way, not just the normal function =??
     friendRequestHandler = () => {
-
-        if(this.userToAdd === null || this.userToAdd === undefined ) {
+        if (this.userToAdd === null || this.userToAdd === undefined) {
             return;
         }
-        console.log("The user:", this.userToAdd);
+
+        // do a post request here for the server to create a friend request
+        const friendRequestData = {
+            user1: this.props._id,
+            user2: this.userToAdd._id,
+            status: "pending",
+        };
+        axios.post("/friend", friendRequestData).then((res) => {
+            console.log(res);
+
+            // check res.status, 201 good, else you fucked it up
+
+            if (res.status !== 201) {
+                // return an indication it didnt work, popup or something
+                // like an android toast
+                console.log("Failed: unable to send friend request.");
+            }
+
+            // indication it was successful somehow,
+            console.log("Friend request sent");
+        });
     };
 
     setUserToAdd = (user) => {
         this.userToAdd = user;
-    }
+    };
 
     render() {
         return (
             <div className="friendsListContainer">
-                <p>FriendsList here</p>
-                <p>current userid is {this.props._id}</p>
+                {/* <p>FriendsList here</p>
+                <p>current userid is {this.props._id}</p> */}
 
                 <p>Add User:</p>
                 <button
@@ -71,4 +93,4 @@ class FriendsList extends React.Component {
     }
 }
 
-export default FriendsList;
+export default AddFriend;

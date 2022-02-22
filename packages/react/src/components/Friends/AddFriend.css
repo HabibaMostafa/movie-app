@@ -1,0 +1,24 @@
+
+/* mui docs https://mui.com/components/autocomplete/ */
+/* mui docs https://mui.com/api/autocomplete/ */
+/* mui docs https://mui.com/api/text-field/ */
+
+.MuiTextField-root, .MuiTextField-inputFocused {
+    color: black;
+    background-color: slategrey;
+}
+
+.MuiAutocomplete-listbox {
+    color: whitesmoke;
+    background-color: slategrey;
+}
+.MuiAutocomplete-focused {
+    color: whitesmoke;
+    background-color: goldenrod;
+}
+
+#friend-request-btn {
+    color: black;
+    background-color: slategrey;
+}
+

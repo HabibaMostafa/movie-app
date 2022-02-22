@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import useToken from "../../components/App/useToken";
-import FriendsList from "../../components/Friends/FriendsList";
+import AddFriend from "../../components/Friends/AddFriend";
 
 const Friends = () => {
     const { token, setToken, getTokenObj } = useToken();
@@ -14,7 +14,7 @@ const Friends = () => {
         <div className="friendsContainer">
             <Navbar />
             <h1>Friends</h1>
-            <FriendsList _id={userID} />
+            <AddFriend _id={userID} />
         </div>
     );
 };
