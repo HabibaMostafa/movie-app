@@ -117,13 +117,11 @@ app.post("/friend", (req, res) => {
         return res.status(400).send();
     }
 
+    //specific check to accept an existing request
     acceptPendingReq(user1, user2).then((acceptedRequest) => {
         if (acceptedRequest === true) {
             return res.status(200).send("Accepted pending request");
-        }
-
-        else {
-            
+        } else {
             // create a new friends record and fill it with the
             // data contained in the post request
             const newFriend = new Friend({
@@ -131,7 +129,7 @@ app.post("/friend", (req, res) => {
                 user2,
                 status,
             });
-        
+
             // try to save the new friend document in the database
             newFriend
                 .save()
@@ -144,7 +142,6 @@ app.post("/friend", (req, res) => {
                 });
         }
     });
-
 });
 
 // gets a list of people the user is not friends with and has not requested.
@@ -247,8 +244,15 @@ app.get("/users/:id", (req, res) => {
 });
 
 //PATCH
+// for accepting a friend request
+app.patch(("/friend", (req,res) => {
+
+}));
 
 //DELETE
+app.delete(("/friend", (req,res) => {
+    
+}));
 
 //TMDB endpoints
 
