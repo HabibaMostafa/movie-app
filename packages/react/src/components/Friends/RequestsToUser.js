@@ -10,13 +10,13 @@ import IconButton from "@mui/material/IconButton";
 
 
 
-import "./RequestsFromUser.css";
+import "./RequestsToUser.css";
 
-class RequestsFromUser extends React.Component {
+class RequestsToUser extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { reqFromMe: [] };
+        this.state = { reqToUser: [] };
         this.userToAdd = null;
     }
 
@@ -25,19 +25,19 @@ class RequestsFromUser extends React.Component {
             user: this.props._id,
         };
 
-        axios.post("/friend/from-me", params).then((res) => {
+        axios.post("/friend/to-me", params).then((res) => {
             if (res.status === 200) {
-                this.setState({ reqFromMe: res.data });
+                this.setState({ reqToUser: res.data });
             } else {
-                this.setState({ reqFromMe: [] });
+                this.setState({ reqToUser: [] });
             }
         });
     }
 
     render() {
         return (
-            <div className="requestsFromUserContainer">
-                <h3>Friend Requests From User</h3>
+            <div className="requestsToUserContainer">
+                <h3>Friend Requests To User</h3>
                 <div>
                     <Paper style={{ maxHeight: 200, overflow: "auto", maxWidth: 300 }}>
                         <List
@@ -47,7 +47,7 @@ class RequestsFromUser extends React.Component {
                                 bgcolor: "background.paper",
                             }}
                         >
-                            {this.state.reqFromMe.map((value) => (
+                            {this.state.reqToUser.map((value) => (
                                 <ListItem
                                     key={value}
                                     disableGutters
@@ -64,4 +64,4 @@ class RequestsFromUser extends React.Component {
     }
 }
 
-export default RequestsFromUser;
+export default RequestsToUser;

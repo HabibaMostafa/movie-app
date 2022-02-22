@@ -117,27 +117,34 @@ app.post("/friend", (req, res) => {
         return res.status(400).send();
     }
 
-    //////////////////////////////////////////////////////////////////////////////TODO see if theres an existing request between the two users where
-    ////////////////////////////////////////////////////////////////////////////// user 2 was the requestor, instead of making a new one just set that request to be accepted
+    acceptPendingReq(user1, user2).then((acceptedRequest) => {
+        if (acceptedRequest === true) {
+            return res.status(200).send("Accepted pending request");
+        }
 
-    // create a new friends record and fill it with the
-    // data contained in the post request
-    const newFriend = new Friend({
-        user1,
-        user2,
-        status,
+        else {
+            
+            // create a new friends record and fill it with the
+            // data contained in the post request
+            const newFriend = new Friend({
+                user1,
+                user2,
+                status,
+            });
+        
+            // try to save the new friend document in the database
+            newFriend
+                .save()
+                .then((newFriend) => {
+                    // if it was successful, send back a 201
+                    res.status(201).send(newFriend);
+                })
+                .catch((e) => {
+                    res.status(400).send(e);
+                });
+        }
     });
 
-    // try to save the new friend document in the database
-    newFriend
-        .save()
-        .then((newFriend) => {
-            // if it was successful, send back a 201
-            res.status(201).send(newFriend);
-        })
-        .catch((e) => {
-            res.status(400).send(e);
-        });
 });
 
 // gets a list of people the user is not friends with and has not requested.
@@ -412,6 +419,35 @@ const getNonFriends = async (userId) => {
     }
 
     return nonFriends;
+};
+
+// called by /friend, will accept a freidn request if it already exists.
+// Returns True if a pending request existed and was accepted
+const acceptPendingReq = async (currentUser, otherUser) => {
+    let acceptedRequest = false;
+
+    await Friend.findOneAndUpdate(
+        {
+            user1: otherUser,
+            user2: currentUser,
+            status: "pending",
+        },
+        {
+            status: "accepted",
+        }
+    )
+        .then((result) => {
+            if (result !== null) {
+                acceptedRequest = true;
+            } else {
+                acceptedRequest = false;
+            }
+        })
+        .catch((e) => {
+            acceptedRequest = false;
+        });
+
+    return acceptedRequest;
 };
 
 app.get("*", (req, res) => {

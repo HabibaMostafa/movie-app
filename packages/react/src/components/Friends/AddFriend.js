@@ -60,14 +60,17 @@ class AddFriend extends React.Component {
         };
         axios.post("/friend", friendRequestData).then((res) => {
             // check res.status, 201 good, else you fucked it up
-            if (res.status !== 201) {
+            if (res.status !== 201 && res.status !== 200) {
                 // return an indication it didnt work, popup or something
                 // like an android toast
-                console.log("Failed: unable to send friend request.");
+                console.log("Failed: unable to send friend request.", res.status, res );
+                
             }
 
             // indication it was successful somehow,
-            console.log("Friend request sent");
+            else{
+                console.log("Friend request sent");
+            }
         });
     };
 
