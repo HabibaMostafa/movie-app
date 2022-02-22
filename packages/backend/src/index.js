@@ -154,7 +154,7 @@ app.post("/friend/not-friends", (req, res) => {
     // if there are push user2 ids into another array
     // remove elements from the users list where the _id is equal to one of the ids in the second array
     getNonFriends(user).then((result) => {
-        res.send(result);
+        res.status(200).send(result);
     });
 });
 
@@ -167,7 +167,7 @@ app.post("/friend/user-friends", (req, res) => {
     }
 
     getFriends(user).then((result) => {
-        res.send(result);
+        res.status(200).send(result);
     });
 });
 
