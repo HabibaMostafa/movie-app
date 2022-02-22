@@ -25,8 +25,24 @@ class AddFriend extends React.Component {
             //// callback(data.json());
             res.json().then((data) => {
                 this.setState({ allUsers: data });
-                // console.log(this.state.allUsers);
             });
+        });
+
+        const params = {
+            user: this.props._id,
+        };
+
+        axios.post("/friend/not-friends", params).then((res) => {
+
+            // console.log(res.data); 
+            if (res.status === 200) {
+                this.setState({ notFriends: res.data });
+            }
+            else {
+                
+                this.setState({ notFriends: [] });
+            }
+
         });
     }
 
@@ -43,10 +59,7 @@ class AddFriend extends React.Component {
             status: "pending",
         };
         axios.post("/friend", friendRequestData).then((res) => {
-            console.log(res);
-
             // check res.status, 201 good, else you fucked it up
-
             if (res.status !== 201) {
                 // return an indication it didnt work, popup or something
                 // like an android toast
@@ -64,11 +77,8 @@ class AddFriend extends React.Component {
 
     render() {
         return (
-            <div className="friendsListContainer">
-                {/* <p>FriendsList here</p>
-                <p>current userid is {this.props._id}</p> */}
-
-                <p>Add User:</p>
+            <div className="addFriendContainer">
+                <h3>Add User:</h3>
                 <button
                     id="friend-request-btn"
                     onClick={this.friendRequestHandler}
@@ -79,7 +89,7 @@ class AddFriend extends React.Component {
                     <Autocomplete
                         disablePortal
                         id="combo-box-users"
-                        options={this.state.allUsers}
+                        options={this.state.notFriends} // set this to notFriends array
                         getOptionLabel={(option) => option.username}
                         sx={{ width: 300 }}
                         renderInput={(params) => <TextField {...params} />}

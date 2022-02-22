@@ -113,7 +113,6 @@ app.post("/signup", (req, res) => {
 app.post("/friend", (req, res) => {
     const { user1, user2, status } = req.body;
 
-
     if (user1.length < 1 || user2.length < 1 || status.length < 1) {
         return res.status(400).send();
     }
@@ -339,7 +338,6 @@ const getFriends = async (userId) => {
     // extract the frend's id from the requests array
     let friendsList = [];
     for (let request of acceptedRequests) {
-
         let toAdd = undefined;
 
         if (request.user1 === userId) {
@@ -364,6 +362,7 @@ const getFriends = async (userId) => {
     return friendsList;
 };
 
+// get a list of accepted friend documents involving the inputted user
 const getAcceptedRequests = async (userID) => {
     const accepted = await Friend.find({
         $and: [
@@ -371,9 +370,6 @@ const getAcceptedRequests = async (userID) => {
             { status: "accepted" },
         ],
     }).exec();
-
-    // console.log(accepted)
-
     return accepted;
 };
 
@@ -385,24 +381,37 @@ const getNonFriends = async (userId) => {
     // list of pending friend requests from the passed userID
     const usersRequests = await getRequestsFromUser(userId);
 
+    // get a list of users that are already friends
+    const friends = await getFriends(userId);
+
     // populate the "alreadyRequested" array with userID's the
     // inputter user had already made a friend requested
-    let alreadyRequested = [];
+    let skipUser = [];
     for (let request of usersRequests) {
-        alreadyRequested.push(request.userId);
+        skipUser.push(request.userId);
+    }
+
+    for (let friend of friends) {
+        skipUser.push(friend.userId);
     }
 
     let nonFriends = [];
     // compare userList to alreadyRequested list, if the id
     // is in alreadyRequested, remove from array
     for (let user of userList) {
-        if (!alreadyRequested.includes(user._id.toString())) {
-            nonFriends.push(user);
+        if (!skipUser.includes(user._id.toString())) {
+            // omit the password and __v columns
+            const redactedRecord = {
+                _id: user._id,
+                name: user.name,
+                username: user.username,
+            };
+
+            nonFriends.push(redactedRecord);
         }
     }
 
     return nonFriends;
-    // });
 };
 
 app.get("*", (req, res) => {
