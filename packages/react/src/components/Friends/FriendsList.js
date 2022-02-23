@@ -8,8 +8,6 @@ import Paper from "@mui/material/Paper";
 // import CommentIcon from "@mui/icons-material/Comment";
 import IconButton from "@mui/material/IconButton";
 
-
-
 import "./FriendsList.css";
 
 class FriendsList extends React.Component {
@@ -39,12 +37,44 @@ class FriendsList extends React.Component {
         return this.state.userFriends;
     };
 
+    deleteButtonHandler = (data) => {
+        // data.preventDefault()
+
+        const requestId = {
+            _id: data.requestId,
+        };
+        // console.log(requestId);
+
+        axios
+            .delete("/friend", { data: requestId })
+            .then((response) => {
+                // console.log(response);
+                if (response.status === 200) {
+                    // refresh the window for now
+                    // better if there was a way to reload everything...
+                    window.location.reload(true);
+                } else {
+                    //have a notification there was an error
+                }
+            })
+            .catch((e) => {
+                //hav a notification there was an error
+                // console.log(e);
+            });
+    };
+
     render() {
         return (
             <div className="friendsListContainer">
                 <h3>Friends List</h3>
                 <div>
-                    <Paper style={{ maxHeight: 200, overflow: "auto", maxWidth: 300 }}>
+                    <Paper
+                        style={{
+                            maxHeight: 200,
+                            overflow: "auto",
+                            maxWidth: 300,
+                        }}
+                    >
                         <List
                             sx={{
                                 width: "100%",
@@ -56,7 +86,16 @@ class FriendsList extends React.Component {
                                 <ListItem
                                     key={value}
                                     disableGutters
-                                    secondaryAction={<IconButton>X</IconButton>}
+                                    secondaryAction={
+                                        <IconButton
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                this.deleteButtonHandler(value);
+                                            }}
+                                        >
+                                            [X]
+                                        </IconButton>
+                                    }
                                 >
                                     <ListItemText primary={value.username} />
                                 </ListItem>

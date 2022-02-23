@@ -72,6 +72,10 @@ class AddFriend extends React.Component {
                 console.log("Friend request sent");
             }
         });
+
+        // refresh the window for now
+        // better if there was a way to reload everything...
+        window.location.reload(true);
     };
 
     setUserToAdd = (user) => {

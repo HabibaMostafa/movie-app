@@ -245,14 +245,28 @@ app.get("/users/:id", (req, res) => {
 
 //PATCH
 // for accepting a friend request
-app.patch(("/friend", (req,res) => {
-
-}));
+app.patch(("/friend", (req, res) => {}));
 
 //DELETE
-app.delete(("/friend", (req,res) => {
-    
-}));
+app.delete("/friend", (req, res) => {
+    const idToDelete = req.body;
+
+    // console.log(idToDelete);
+
+    if (idToDelete._id == undefined || idToDelete._id == null || idToDelete._id.length < 1) {
+        return res.status(400).send("bad request");
+    }
+        
+    Friend.findOneAndDelete(idToDelete).then((result)=>{
+        // console.log(result);
+        return res.status(200).send("successfully deleted friend document");
+    }).catch((e)=>{
+        // console.log(e);
+        return res.status(400).send("error, could not delete requested document");
+        
+    });
+
+});
 
 //TMDB endpoints
 

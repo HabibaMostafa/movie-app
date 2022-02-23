@@ -51,7 +51,7 @@ class RequestsToUser extends React.Component {
                                 <ListItem
                                     key={value}
                                     disableGutters
-                                    secondaryAction={<IconButton>X</IconButton>}
+                                    secondaryAction={<IconButton>[accept]</IconButton>}
                                 >
                                     <ListItemText primary={value.username} />
                                 </ListItem>
