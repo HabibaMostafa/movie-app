@@ -19,7 +19,6 @@ function Home() {
             <Navbar />
             <h1>Home</h1>
             <p>Welcome User: {tokenObj.username}</p>
-            <p>IDK maybe have like a FB feed or something here, list whatever you other loser friends are doing.</p>
         </div>
 
     );

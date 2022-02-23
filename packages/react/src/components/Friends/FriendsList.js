@@ -97,7 +97,14 @@ class FriendsList extends React.Component {
                                         </IconButton>
                                     }
                                 >
-                                    <ListItemText primary={value.username} />
+                                    <ListItemText
+                                        primary={
+                                            value.username +
+                                            " (" +
+                                            value.name +
+                                            ")"
+                                        }
+                                    />
                                 </ListItem>
                             ))}
                         </List>
