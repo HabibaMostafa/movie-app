@@ -492,7 +492,7 @@ const acceptPendingReq = async (currentUser, otherUser) => {
 };
 
 app.get("*", (req, res) => {
-    res.status(404).send();
+    res.redirect('/');
 });
 
 app.listen(port, () => {
