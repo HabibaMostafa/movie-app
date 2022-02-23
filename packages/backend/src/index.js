@@ -255,10 +255,12 @@ app.patch("/friend", (req, res) => {
 
     Friend.findOneAndUpdate(idToUpdate, {status: "accepted"}).then((result)=>{
         // console.log(result);
-        return res.status(200).send("successfully accepted friend request");
+        return res.status(200).send();
+        // return res.status(200).send("successfully accepted friend request");
     }).catch((e)=>{
         // console.log(e);
-        return res.status(400).send("error, could not accept friend request");
+        return res.status(400).send();
+        // return res.status(400).send("error, could not accept friend request");
         
     });
 
@@ -278,10 +280,12 @@ app.delete("/friend", (req, res) => {
         
     Friend.findOneAndDelete(idToDelete).then((result)=>{
         // console.log(result);
-        return res.status(200).send("successfully deleted friend document");
+        return res.status(200).send();
+        // return res.status(200).send("successfully deleted friend document");
     }).catch((e)=>{
         // console.log(e);
-        return res.status(400).send("error, could not delete requested document");
+        return res.status(400).send();
+        // return res.status(400).send("error, could not delete requested document");
         
     });
 
@@ -488,7 +492,7 @@ const acceptPendingReq = async (currentUser, otherUser) => {
 };
 
 app.get("*", (req, res) => {
-    res.status(404).send("404, RIP");
+    res.status(404).send();
 });
 
 app.listen(port, () => {
