@@ -504,9 +504,14 @@ const acceptPendingReq = async (currentUser, otherUser) => {
 // });
 
 // need this for react to handle the 404s
-app.use(function (req, res, next) {
-    res.sendFile(path.join(buildPath, "index.html"));
+// app.use(function (req, res, next) {
+//     res.sendFile(path.join(buildPath, "index.html"));
+// });
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
+
 
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`);
