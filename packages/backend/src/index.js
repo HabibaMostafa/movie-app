@@ -245,7 +245,26 @@ app.get("/users/:id", (req, res) => {
 
 //PATCH
 // for accepting a friend request
-app.patch(("/friend", (req, res) => {}));
+app.patch("/friend", (req, res) => {
+
+    const idToUpdate = req.body;
+
+    if (idToUpdate._id == undefined || idToUpdate._id == null || idToUpdate._id.length < 1) {
+        return res.status(400).send("bad request");
+    }
+
+    Friend.findOneAndUpdate(idToUpdate, {status: "accepted"}).then((result)=>{
+        // console.log(result);
+        return res.status(200).send("successfully accepted friend request");
+    }).catch((e)=>{
+        // console.log(e);
+        return res.status(400).send("error, could not accept friend request");
+        
+    });
+
+    // res.send(req.body);
+
+});
 
 //DELETE
 app.delete("/friend", (req, res) => {
