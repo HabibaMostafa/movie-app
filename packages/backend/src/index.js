@@ -246,26 +246,29 @@ app.get("/users/:id", (req, res) => {
 //PATCH
 // for accepting a friend request
 app.patch("/friend", (req, res) => {
-
     const idToUpdate = req.body;
 
-    if (idToUpdate._id == undefined || idToUpdate._id == null || idToUpdate._id.length < 1) {
+    if (
+        idToUpdate._id == undefined ||
+        idToUpdate._id == null ||
+        idToUpdate._id.length < 1
+    ) {
         return res.status(400).send("bad request");
     }
 
-    Friend.findOneAndUpdate(idToUpdate, {status: "accepted"}).then((result)=>{
-        // console.log(result);
-        return res.status(200).send();
-        // return res.status(200).send("successfully accepted friend request");
-    }).catch((e)=>{
-        // console.log(e);
-        return res.status(400).send();
-        // return res.status(400).send("error, could not accept friend request");
-        
-    });
+    Friend.findOneAndUpdate(idToUpdate, { status: "accepted" })
+        .then((result) => {
+            // console.log(result);
+            return res.status(200).send();
+            // return res.status(200).send("successfully accepted friend request");
+        })
+        .catch((e) => {
+            // console.log(e);
+            return res.status(400).send();
+            // return res.status(400).send("error, could not accept friend request");
+        });
 
     // res.send(req.body);
-
 });
 
 //DELETE
@@ -274,21 +277,25 @@ app.delete("/friend", (req, res) => {
 
     // console.log(idToDelete);
 
-    if (idToDelete._id == undefined || idToDelete._id == null || idToDelete._id.length < 1) {
+    if (
+        idToDelete._id == undefined ||
+        idToDelete._id == null ||
+        idToDelete._id.length < 1
+    ) {
         return res.status(400).send("bad request");
     }
-        
-    Friend.findOneAndDelete(idToDelete).then((result)=>{
-        // console.log(result);
-        return res.status(200).send();
-        // return res.status(200).send("successfully deleted friend document");
-    }).catch((e)=>{
-        // console.log(e);
-        return res.status(400).send();
-        // return res.status(400).send("error, could not delete requested document");
-        
-    });
 
+    Friend.findOneAndDelete(idToDelete)
+        .then((result) => {
+            // console.log(result);
+            return res.status(200).send();
+            // return res.status(200).send("successfully deleted friend document");
+        })
+        .catch((e) => {
+            // console.log(e);
+            return res.status(400).send();
+            // return res.status(400).send("error, could not delete requested document");
+        });
 });
 
 //TMDB endpoints
@@ -491,9 +498,14 @@ const acceptPendingReq = async (currentUser, otherUser) => {
     return acceptedRequest;
 };
 
-app.get("*", (req, res) => {
-    // res.redirect('/');
-    res.status(404).send(req);
+// app.get("*", (req, res) => {
+//     // res.redirect('/');
+//     // res.status(404).send(req);
+// });
+
+// need this for react to handle the 404s
+app.use(function (req, res, next) {
+    res.sendFile(path.join(buildPath, "index.html"));
 });
 
 app.listen(port, () => {

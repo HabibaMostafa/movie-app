@@ -12,10 +12,13 @@ ReactDOM.render(
     <Router>
         <Routes>
             <Route path="/" element={<Home />} />
-            {/* <Route path="/" element={<App />} /> */}
-            <Route path="/friend" element={<Friends />} />
-            <Route path="/movie" element={<Movies />} />
-            <Route path="/match" element={<Matches />} />
+            <Route path="/friends" element={<Friends />} />
+                <Route path="/friends/*" element={<Friends />} />
+            <Route path="/movies" element={<Movies />} />
+            <Route path="/matches" element={<Matches />} />
+
+            <Route path="*" element={<Home />} />
+            
         </Routes>
     </Router>,
     document.getElementById("root")
