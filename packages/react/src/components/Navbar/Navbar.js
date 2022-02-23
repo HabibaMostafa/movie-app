@@ -43,7 +43,7 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink
                                 exact
-                                to="/movies"
+                                to="/movie"
                                 activeClassName="active"
                                 className="nav-links"
                                 onClick={click ? handleClick : null}
@@ -54,7 +54,7 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink
                                 exact
-                                to="/friends"
+                                to="/friend"
                                 activeClassName="active"
                                 className="nav-links"
                                 onClick={click ? handleClick : null}
@@ -65,7 +65,7 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink
                                 exact
-                                to="/matches"
+                                to="/match"
                                 activeClassName="active"
                                 className="nav-links"
                                 onClick={click ? handleClick : null}
