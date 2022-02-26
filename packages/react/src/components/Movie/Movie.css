@@ -1,4 +1,93 @@
+:root {
+    --grey: #7f9aa7;
+    --white: #ffffff;
+    --off-white: #cfcfcf;
+    --black: #000000;
+    --dark-blue: #031d72;
+    --movie-yellow: #ecb220;
+}
+
+div.movie, div.movie > * {
+    padding: 0;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.movie-title {
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.movie-btn:hover { border: 1px solid var(--movie-yellow); }
+
+.movie-btn {
+    height: 4em;
+    width: 4em;
+    margin: 1em;
+    border-radius: 50%;
+    border: 1px solid var(--dark-blue);
+    color: var(--white);
+    background-color: var(--black);
+}
+
+.content {
+    margin: auto;
+    max-width: 80%;
+}
+
+@media (max-width: 720px) {
+    .content {
+        max-width: 100%;
+    }
+}
+
+.movie {
+    position: relative;
+    padding: 2em 0 1em;
+}
+
+@media (min-width: 721px) {
+    .movie-grid {
+        display: grid;
+        grid-template-columns: auto auto;
+    }
+}
+
+.movie-display {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.like-dislike-btns {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
 .movie-info {
-    margin: 25px 50px 75px 100px;
-    background-color: red;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.movie-info {
+    position: relative;
+    padding: 4em 1em 6em;
+}
+
+@media (min-width: 721px) {
+    .movie-info {
+        border-left: 1px solid var(--movie-yellow);
+        padding-left: 2em;
+        margin: 1em 0 0 2em;
+    }
+}
+  
+@media (max-width: 720px) {
+    .movie-info {
+        border-top: 1px solid var(--movie-yellow);
+        padding-top: 2em;
+        margin-top: 2em;
+    }
 }
