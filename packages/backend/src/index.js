@@ -43,7 +43,18 @@ app.post("/users", (req, res) => {
 
 //create a new vote (user swipes)
 app.post("/votes", (req, res) => {
-    const newVote = new Vote(req.body);
+    const movieID = req.body.id;
+    const user = req.body.user;
+    const liked = true;
+
+    console.log(req.body.id);
+
+    // make a new vote object
+    const newVote = new Vote({
+        movieID,
+        user,
+        liked,
+    });
 
     newVote
         .save()

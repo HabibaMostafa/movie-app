@@ -1,11 +1,13 @@
 import React from "react";
 import "./Movie.css";
+import useToken from "../App/useToken";
 
 var movie;
 var min;
 var max;
 const movieIndex = [];
 var i = 0;
+
 
 class Movie extends React.Component {
     constructor(props) {
@@ -72,8 +74,7 @@ class Movie extends React.Component {
             this.setState({ overview: movie.overview });
             //// this.setState({ title : mov.title });
             
-            console.log(this.state.title);
-            console.log(movie);
+        
         } else {
             //show an alert or update list and data with new movies. 
             console.log("out of movies");
@@ -85,7 +86,18 @@ class Movie extends React.Component {
     //method for when the user "likes" the movie on display
     likeMovie() {
         //TODO: add (movie) to the database as a "liked" movie.
-        console.log("like pressed");
+        //TODO: get user ID from backend
+        let userID = 0;
+
+        let data = JSON.stringify({id: movie.id, user: userID});
+    
+        fetch("/votes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: data,
+        }).then((res) => res.json());
     }
 
     //method for when the user "dislikes" the movie on display
@@ -106,7 +118,7 @@ class Movie extends React.Component {
                             </div>
                             <div className="like-dislike-btns">
                                 <button 
-                                id="like-btn" 
+                                
                                 className="movie-btn" 
                                 onClick={() => {
                                     this.likeMovie();
@@ -131,5 +143,4 @@ class Movie extends React.Component {
         );
     }
 }
-
 export default Movie;
