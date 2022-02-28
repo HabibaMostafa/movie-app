@@ -109,6 +109,20 @@ app.post("/signup", (req, res) => {
         });
 });
 
+//get a list of votes the user has made 
+app.post("/user/movie-votes", (req, res) => {
+    const { user } = req.body;
+
+    if (user.length < 1) {
+        return res.status(400).send();
+    }
+
+    // potential getVotes function
+    // getVotes(user).then((result) => {
+    //     res.status(200).send(result);
+    // });
+});
+
 // makes a new document in the friend table
 app.post("/friend", (req, res) => {
     const { user1, user2, status } = req.body;

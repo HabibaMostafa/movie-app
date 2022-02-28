@@ -7,13 +7,27 @@ var max;
 const movieIndex = [];
 var i = 0;
 
+async function inputMovieVote(movieVote) {
+    return fetch("/votes", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+    }).then((data) => data.json());
+}
+
 class Movie extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { movieVotes: [] };
     }
 
     componentDidMount() {
+        const params = {
+            user: this.props._id,
+        };
+
         fetch("/movies", {
             method: "POST",
             headers: {
@@ -85,12 +99,25 @@ class Movie extends React.Component {
     //method for when the user "likes" the movie on display
     likeMovie() {
         //TODO: add (movie) to the database as a "liked" movie.
+
+        // Calls function to create the user with form data
+        const sendMovieVote = async (e) => {
+            e.preventDefault();
+
+            // const movieVote = {
+            //     movieID = this.state.title,
+            //     user = this.state.userid,
+            //     liked = true,
+            // };
+
+            const token = await inputMovieVote(movieVote);
+            setToken(token);
+        };
         console.log("like pressed");
     }
 
     //method for when the user "dislikes" the movie on display
     dislikeMovie() {
-        //TODO: add (movie) to the database as a "liked" movie.
         console.log("dislike pressed");
     }
 
