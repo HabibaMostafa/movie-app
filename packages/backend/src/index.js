@@ -47,8 +47,6 @@ app.post("/votes", (req, res) => {
     const user = req.body.user;
     const liked = true;
 
-    console.log(req.body.id);
-
     // make a new vote object
     const newVote = new Vote({
         movieID,

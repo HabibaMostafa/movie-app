@@ -1,6 +1,5 @@
 import React from "react";
 import "./Movie.css";
-import useToken from "../App/useToken";
 
 var movie;
 var min;
@@ -85,9 +84,7 @@ class Movie extends React.Component {
 
     //method for when the user "likes" the movie on display
     likeMovie() {
-        //TODO: add (movie) to the database as a "liked" movie.
-        //TODO: get user ID from backend
-        let userID = 0;
+        let userID = this.props._id;
 
         let data = JSON.stringify({id: movie.id, user: userID});
     
@@ -144,3 +141,6 @@ class Movie extends React.Component {
     }
 }
 export default Movie;
+
+ 
+
