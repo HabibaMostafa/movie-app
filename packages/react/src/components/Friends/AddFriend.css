@@ -4,8 +4,8 @@
 /* mui docs https://mui.com/api/text-field/ */
 
 .MuiTextField-root, .MuiTextField-inputFocused {
-    color: black;
-    background-color: slategrey;
+    color: whitesmoke !important;
+    background-color:  slategrey;
 }
 
 .MuiAutocomplete-listbox {
@@ -18,11 +18,14 @@
 }
 
 #friend-request-btn {
-    color: black;
-    background-color: slategrey;
+    background-color: goldenrod;
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
 }
-
-
 
 .addFriendContainer {
     padding-bottom: 60px;
