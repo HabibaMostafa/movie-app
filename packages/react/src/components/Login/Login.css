@@ -22,7 +22,12 @@
 
 .login-wrapper {
   background-image: url("movie-bg.png");
- }
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
 
 .login-input {
    color: black !important;

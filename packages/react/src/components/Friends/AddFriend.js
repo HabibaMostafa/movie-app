@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import Button from '@mui/material/Button';
 import "./AddFriend.css";
 
 class AddFriend extends React.Component {
@@ -86,12 +87,12 @@ class AddFriend extends React.Component {
         return (
             <div className="addFriendContainer">
                 <h3>Add User:</h3>
-                <button
+                <Button variant="contained"
                     id="friend-request-btn"
                     onClick={this.friendRequestHandler}
                 >
                     Send Friend Request
-                </button>
+                </Button>
                 <div ref={this.userListRef}>
                     <Autocomplete
                         disablePortal
