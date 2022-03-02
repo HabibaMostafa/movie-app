@@ -1,11 +1,13 @@
 import React from "react";
+import axios from "axios";
 import "./Movie.css";
 
 var movie;
 var min;
 var max;
+var page = 1;
 const movieIndex = [];
-var i = 0;
+var index = 0;
 
 class Movie extends React.Component {
     constructor(props) {
@@ -14,29 +16,24 @@ class Movie extends React.Component {
     }
 
     componentDidMount() {
-        fetch("/movies", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(),
-        }).then((res) => {
-            //// callback(data.json());
-            res.json().then((data) => {
-                //save data to movies state
-                if (res.status === 200) {
-                    this.setState({ movies: data });
-                }
-                else {
-                    this.setState({ movies: [] });
-                }
+        const params = {
+            pageNum: page,
+        };
 
+        axios.post("/movies", params).then((res) => {
+
+            // console.log(res.data); 
+            if (res.status === 200) {
+                index = 0;
+                this.setState({ movies: res.data });
                 //create a list of movies to display in carousel
                 this.setMovieIndex();
-
                 //set the next movie to display
                 this.setMovie();
-            });
+            }
+            else {
+                this.setState({ movies: [] });
+            }
         });
     }
 
@@ -59,9 +56,9 @@ class Movie extends React.Component {
 
         //as long as there are still movies not displayed in the list then set them to the states. 
         //...and iterate the list. 
-        if (i<max) {
-            movie = this.state.movies.body.results[movieIndex[i]];
-            i++;
+        if (index<max) {
+            movie = this.state.movies.body.results[movieIndex[index]];
+            index++;
 
             //// probably a better way to restructure this?
             this.setState({ title: movie.title });
@@ -76,8 +73,9 @@ class Movie extends React.Component {
             console.log(movie);
         } else {
             //show an alert or update list and data with new movies. 
-            console.log("out of movies");
-
+            console.log("refreshing movie list");
+            page++;
+            this.componentDidMount()
             //TODO: add more movies to the list when out of movies. 
         }
     }

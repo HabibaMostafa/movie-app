@@ -248,7 +248,8 @@ app.get("/users/:id", (req, res) => {
 // sample api get request
 app.post("/movies", (req, res) => {
     // make request to api
-    const test = tmdb({}, (error, response) => {
+    var pageNum = req.body.pageNum;
+    const test = tmdb({pageNum}, (error, response) => {
         if (error) {
             console.log("Error! =(");
             return;
