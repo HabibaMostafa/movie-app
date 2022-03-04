@@ -34,8 +34,7 @@ app.post("/matches", (req, res) => {
 });
 
 // checks for and possible creates matches
-app.post("/matches/by-vote", (req,res)=>{
-
+app.post("/matches/by-vote", (req, res) => {
     // ObjectId("622171a72484af5ac33637d2") debug
     const test = checkForMatchesWithVote("622171a72484af5ac33637d2");
     res.send(test);
@@ -558,7 +557,7 @@ const getUserDislikes = async (userId) => {
     return userLikes;
 };
 
-const getVote = async(voteID) => {
+const getVote = async (voteID) => {
     const theVote = await Vote.findById(voteID).exec();
 
     return theVote;
@@ -566,9 +565,6 @@ const getVote = async(voteID) => {
 
 // checks for any new matches with a specific vote
 const checkForMatchesWithVote = async (vote_id) => {
-
-    let newMatches = []
-
     // a list of other votes this vote has already been matched with
     let alreadyMatched = [];
 
@@ -578,21 +574,21 @@ const checkForMatchesWithVote = async (vote_id) => {
     // get the movie id from the vote, userid, and user friends list
     const movie = theVote.movieID;
     const userId = theVote.user;
-    
-    // check that the vote is actually set to true for liked, skip it if it isnt   
+
+    // check that the vote is actually set to true for liked, skip it if it isnt
     if (theVote.liked === false) {
         return;
     }
 
-    // get the friends list for this 
+    // get the friends list for this
     const userFriendsObjs = await getFriends(userId);
     let userFriends = [];
 
-    for(let friend of userFriendsObjs) {
+    for (let friend of userFriendsObjs) {
         userFriends.push(friend.userId);
     }
 
-    console.log(userFriends);
+    // console.log(userFriends);
 
     /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
     /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
@@ -605,19 +601,66 @@ const checkForMatchesWithVote = async (vote_id) => {
     /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
     /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
 
-    // perform query on Vote collection for records that have the same movie id and 
+    // perform query on Vote collection for records that have the same movie id and
     // whos user id is in the userFriends array, save these records in possibleMatches
     // const possibleMatches
 
+    //if possible vote is in alreadyMatched, skip
 
+    //else create a new match document.
+    // if a new one is made add it to newMatches
 
-        //if possible vote is in alreadyMatched, skip
-
-        //else create a new match document.
-        // if a new one is made add it to newMatches
+    const newMatches = await matchVotes(userFriends, theVote);
 
     return newMatches;
+};
 
+const matchVotes = async (friendList, theVote) => {
+    const movie = theVote.movieID;
+    const userId = theVote.user;
+    const user1Vote = theVote._id.toString();
+
+    const user1 = await User.findById(userId);
+    const user1Username = user1.username;
+
+    const friendsOnly = { user: { $in: friendList } };
+    const voteNotByUser = { user: { $ne: userId } };
+    const specificMovie = { movieID: movie };
+
+    // const possibleMatches = await Vote.find({user: {$in: friendList}}).exec();
+
+    const possibleMatches = await Vote.find({
+        $and: [friendsOnly, voteNotByUser, specificMovie],
+    }).exec();
+
+    let newMatches = [];
+
+    // create a match object for every possible match
+    for (let match of possibleMatches) {
+        //
+        const user2 = await User.findById(match.user);
+        const user2Username = user2.username;
+
+        // console.log(user1Username)
+        // console.log(user2Username)
+        const newMatch = new Match({
+            user1Id: user1._id.toString(),
+            user1Vote: user1Vote,
+            user1Username: user1Username,
+            user2Id: user2._id.toString(),
+            user2Vote: match._id.toString(),
+            user2Username: user2Username,
+            movieID: movie,
+        });
+
+        await newMatch.save().then((result) => {
+            newMatches.push(result);
+        });
+
+        // await
+    }
+
+    return newMatches;
 };
 
 // does a full check of the database

@@ -9,6 +9,10 @@ const Match = mongoose.model("Match", {
         type: String,
         required: true,
     },
+    user1Username: {
+        type: String,
+        required: true,
+    },
     user2Id: {
         type: String,
         required: true,
@@ -17,8 +21,14 @@ const Match = mongoose.model("Match", {
         type: String,
         required: true,
     },
+    user2Username: {
+        type: String,
+        required: true,
+    },
     movieID: {
         type: Number,
         required: true,
     }
 });
+
+module.exports = Match;
