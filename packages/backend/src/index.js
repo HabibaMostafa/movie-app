@@ -4,6 +4,7 @@ require("./database/mongoose");
 const User = require("./database/models/user");
 const Vote = require("./database/models/vote");
 const Friend = require("./database/models/friend");
+const Match = require("./database/models/match");
 
 const express = require("express");
 
@@ -24,6 +25,21 @@ app.use(express.static(path.join(__dirname, buildPath)));
 app.use(cors());
 
 ////////////////// POST //////////////////
+
+//
+app.post("/matches", (req, res) => {
+    const user1 = req.body.user1;
+    const user2 = req.body.user2;
+    res.send(user1 + user2);
+});
+
+// checks for and possible creates matches
+app.post("/matches/by-vote", (req,res)=>{
+
+    // ObjectId("622171a72484af5ac33637d2") debug
+    const test = checkForMatchesWithVote("622171a72484af5ac33637d2");
+    res.send(test);
+});
 
 //create a new user
 app.post("/users", (req, res) => {
@@ -211,6 +227,16 @@ app.post("/friend/to-me", (req, res) => {
 });
 
 ////////////////// GET //////////////////
+
+// gett all of a user's votes
+app.get("/votes", (req, res) => {
+    let userId = req.query.user;
+
+    Vote.find({ user: userId }).then((result) => {
+        res.send(result);
+    });
+});
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
@@ -313,7 +339,7 @@ app.delete("/friend", (req, res) => {
 app.post("/movies", (req, res) => {
     // make request to api
     var pageNum = req.body.pageNum;
-    const test = tmdb({pageNum}, (error, response) => {
+    const test = tmdb({ pageNum }, (error, response) => {
         if (error) {
             console.log("Error! =(");
             return;
@@ -508,20 +534,100 @@ const acceptPendingReq = async (currentUser, otherUser) => {
     return acceptedRequest;
 };
 
-// app.get("*", (req, res) => {
-//     // res.redirect('/');
-//     // res.status(404).send(req);
-// });
+// returns an object of votes where the user liked liked a movie.
+const getUserLikes = async (userId) => {
+    const query = {
+        user: userId,
+        liked: true,
+    };
 
-// need this for react to handle the 404s
-// app.use(function (req, res, next) {
-//     res.sendFile(path.join(buildPath, "index.html"));
-// });
+    const userLikes = await Vote.find(query).exec();
+
+    return userLikes;
+};
+
+// returns an object of votes where the user disliked a movie.
+const getUserDislikes = async (userId) => {
+    const query = {
+        user: userId,
+        liked: false,
+    };
+
+    const userLikes = await Vote.find(query).exec();
+
+    return userLikes;
+};
+
+const getVote = async(voteID) => {
+    const theVote = await Vote.findById(voteID).exec();
+
+    return theVote;
+};
+
+// checks for any new matches with a specific vote
+const checkForMatchesWithVote = async (vote_id) => {
+
+    let newMatches = []
+
+    // a list of other votes this vote has already been matched with
+    let alreadyMatched = [];
+
+    // get the vote document from the collection
+    const theVote = await getVote(vote_id);
+
+    // get the movie id from the vote, userid, and user friends list
+    const movie = theVote.movieID;
+    const userId = theVote.user;
+    
+    // check that the vote is actually set to true for liked, skip it if it isnt   
+    if (theVote.liked === false) {
+        return;
+    }
+
+    // get the friends list for this 
+    const userFriendsObjs = await getFriends(userId);
+    let userFriends = [];
+
+    for(let friend of userFriendsObjs) {
+        userFriends.push(friend.userId);
+    }
+
+    console.log(userFriends);
+
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+    // see if there are any match documents in the Matches collection that have this vote id,  ///////////////////
+    // if there are any, add the other vote in that match document to the vote ignore list.    ///////////////////
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
+
+    // perform query on Vote collection for records that have the same movie id and 
+    // whos user id is in the userFriends array, save these records in possibleMatches
+    // const possibleMatches
+
+
+
+        //if possible vote is in alreadyMatched, skip
+
+        //else create a new match document.
+        // if a new one is made add it to newMatches
+
+    return newMatches;
+
+};
+
+// does a full check of the database
+const checkForMatchesWithUser = async (user) => {};
+
+const createNewMatch = async (vote1, vote2, movie) => {};
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
-
 
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`);
