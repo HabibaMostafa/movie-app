@@ -81,18 +81,23 @@ class Movie extends React.Component {
     }
 
     //method for when the user "likes" the movie on display
-    likeMovie() {
+    likeMovie = async () => {
         let userID = this.props._id;
 
         let data = JSON.stringify({id: movie.id, user: userID});
     
-        fetch("/votes", {
+        const like = await fetch("/votes", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: data,
         }).then((res) => res.json());
+
+
+        console.log(like);
+
+    
     }
 
     //method for when the user "dislikes" the movie on display

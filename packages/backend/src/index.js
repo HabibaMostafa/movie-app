@@ -33,12 +33,23 @@ app.post("/matches", (req, res) => {
     res.send(user1 + user2);
 });
 
-// checks for and possible creates matches
-
+// checks for and possible creates matches, this should be called after every vote is made
 // will need to add a voteId to the req body
-app.post("/matches/by-vote", (req, res) => {
+app.post("/matches/vote", (req, res) => {
     // ObjectId("622171a72484af5ac33637d2") debug
-    const test = checkForMatchesWithVote("622171a72484af5ac33637d2");
+
+    const voteID = req.body.voteId;
+    // debug
+
+    console.log("ayy the vote id was: " + req.body.voteId);
+
+    // const voteID = "622171a72484af5ac33637d2";
+
+    if (voteID === undefined || voteID === null) {
+        return res.status(400).send();
+    }
+
+    const test = checkForMatchesWithVote(voteID);
     res.send(test);
 });
 
