@@ -97,8 +97,7 @@ class Movie extends React.Component {
         };
 
         axios.post("/matches/vote", params).then((response) => {
-            
-
+            //need new match notification here
             if (response.status === 201) {
                 //means new matches were made,
                 //make a notification appear or something here
@@ -106,11 +105,8 @@ class Movie extends React.Component {
                 //should be in response.data
                 console.log("new match!");
                 console.log(response.data);
-
             }
-  
         });
-
     };
 
     //method for when the user "dislikes" the movie on display

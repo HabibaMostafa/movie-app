@@ -36,14 +36,8 @@ app.post("/matches", (req, res) => {
 // checks for and possible creates matches, this should be called after every vote is made
 // will need to add a voteId to the req body
 app.post("/matches/vote", (req, res) => {
-    // ObjectId("622171a72484af5ac33637d2") debug
-
-    console.log("helllo");
 
     const voteID = req.body.voteId;
-    // debug
-
-    console.log("ayy the vote id was: " + req.body.voteId);
 
     if (voteID === undefined || voteID === null) {
         return res.status(400).send({});
@@ -82,36 +76,39 @@ app.post("/votes", (req, res) => {
     const user = req.body.user;
     const liked = true;
 
-    ////////////////////////////////first check if there is an existing vote for the same movie,
-    //
-    //________  ______   _______    ______
-    ///        |/      \ /       \  /      \
-    //$$$$$$$$//$$$$$$  |$$$$$$$  |/$$$$$$  |
-    //   $$ |  $$ |  $$ |$$ |  $$ |$$ |  $$ |
-    //   $$ |  $$ |  $$ |$$ |  $$ |$$ |  $$ |
-    //   $$ |  $$ |  $$ |$$ |  $$ |$$ |  $$ |
-    //   $$ |  $$ \__$$ |$$ |__$$ |$$ \__$$ |
-    //   $$ |  $$    $$/ $$    $$/ $$    $$/
-    //   $$/    $$$$$$/  $$$$$$$/   $$$$$$/
-    //
-    //
-    ////////////////////////////////first check if there is an existing vote for the same movie,
-
-    // make a new vote object
-    const newVote = new Vote({
+    const parameters = {
         movieID,
         user,
         liked,
-    });
+    };
 
-    newVote
-        .save()
-        .then(() => {
-            res.status(201).send(newVote);
-        })
-        .catch((e) => {
-            res.status(400).send(e);
-        });
+    Vote.find(parameters).then((result) => {
+        // console.log(result);
+
+        // means a vote and save if one does not exist yet
+        if (result.length === 0) {
+            // make a new vote object
+            console.log("new vote");
+            const newVote = new Vote({
+                movieID,
+                user,
+                liked,
+            });
+
+            newVote
+                .save()
+                .then(() => {
+                    res.status(201).send(newVote);
+                })
+                .catch((e) => {
+                    res.status(400).send(e);
+                });
+        } else {
+            // handle existing votes.
+            res.status(200).send();
+            console.log("existing vote...");
+        }
+    });
 });
 
 //login
