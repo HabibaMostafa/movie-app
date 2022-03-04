@@ -11,8 +11,6 @@ const Friends = () => {
     const tokenObj = getTokenObj();
     const userID = tokenObj._id;
 
-    const testNames = ["fred", "george", "ron", "percy"];
-
     return (
         <div className="friendsContainer">
             <Navbar />
