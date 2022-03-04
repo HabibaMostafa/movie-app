@@ -38,19 +38,26 @@ app.post("/matches", (req, res) => {
 app.post("/matches/vote", (req, res) => {
     // ObjectId("622171a72484af5ac33637d2") debug
 
+    console.log("helllo");
+
     const voteID = req.body.voteId;
     // debug
 
     console.log("ayy the vote id was: " + req.body.voteId);
 
-    // const voteID = "622171a72484af5ac33637d2";
-
     if (voteID === undefined || voteID === null) {
-        return res.status(400).send();
+        return res.status(400).send({});
     }
 
-    const test = checkForMatchesWithVote(voteID);
-    res.send(test);
+    checkForMatchesWithVote(voteID).then((result) => {
+        if (result.length > 0) {
+            res.status(201).send(result);
+        } else {
+            res.status(200).send(result);
+        }
+    });
+
+    // if there are any new matches return a 201 (created) otherwise a 200 (ok)
 });
 
 //create a new user
@@ -74,6 +81,21 @@ app.post("/votes", (req, res) => {
     const movieID = req.body.id;
     const user = req.body.user;
     const liked = true;
+
+    ////////////////////////////////first check if there is an existing vote for the same movie,
+    //
+    //________  ______   _______    ______
+    ///        |/      \ /       \  /      \
+    //$$$$$$$$//$$$$$$  |$$$$$$$  |/$$$$$$  |
+    //   $$ |  $$ |  $$ |$$ |  $$ |$$ |  $$ |
+    //   $$ |  $$ |  $$ |$$ |  $$ |$$ |  $$ |
+    //   $$ |  $$ |  $$ |$$ |  $$ |$$ |  $$ |
+    //   $$ |  $$ \__$$ |$$ |__$$ |$$ \__$$ |
+    //   $$ |  $$    $$/ $$    $$/ $$    $$/
+    //   $$/    $$$$$$/  $$$$$$$/   $$$$$$/
+    //
+    //
+    ////////////////////////////////first check if there is an existing vote for the same movie,
 
     // make a new vote object
     const newVote = new Vote({
@@ -601,26 +623,11 @@ const checkForMatchesWithVote = async (vote_id) => {
         userFriends.push(friend.userId);
     }
 
-    // console.log(userFriends);
-
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-    // see if there are any match documents in the Matches collection that have this vote id,  ///////////////////
-    // if there are any, add the other vote in that match document to the vote ignore list.    ///////////////////
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////TODO/////////////////////////////////////////
-
     // perform query on Vote collection for records that have the same movie id and
     // whos user id is in the userFriends array, save these records in possibleMatches
     // const possibleMatches
-
-    //if possible vote is in alreadyMatched, skip
-
-    //else create a new match document.
+    //      if possible vote is in alreadyMatched, skip
+    //      else create a new match document.
     // if a new one is made add it to newMatches
 
     const newMatches = await matchVotes(userFriends, theVote);
