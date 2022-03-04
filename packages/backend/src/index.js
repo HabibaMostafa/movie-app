@@ -34,6 +34,8 @@ app.post("/matches", (req, res) => {
 });
 
 // checks for and possible creates matches
+
+// will need to add a voteId to the req body
 app.post("/matches/by-vote", (req, res) => {
     // ObjectId("622171a72484af5ac33637d2") debug
     const test = checkForMatchesWithVote("622171a72484af5ac33637d2");
@@ -641,19 +643,33 @@ const matchVotes = async (friendList, theVote) => {
         const user2 = await User.findById(match.user);
         const user2Username = user2.username;
 
-        const newMatch = new Match({
+        // check if a record already exist.
+
+        const searchParameters = {
             user1Id: user1._id.toString(),
             user1Vote: user1Vote,
-            user1Username: user1Username,
             user2Id: user2._id.toString(),
             user2Vote: match._id.toString(),
-            user2Username: user2Username,
             movieID: movie,
-        });
+        };
+        const existingDocument = await Match.find(searchParameters);
 
-        await newMatch.save().then((result) => {
-            newMatches.push(result);
-        });
+        //if there no existing match document, make it and save
+        if (existingDocument.length === 0) {
+            const newMatch = new Match({
+                user1Id: user1._id.toString(),
+                user1Vote: user1Vote,
+                user1Username: user1Username,
+                user2Id: user2._id.toString(),
+                user2Vote: match._id.toString(),
+                user2Username: user2Username,
+                movieID: movie,
+            });
+
+            await newMatch.save().then((result) => {
+                newMatches.push(result);
+            });
+        }
     }
 
     return newMatches;
