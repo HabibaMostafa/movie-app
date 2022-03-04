@@ -641,8 +641,6 @@ const matchVotes = async (friendList, theVote) => {
         const user2 = await User.findById(match.user);
         const user2Username = user2.username;
 
-        // console.log(user1Username)
-        // console.log(user2Username)
         const newMatch = new Match({
             user1Id: user1._id.toString(),
             user1Vote: user1Vote,
@@ -656,8 +654,6 @@ const matchVotes = async (friendList, theVote) => {
         await newMatch.save().then((result) => {
             newMatches.push(result);
         });
-
-        // await
     }
 
     return newMatches;
