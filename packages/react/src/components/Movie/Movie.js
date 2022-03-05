@@ -1,12 +1,14 @@
 import React from "react";
 import axios from "axios";
 import "./Movie.css";
+import { getGenre } from "./Genre.js";
 
 var movie;
 var min;
 var max;
 var page = 1;
 const movieIndex = [];
+const movieInfo = document.getElementById("movie-info");
 var index = 0;
 
 class Movie extends React.Component {
@@ -60,6 +62,8 @@ class Movie extends React.Component {
             movie = this.state.movies.body.results[movieIndex[index]];
             index++;
 
+            console.log(movie);
+
             //// probably a better way to restructure this?
             this.setState({ title: movie.title });
             this.setState({
@@ -67,6 +71,16 @@ class Movie extends React.Component {
                     "https://image.tmdb.org/t/p/w300" + movie.poster_path,
             });
             this.setState({ overview: movie.overview });
+            this.setState({ release: movie.release_date });
+
+            //grab genre ids then convert and save genre names
+            var genreIDArr = movie.genre_ids;
+            var genresArr = [];
+            for (let g=0; g<genreIDArr.length; g++) {
+                genresArr.push(getGenre(genreIDArr[g]));
+            }
+            this.setState({ genres: genresArr.join(', ') });
+
             //// this.setState({ title : mov.title });
         } else {
             //show an alert or update list and data with new movies.
@@ -115,6 +129,15 @@ class Movie extends React.Component {
         console.log("dislike pressed");
     }
 
+    displayData() {
+        console.log(movieInfo.style.display);
+        if (movieInfo.style.display === "none") {
+            movieInfo.style.display = "flex";
+        } else {
+            movieInfo.style.display = "none";
+        }
+    }
+
     render() {
         return (
             <section className="movie">
@@ -126,6 +149,10 @@ class Movie extends React.Component {
                                     {this.state.title}
                                 </h3>
                                 <img
+                                    className="movie-poster"
+                                    onClick={() => {
+                                        this.displayData();
+                                    }}
                                     src={this.state.poster_path}
                                     alt="Movie Poster"
                                 ></img>
@@ -152,9 +179,13 @@ class Movie extends React.Component {
                                 </button>
                             </div>
                         </div>
-                        <div className="movie-info">
+                        <div id='movie-info' className="movie-info">
                             <h3>Description</h3>
                             <p>{this.state.overview}</p>
+                            <h4>Release Date</h4>
+                            <p>{this.state.release}</p>
+                            <h4>Genre(s)</h4>
+                            <p>{this.state.genres}</p>
                         </div>
                     </div>
                 </div>

@@ -59,6 +59,12 @@ div.movie, div.movie > * {
     flex-direction: column;
 }
 
+.movie-poster {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .like-dislike-btns {
     display: flex;
     justify-content: center;
@@ -66,7 +72,6 @@ div.movie, div.movie > * {
 }
 
 .movie-info {
-    display: flex;
     justify-content: center;
     flex-direction: column;
 }
