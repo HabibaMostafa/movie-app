@@ -2,6 +2,9 @@ import React from "react";
 import axios from "axios";
 import "./FriendMatches.css";
 
+
+import MovieListElement from "../../components/Movie/MovieListElement";
+
 class FriendMatches extends React.Component {
     constructor(props) {
         if (props === {}) {
@@ -29,7 +32,7 @@ class FriendMatches extends React.Component {
             };
             axios.post("/matches", matchQuery).then((result) => {
                 if (result.status === 200 && result.data.length > 0) {
-                    console.log(result.data);
+                    // console.log(result.data);
                     this.setState({ matches: result.data });
                 }
             });
@@ -42,7 +45,9 @@ class FriendMatches extends React.Component {
         // despite there being x elements in the friends array, there will always be
         // x + 1 calls, with the 1 being an empty object
         // this is just a band aid....
-        if (this.props.friend === undefined) {
+
+        // render nothing if there are no matches
+        if (this.props.friend === undefined || this.state.matches.length === 0) {
             return <div></div>;
         }
 
@@ -53,7 +58,8 @@ class FriendMatches extends React.Component {
                 {/* <p>my id: {this.state._id}</p>
                 <p>friend id: {this.state.friend.userId}</p> */}
                 {this.state.matches.map((value) => (
-                    <p>{value.movieID}</p>
+                    // <p>{value.movieID}</p>
+                    <MovieListElement movieID={value.movieID} />
                 ))}
             </div>
         );

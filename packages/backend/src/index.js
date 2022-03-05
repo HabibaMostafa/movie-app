@@ -11,7 +11,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8080;
 
-const tmdb = require("./utils/tmdb");
+const { tmdb, getMovie } = require("./utils/tmdb");
 const path = require("path");
 const cors = require("cors");
 const buildPath = "../../react/build";
@@ -37,7 +37,7 @@ app.post("/matches", (req, res) => {
             { $and: [{ user1Id: userB }, { user2Id: userA }] },
         ],
     };
-    
+
     Match.find(queryParameters).then((queryResult) => {
         res.status(200).send(queryResult);
     });
@@ -274,6 +274,24 @@ app.get("/votes", (req, res) => {
 
     Vote.find({ user: userId }).then((result) => {
         res.send(result);
+    });
+});
+
+// endpoint to get movie data from the tmdb site.
+app.get("/movies", (req, res) => {
+    const id = req.query.id;
+
+    //if no id added with the get request, exit
+    if (id === undefined) {
+        return res.status(400).send();
+    }
+
+    getMovie(id, (error, response) => {
+        if (error) {
+            return res.status(400).send();
+        }
+
+        res.status(200).send(response);
     });
 });
 
