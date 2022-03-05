@@ -3,6 +3,10 @@ import axios from "axios";
 
 import FriendMatches from "../../components/Matches/FriendMatches";
 
+
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+
 class MatchList extends React.Component {
     constructor(props) {
         super(props);
@@ -29,10 +33,24 @@ class MatchList extends React.Component {
     render() {
         return (
             <div className="matchList">
-                <FriendMatches />
                 {this.state.userFriends.map((value) => (
                     <FriendMatches friend={value} _id={this.props._id} />
                 ))}
+
+
+                {/* <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+                {this.state.userFriends.map((value) => (
+                    // <ImageListItem key={item.img}>
+                    // <img
+                    //     src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                    //     srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                    //     alt={item.title}
+                    //     loading="lazy"
+                    // />
+                    // </ImageListItem>
+                    <FriendMatches friend={value} _id={this.props._id} />
+                ))}
+                </ImageList> */}
 
             </div>
         );
