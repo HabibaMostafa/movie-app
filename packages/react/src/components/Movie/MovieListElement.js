@@ -11,7 +11,7 @@ class MovieListElement extends React.Component {
         this.state = { id: "", title: "", poster: "", movie: [] };
     }
     componentDidMount() {
-        axios.get(`/movies?id=${this.props.movieID}`).then((result) => {
+        axios.get(`/movie?id=${this.props.movieID}`).then((result) => {
             if (result.status === 200) {
                 // console.log(result);
 

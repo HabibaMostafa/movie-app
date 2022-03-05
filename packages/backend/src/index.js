@@ -278,7 +278,7 @@ app.get("/votes", (req, res) => {
 });
 
 // endpoint to get movie data from the tmdb site.
-app.get("/movies", (req, res) => {
+app.get("/movie", (req, res) => {
     const id = req.query.id;
 
     //if no id added with the get request, exit
