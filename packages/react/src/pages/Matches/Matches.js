@@ -12,8 +12,6 @@ const Matches = () => {
     const tokenObj = getTokenObj();
     const userID = tokenObj._id;
 
-
-
     return (
       
         <div className="container">

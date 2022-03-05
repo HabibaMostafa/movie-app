@@ -28,15 +28,24 @@ app.use(cors());
 
 //
 app.post("/matches", (req, res) => {
-    const user1 = req.body.user1;
-    const user2 = req.body.user2;
-    res.send(user1 + user2);
+    const users = [req.body.user1, req.body.user2];
+    const userA = req.body.user1;
+    const userB = req.body.user2;
+    const queryParameters = {
+        $or: [
+            { $and: [{ user1Id: userA }, { user2Id: userB }] },
+            { $and: [{ user1Id: userB }, { user2Id: userA }] },
+        ],
+    };
+    
+    Match.find(queryParameters).then((queryResult) => {
+        res.status(200).send(queryResult);
+    });
 });
 
 // checks for and possible creates matches, this should be called after every vote is made
 // will need to add a voteId to the req body
 app.post("/matches/vote", (req, res) => {
-
     const voteID = req.body.voteId;
 
     if (voteID === undefined || voteID === null) {

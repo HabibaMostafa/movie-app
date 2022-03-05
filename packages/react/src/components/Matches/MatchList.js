@@ -31,7 +31,7 @@ class MatchList extends React.Component {
             <div className="matchList">
                 <FriendMatches />
                 {this.state.userFriends.map((value) => (
-                    <FriendMatches friend={value} />
+                    <FriendMatches friend={value} _id={this.props._id} />
                 ))}
 
             </div>
