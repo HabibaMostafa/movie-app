@@ -28,6 +28,18 @@ class FriendMatches extends React.Component {
             this.setState({ friend: this.props.friend });
             this.setState({ _id: this.props._id });
 
+            // {/* <p>my id: {this.state._id}</p>
+            // <p>friend id: {this.state.friend.userId}</p> */}
+
+
+
+            // search for any new matches here first!
+
+
+
+
+
+
             // populate the list of matches here
             const matchQuery = {
                 user1: this.props._id,

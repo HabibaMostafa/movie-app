@@ -63,6 +63,48 @@ app.post("/matches/vote", (req, res) => {
     // if there are any new matches return a 201 (created) otherwise a 200 (ok)
 });
 
+// has two passed params, user1, user2, will compare all of
+// user1's votes against user2's to see if there are any matches
+app.post("/matches/check", (req, res) => {
+    const userId = req.body.userId;
+
+    if (userId === undefined) {
+        return res.status(400).send({});
+    }
+
+    //get complete list of votes by the user and put into an array
+
+    Vote.find({ user: userId }).then((votes) => {
+        console.log(votes.length);
+        let counter = 0;
+        let size = votes.length;
+
+        for (let vote of votes) {
+            // console.log(vote._id.toString());
+
+            const voteId = vote._id.toString();
+
+            checkForMatchesWithVote(voteId)
+                .then(() => {
+                    counter++;
+
+                    console.log(counter, size);
+
+                    if (counter === size) {
+                        res.status(200).send({});
+                    }
+                })
+                .catch(() => {
+                    res.status(400).send({});
+                });
+        }
+    });
+
+    // call checkForMatchesWithVote on each vote
+
+    // res.status(200).send({});
+});
+
 //create a new user
 app.post("/users", (req, res) => {
     const newUser = new User(req.body);
