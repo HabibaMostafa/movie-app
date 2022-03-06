@@ -8,7 +8,6 @@ var min;
 var max;
 var page = 1;
 const movieIndex = [];
-const movieInfo = document.getElementById("movie-info");
 var index = 0;
 
 class Movie extends React.Component {
@@ -21,6 +20,7 @@ class Movie extends React.Component {
         const params = {
             pageNum: page,
         };
+        this.setState({ showDescrption: true });
 
         axios.post("/movies", params).then((res) => {
             // console.log(res.data);
@@ -129,12 +129,23 @@ class Movie extends React.Component {
         console.log("dislike pressed");
     }
 
+    //if movie poster is clicked then change state to display or hide description
     displayData() {
-        console.log(movieInfo.style.display);
-        if (movieInfo.style.display === "none") {
-            movieInfo.style.display = "flex";
+        //console.log(movieInfo.style.display);
+        if (this.state.showDescrption) {
+            this.setState({ showDescrption: false });
         } else {
-            movieInfo.style.display = "none";
+            this.setState({ showDescrption: true });
+        }
+    }
+
+    //if description is hidden then chnage movie elements to block to center in screen
+    // otherwise make then follow the grid display to center everything together. 
+    className() {
+        if (this.state.showDescrption) {
+            return "movie-grid";
+        } else {
+            return "movie-block";
         }
     }
 
@@ -142,7 +153,7 @@ class Movie extends React.Component {
         return (
             <section className="movie">
                 <div className="content">
-                    <div className="movie-grid">
+                    <div className={ this.className() }>
                         <div className="movie-display">
                             <div className="movie-visual">
                                 <h3 className="movie-title">
@@ -179,13 +190,19 @@ class Movie extends React.Component {
                                 </button>
                             </div>
                         </div>
-                        <div id='movie-info' className="movie-info">
-                            <h3>Description</h3>
-                            <p>{this.state.overview}</p>
-                            <h4>Release Date</h4>
-                            <p>{this.state.release}</p>
-                            <h4>Genre(s)</h4>
-                            <p>{this.state.genres}</p>
+                        <div>
+                            {this.state.showDescrption ?(
+                                <div id='minfo' className="movie-info">
+                                    <h3>Description</h3>
+                                    <p>{this.state.overview}</p>
+                                    <h4>Release Date</h4>
+                                    <p>{this.state.release}</p>
+                                    <h4>Genre(s)</h4>
+                                    <p>{this.state.genres}</p>
+                                </div>
+                            ) : (
+                                <div className="hidden"></div>
+                            )}
                         </div>
                     </div>
                 </div>

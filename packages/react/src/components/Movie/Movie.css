@@ -53,6 +53,12 @@ div.movie, div.movie > * {
     }
 }
 
+@media (min-width: 721px) {
+    .movie-block {
+        display: block;
+    }
+}
+
 .movie-display {
     display: flex;
     justify-content: center;
@@ -95,4 +101,9 @@ div.movie, div.movie > * {
         padding-top: 2em;
         margin-top: 2em;
     }
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
 }
