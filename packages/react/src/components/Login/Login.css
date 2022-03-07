@@ -20,6 +20,17 @@
   cursor: pointer;
 }
 
+.signup-btn {
+  background-color: rgba(128, 123, 123, 0.37);
+  color: white;
+  stroke: white;
+  font-size: 16px;
+  padding: 8px 50px;
+  border-radius: 20px;
+  margin: 10px 0px;
+  cursor: pointer;
+}
+
 .login-wrapper {
   background-image: url("movie-bg.png");
   background-size: cover;
@@ -31,5 +42,6 @@
 
 .login-input {
    color: black !important;
+   width: 350px;
 }
 

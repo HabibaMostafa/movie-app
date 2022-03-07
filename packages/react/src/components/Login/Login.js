@@ -11,9 +11,13 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import logo from "../../logo-white.png";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { ThemeProvider } from "@mui/material/styles";
+import theme from './../../theme';
 import "./Login.css";
+import Button from '@mui/material/Button';
 import { Fragment } from "react/cjs/react.production.min";
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
 
 async function loginUser(credentials) {
     return fetch("/login", {
@@ -76,96 +80,101 @@ export default function Login({ setToken }) {
     // Show login page
     if (state === "login") {
         return (
+            <ThemeProvider theme={theme}>
             <Fragment>
                 <div className="login-wrapper">
                     <img src={logo} />
                     <h1>Log In</h1>
                     <form onSubmit={handleLogin}>
                         <label>
-                            <p>Username</p>
-                            <input
+                            <p>  </p>
+                            <TextField id="filled-basic" label="Username" variant="filled"
                                 className="login-input"
                                 type="text"
                                 onChange={(e) => setUserName(e.target.value)}
                             />
                         </label>
                         <label>
-                            <p>Password</p>
-                            <input
+                            <p>  </p>
+                            <TextField id="filled-basic" label="Password" variant="filled" 
                                 className="login-input"
                                 type="password"
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </label>
                         <div>
-                            <button
+                            <button variant="outlined" href="#outlined-buttons"
                                 className="authentication-btn"
                                 type="submit"
                             >
-                                Submit
+                                LOG IN     
                             </button>
-                            <button
-                                className="authentication-btn"
+                            
+                            <button variant="outlined" href="#outlined-buttons"
+                                className="signup-btn"
                                 onClick={() => setState("signUp")}
                             >
-                                Sign Up
+                                SIGN UP
                             </button>
                         </div>
                     </form>
                 </div>
             </Fragment>
+            </ThemeProvider>
         );
     }
 
     // Show create user page
     if (state === "signUp") {
         return (
+            <ThemeProvider theme={theme}>
             <Fragment>
                 <div className="login-wrapper">
                     <img src={logo} />
                     <h1>Sign Up</h1>
                     <form onSubmit={handlesignUp}>
                         <label>
-                            <p>Name</p>
-                            <input
+                            <p> </p>
+                            <TextField id="filled-basic" label="Name" variant="filled"
                                 className="login-input"
                                 type="text"
                                 onChange={(e) => setName(e.target.value)}
                             />
                         </label>
                         <label>
-                            <p>Username</p>
-                            <input
+                            <p> </p>
+                            <TextField id="filled-basic" label="Username" variant="filled"
                                 className="login-input"
                                 type="text"
                                 onChange={(e) => setUserName(e.target.value)}
                             />
                         </label>
                         <label>
-                            <p>Password</p>
-                            <input
+                            <p>  </p>
+                            <TextField id="filled-basic" label="Password" variant="filled"
                                 className="login-input"
                                 type="password"
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </label>
                         <div>
-                            <button
+                        <button variant="outlined" href="#outlined-buttons"
                                 className="authentication-btn"
                                 type="submit"
                             >
-                                Submit
+                                Create Account
                             </button>
-                            <button
-                                className="authentication-btn"
+                            <button variant="outlined" href="#outlined-buttons"
+                                className="signup-btn"
                                 onClick={() => setState("login")}
                             >
-                                Log In
+                                Back
                             </button>
                         </div>
                     </form>
                 </div>
             </Fragment>
+            </ThemeProvider>
         );
     }
 }
