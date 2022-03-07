@@ -730,11 +730,22 @@ const matchVotes = async (friendList, theVote) => {
         // check if a record already exist.
 
         const searchParameters = {
-            user1Id: user1._id.toString(),
-            user1Vote: user1Vote,
-            user2Id: user2._id.toString(),
-            user2Vote: match._id.toString(),
-            movieID: movie,
+            $or: [
+                {
+                    user1Id: user1._id.toString(),
+                    user1Vote: user1Vote,
+                    user2Id: user2._id.toString(),
+                    user2Vote: match._id.toString(),
+                    movieID: movie,
+                },
+                {
+                    user2Id: user1._id.toString(),
+                    user2Vote: user1Vote,
+                    user1Id: user2._id.toString(),
+                    user1Vote: match._id.toString(),
+                    movieID: movie,
+                },
+            ],
         };
         const existingDocument = await Match.find(searchParameters);
 
