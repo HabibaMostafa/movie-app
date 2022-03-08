@@ -1,7 +1,11 @@
 import React from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./Movie.css";
+
 import { getGenre } from "./Genre.js";
+
 
 var movie;
 var likesList;
@@ -181,13 +185,19 @@ class Movie extends React.Component {
             if (response.status === 201) {
                 //means new matches were made,
                 //make a notification appear or something here
-
+                const toastData = () => (
+                    <div>
+                      <a href="/matches" style={{ textDecoration: 'none' }}>{"New match with " + response.data[0].user2Username + "!"}</a>
+                    </div>
+                );
+                toast.info(toastData);
                 //should be in response.data
                 console.log("new match!");
                 console.log(response.data);
             }
         });
     };
+
 
     //method for when the user "dislikes" the movie on display
     dislikeMovie() {
@@ -215,47 +225,47 @@ class Movie extends React.Component {
         }
     }
 
+
     render() {
         return (
             <section className="movie">
                 <div className="content">
                     <div className={ this.className() }>
                         <div className="movie-display">
-                            <div className="movie-visual">
-                                <h3 className="movie-title">
-                                    {this.state.title}
-                                </h3>
+                            <div >
                                 <img
                                     className="movie-poster"
                                     onClick={() => {
                                         this.displayData();
                                     }}
                                     src={this.state.poster_path}
-                                    alt="Movie Poster"
+                                    alt="Movie Poster" 
+                                    className="movie-visual"
                                 ></img>
                             </div>
-                            <div className="like-dislike-btns">
+                            <div className="like-dislike-btns" >
                                 <button
-                                    className="movie-btn"
+                                    className="like-btn"
                                     onClick={() => {
                                         this.likeMovie();
                                         this.setMovie();
                                     }}
                                 >
-                                    Like
+                                    LIKE
                                 </button>
+                                <p> </p>
                                 <button
-                                    id="dislike-btn"
-                                    className="movie-btn"
+                                    className="dislike-btn"
                                     onClick={() => {
                                         this.dislikeMovie();
                                         this.setMovie();
                                     }}
                                 >
-                                    Dislike
+                                    DISLIKE
                                 </button>
                             </div>
                         </div>
+
                         <div>
                             {this.state.showDescrption ?(
                                 <div id='minfo' className="movie-info">
@@ -269,8 +279,21 @@ class Movie extends React.Component {
                             ) : (
                                 <div className="hidden"></div>
                             )}
+
                         </div>
                     </div>
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="dark"
+                    />
                 </div>
             </section>
         );

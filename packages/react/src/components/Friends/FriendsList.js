@@ -37,7 +37,28 @@ class FriendsList extends React.Component {
         return this.state.userFriends;
     };
 
-    deleteButtonHandler = (data) => {
+    deleteMatches = async (user1, user2) => {
+        if (user1 === undefined || user2 === undefined) {
+            console.log(user1, user2);
+            return;
+        }
+
+        const params = {
+            user1,
+            user2,
+        };
+
+        await axios
+            .delete("/matches", { data: params })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
+
+    deleteButtonHandler = async (data) => {
         // data.preventDefault()
 
         const requestId = {
@@ -45,21 +66,31 @@ class FriendsList extends React.Component {
         };
         // console.log(requestId);
 
-        axios
+        await axios
             .delete("/friend", { data: requestId })
             .then((response) => {
                 // console.log(response);
                 if (response.status === 200) {
                     // refresh the window for now
+
+                    //deletes matches between the two users
+                    this.deleteMatches(data.userId, this.props._id)
+                        .then(() => {
+                            window.location.reload(true);
+                        })
+                        .catch(() => {
+                            window.location.reload(true);
+                        });
+
                     // better if there was a way to reload everything...
-                    window.location.reload(true);
+                    // window.location.reload(true);
                 } else {
                     //have a notification there was an error
                 }
             })
             .catch((e) => {
                 //hav a notification there was an error
-                // console.log(e);
+                console.log(e);
             });
     };
 

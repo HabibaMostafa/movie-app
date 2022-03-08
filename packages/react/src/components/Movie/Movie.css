@@ -15,17 +15,20 @@ div.movie, div.movie > * {
 
 .movie-title {
     margin-bottom: 1em;
-    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+    color: var(--movie-yellow);
+    
 }
 
-.movie-btn:hover { border: 1px solid var(--movie-yellow); }
+.like-btn:hover { border: 1px white; }
+.dislike-btn:hover { border: 1px solid var(--movie-yellow); }
 
 .movie-btn {
     height: 4em;
     width: 4em;
     margin: 1em;
     border-radius: 50%;
-    border: 1px solid var(--dark-blue);
     color: var(--white);
     background-color: var(--black);
 }
@@ -75,6 +78,30 @@ div.movie, div.movie > * {
     display: flex;
     justify-content: center;
     flex-direction: row;
+}
+
+.like-btn {
+    background-color: var(--movie-yellow);
+    color: var(--white);
+    font-weight: bold;
+    stroke: white;
+    font-size: 18px;
+    padding: 10px 40px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+
+.dislike-btn {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    stroke: white;
+    font-size: 18px;
+    padding: 10px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
 }
 
 .movie-info {

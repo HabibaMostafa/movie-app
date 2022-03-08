@@ -75,12 +75,11 @@ app.post("/matches/check", (req, res) => {
     //get complete list of votes by the user and put into an array
 
     Vote.find({ user: userId }).then((votes) => {
-        console.log(votes.length);
+
         let counter = 0;
         let size = votes.length;
 
         for (let vote of votes) {
-            // console.log(vote._id.toString());
 
             const voteId = vote._id.toString();
 
@@ -88,7 +87,6 @@ app.post("/matches/check", (req, res) => {
                 .then(() => {
                     counter++;
 
-                    console.log(counter, size);
 
                     if (counter === size) {
                         res.status(200).send({});
@@ -134,7 +132,6 @@ app.post("/votes", (req, res) => {
     };
 
     Vote.find(parameters).then((result) => {
-        // console.log(result);
 
         // means a vote and save if one does not exist yet
         if (result.length === 0) {
@@ -407,6 +404,48 @@ app.patch("/friend", (req, res) => {
 });
 
 //DELETE
+
+// delete all matches between two users
+app.delete("/matches", (req, res) => {
+    const { user1, user2 } = req.body;
+
+    if (user1 === undefined || user2 === undefined) {
+        console.log(user1, user2);
+        return res.status(400).send();
+    }
+
+    const query = {
+        $or: [
+            {
+                $and: [
+                    {
+                        user1Id: user1,
+                        user2Id: user2,
+                    },
+                ],
+            },
+            {
+                $and: [
+                    {
+                        user1Id: user2,
+                        user2Id: user1,
+                    },
+                ],
+            },
+        ],
+    };
+
+    Match.deleteMany(query)
+        .then((result) => {
+            res.status(200).send(result);
+        })
+        .catch((e) => {
+            console.log("error in match deletion, endpoint: delete/matches");
+            console.log(e);
+            res.status(500).send();
+        });
+});
+
 app.delete("/friend", (req, res) => {
     const idToDelete = req.body;
 
@@ -730,11 +769,22 @@ const matchVotes = async (friendList, theVote) => {
         // check if a record already exist.
 
         const searchParameters = {
-            user1Id: user1._id.toString(),
-            user1Vote: user1Vote,
-            user2Id: user2._id.toString(),
-            user2Vote: match._id.toString(),
-            movieID: movie,
+            $or: [
+                {
+                    user1Id: user1._id.toString(),
+                    user1Vote: user1Vote,
+                    user2Id: user2._id.toString(),
+                    user2Vote: match._id.toString(),
+                    movieID: movie,
+                },
+                {
+                    user2Id: user1._id.toString(),
+                    user2Vote: user1Vote,
+                    user1Id: user2._id.toString(),
+                    user1Vote: match._id.toString(),
+                    movieID: movie,
+                },
+            ],
         };
         const existingDocument = await Match.find(searchParameters);
 
