@@ -35,6 +35,8 @@ class AddFriend extends React.Component {
 
         axios.post("/friend/not-friends", params).then((res) => {
 
+            //"not-friends" ='(
+
             // console.log(res.data); 
             if (res.status === 200) {
                 this.setState({ notFriends: res.data });

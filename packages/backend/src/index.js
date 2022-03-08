@@ -4,13 +4,14 @@ require("./database/mongoose");
 const User = require("./database/models/user");
 const Vote = require("./database/models/vote");
 const Friend = require("./database/models/friend");
+const Match = require("./database/models/match");
 
 const express = require("express");
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-const tmdb = require("./utils/tmdb");
+const { tmdb, getMovie } = require("./utils/tmdb");
 const path = require("path");
 const cors = require("cors");
 const buildPath = "../../react/build";
@@ -24,6 +25,83 @@ app.use(express.static(path.join(__dirname, buildPath)));
 app.use(cors());
 
 ////////////////// POST //////////////////
+
+//
+app.post("/matches", (req, res) => {
+    const users = [req.body.user1, req.body.user2];
+    const userA = req.body.user1;
+    const userB = req.body.user2;
+    const queryParameters = {
+        $or: [
+            { $and: [{ user1Id: userA }, { user2Id: userB }] },
+            { $and: [{ user1Id: userB }, { user2Id: userA }] },
+        ],
+    };
+
+    Match.find(queryParameters).then((queryResult) => {
+        res.status(200).send(queryResult);
+    });
+});
+
+// checks for and possible creates matches, this should be called after every vote is made
+// will need to add a voteId to the req body
+app.post("/matches/vote", (req, res) => {
+    const voteID = req.body.voteId;
+
+    if (voteID === undefined || voteID === null) {
+        return res.status(400).send({});
+    }
+
+    checkForMatchesWithVote(voteID).then((result) => {
+        if (result.length > 0) {
+            res.status(201).send(result);
+        } else {
+            res.status(200).send(result);
+        }
+    });
+
+    // if there are any new matches return a 201 (created) otherwise a 200 (ok)
+});
+
+// has two passed params, user1, user2, will compare all of
+// user1's votes against user2's to see if there are any matches
+app.post("/matches/check", (req, res) => {
+    const userId = req.body.userId;
+
+    if (userId === undefined) {
+        return res.status(400).send({});
+    }
+
+    //get complete list of votes by the user and put into an array
+
+    Vote.find({ user: userId }).then((votes) => {
+
+        let counter = 0;
+        let size = votes.length;
+
+        for (let vote of votes) {
+
+            const voteId = vote._id.toString();
+
+            checkForMatchesWithVote(voteId)
+                .then(() => {
+                    counter++;
+
+
+                    if (counter === size) {
+                        res.status(200).send({});
+                    }
+                })
+                .catch(() => {
+                    res.status(400).send({});
+                });
+        }
+    });
+
+    // call checkForMatchesWithVote on each vote
+
+    // res.status(200).send({});
+});
 
 //create a new user
 app.post("/users", (req, res) => {
@@ -47,21 +125,38 @@ app.post("/votes", (req, res) => {
     const user = req.body.user;
     const liked = true;
 
-    // make a new vote object
-    const newVote = new Vote({
+    const parameters = {
         movieID,
         user,
         liked,
-    });
+    };
 
-    newVote
-        .save()
-        .then(() => {
-            res.status(201).send(newVote);
-        })
-        .catch((e) => {
-            res.status(400).send(e);
-        });
+    Vote.find(parameters).then((result) => {
+
+        // means a vote and save if one does not exist yet
+        if (result.length === 0) {
+            // make a new vote object
+            console.log("new vote");
+            const newVote = new Vote({
+                movieID,
+                user,
+                liked,
+            });
+
+            newVote
+                .save()
+                .then(() => {
+                    res.status(201).send(newVote);
+                })
+                .catch((e) => {
+                    res.status(400).send(e);
+                });
+        } else {
+            // handle existing votes.
+            res.status(200).send();
+            console.log("existing vote...");
+        }
+    });
 });
 
 //login
@@ -211,6 +306,34 @@ app.post("/friend/to-me", (req, res) => {
 });
 
 ////////////////// GET //////////////////
+
+// gett all of a user's votes
+app.get("/votes", (req, res) => {
+    let userId = req.query.user;
+
+    Vote.find({ user: userId }).then((result) => {
+        res.send(result);
+    });
+});
+
+// endpoint to get movie data from the tmdb site.
+app.get("/movie", (req, res) => {
+    const id = req.query.id;
+
+    //if no id added with the get request, exit
+    if (id === undefined) {
+        return res.status(400).send();
+    }
+
+    getMovie(id, (error, response) => {
+        if (error) {
+            return res.status(400).send();
+        }
+
+        res.status(200).send(response);
+    });
+});
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
@@ -281,6 +404,48 @@ app.patch("/friend", (req, res) => {
 });
 
 //DELETE
+
+// delete all matches between two users
+app.delete("/matches", (req, res) => {
+    const { user1, user2 } = req.body;
+
+    if (user1 === undefined || user2 === undefined) {
+        console.log(user1, user2);
+        return res.status(400).send();
+    }
+
+    const query = {
+        $or: [
+            {
+                $and: [
+                    {
+                        user1Id: user1,
+                        user2Id: user2,
+                    },
+                ],
+            },
+            {
+                $and: [
+                    {
+                        user1Id: user2,
+                        user2Id: user1,
+                    },
+                ],
+            },
+        ],
+    };
+
+    Match.deleteMany(query)
+        .then((result) => {
+            res.status(200).send(result);
+        })
+        .catch((e) => {
+            console.log("error in match deletion, endpoint: delete/matches");
+            console.log(e);
+            res.status(500).send();
+        });
+});
+
 app.delete("/friend", (req, res) => {
     const idToDelete = req.body;
 
@@ -313,7 +478,7 @@ app.delete("/friend", (req, res) => {
 app.post("/movies", (req, res) => {
     // make request to api
     var pageNum = req.body.pageNum;
-    const test = tmdb({pageNum}, (error, response) => {
+    const test = tmdb({ pageNum }, (error, response) => {
         if (error) {
             console.log("Error! =(");
             return;
@@ -508,20 +673,150 @@ const acceptPendingReq = async (currentUser, otherUser) => {
     return acceptedRequest;
 };
 
-// app.get("*", (req, res) => {
-//     // res.redirect('/');
-//     // res.status(404).send(req);
-// });
+// returns an object of votes where the user liked liked a movie.
+const getUserLikes = async (userId) => {
+    const query = {
+        user: userId,
+        liked: true,
+    };
 
-// need this for react to handle the 404s
-// app.use(function (req, res, next) {
-//     res.sendFile(path.join(buildPath, "index.html"));
-// });
+    const userLikes = await Vote.find(query).exec();
+
+    return userLikes;
+};
+
+// returns an object of votes where the user disliked a movie.
+const getUserDislikes = async (userId) => {
+    const query = {
+        user: userId,
+        liked: false,
+    };
+
+    const userLikes = await Vote.find(query).exec();
+
+    return userLikes;
+};
+
+const getVote = async (voteID) => {
+    const theVote = await Vote.findById(voteID).exec();
+
+    return theVote;
+};
+
+// checks for any new matches with a specific vote
+const checkForMatchesWithVote = async (vote_id) => {
+    // a list of other votes this vote has already been matched with
+    let alreadyMatched = [];
+
+    // get the vote document from the collection
+    const theVote = await getVote(vote_id);
+
+    // get the movie id from the vote, userid, and user friends list
+    const movie = theVote.movieID;
+    const userId = theVote.user;
+
+    // check that the vote is actually set to true for liked, skip it if it isnt
+    if (theVote.liked === false) {
+        return;
+    }
+
+    // get the friends list for this
+    const userFriendsObjs = await getFriends(userId);
+    let userFriends = [];
+
+    for (let friend of userFriendsObjs) {
+        userFriends.push(friend.userId);
+    }
+
+    // perform query on Vote collection for records that have the same movie id and
+    // whos user id is in the userFriends array, save these records in possibleMatches
+    // const possibleMatches
+    //      if possible vote is in alreadyMatched, skip
+    //      else create a new match document.
+    // if a new one is made add it to newMatches
+
+    const newMatches = await matchVotes(userFriends, theVote);
+
+    return newMatches;
+};
+
+const matchVotes = async (friendList, theVote) => {
+    const movie = theVote.movieID;
+    const userId = theVote.user;
+    const user1Vote = theVote._id.toString();
+
+    const user1 = await User.findById(userId);
+    const user1Username = user1.username;
+
+    const friendsOnly = { user: { $in: friendList } };
+    const voteNotByUser = { user: { $ne: userId } };
+    const specificMovie = { movieID: movie };
+
+    // const possibleMatches = await Vote.find({user: {$in: friendList}}).exec();
+
+    const possibleMatches = await Vote.find({
+        $and: [friendsOnly, voteNotByUser, specificMovie],
+    }).exec();
+
+    let newMatches = [];
+
+    // create a match object for every possible match
+    for (let match of possibleMatches) {
+        //
+        const user2 = await User.findById(match.user);
+        const user2Username = user2.username;
+
+        // check if a record already exist.
+
+        const searchParameters = {
+            $or: [
+                {
+                    user1Id: user1._id.toString(),
+                    user1Vote: user1Vote,
+                    user2Id: user2._id.toString(),
+                    user2Vote: match._id.toString(),
+                    movieID: movie,
+                },
+                {
+                    user2Id: user1._id.toString(),
+                    user2Vote: user1Vote,
+                    user1Id: user2._id.toString(),
+                    user1Vote: match._id.toString(),
+                    movieID: movie,
+                },
+            ],
+        };
+        const existingDocument = await Match.find(searchParameters);
+
+        //if there no existing match document, make it and save
+        if (existingDocument.length === 0) {
+            const newMatch = new Match({
+                user1Id: user1._id.toString(),
+                user1Vote: user1Vote,
+                user1Username: user1Username,
+                user2Id: user2._id.toString(),
+                user2Vote: match._id.toString(),
+                user2Username: user2Username,
+                movieID: movie,
+            });
+
+            await newMatch.save().then((result) => {
+                newMatches.push(result);
+            });
+        }
+    }
+
+    return newMatches;
+};
+
+// does a full check of the database
+const checkForMatchesWithUser = async (user) => {};
+
+const createNewMatch = async (vote1, vote2, movie) => {};
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
-
 
 app.listen(port, () => {
     console.log(`Server is up on port: ${port}`);
