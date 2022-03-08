@@ -4,6 +4,7 @@ import "./Movie.css";
 import { getGenre } from "./Genre.js";
 
 var movie;
+var likesList;
 var min;
 var max;
 var page = 1;
@@ -21,6 +22,9 @@ class Movie extends React.Component {
             pageNum: page,
         };
         this.setState({ showDescrption: true });
+
+        //get a list of previously "liked" movies
+        this.getLikedList();
 
         axios.post("/movies", params).then((res) => {
             // console.log(res.data);
@@ -52,14 +56,75 @@ class Movie extends React.Component {
         return movieIndex;
     }
 
+    getLikedList = async() => {
+        axios.get(`/votes?user=${this.props._id}`).then((result) => {
+            if (result.status === 200) {
+                this.setState({ likes: result.data });
+            }
+        });
+    }
+
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
-        //const coverSize = 300;
+        movie = this.state.movies.body.results[movieIndex[index]];
+        likesList = this.state.likes;
+        var i = 0;
+        var exit = false;
+
+        try {
+            for (i=0; i<likesList.length; i++){
+                //check if the movie and liked movie are the same
+                if (likesList[i].movieID === movie.id) {
+                    index++;
+    
+                    //check if we are at the end of the movie list and need to 
+                    // call API for more movies. 
+                    if (index >= max) {
+                        page++;
+                        this.componentDidMount();
+                        i = likesList.length+9;
+                        exit = true;
+    
+                        //set the next movie to be cheched
+                    } else {
+                        movie = this.state.movies.body.results[movieIndex[index]];
+                        i = 0;
+                    }
+                }
+            }
+    
+            if (!exit) {
+                this.setState({ title: movie.title });
+                this.setState({
+                    poster_path:
+                        "https://image.tmdb.org/t/p/w300" + movie.poster_path,
+                });
+                this.setState({ overview: movie.overview });
+                this.setState({ release: movie.release_date });
+    
+                //grab genre ids then convert and save genre names
+                var genreIDArr = movie.genre_ids;
+                var genresArr = [];
+                for (let g=0; g<genreIDArr.length; g++) {
+                    genresArr.push(getGenre(genreIDArr[g]));
+                }
+                this.setState({ genres: genresArr.join(', ') });
+    
+                index++;
+            }
+        } catch (error) {
+            console.log("out of movies. Error: " + error);
+        }
+    }
+
+        /* //old set movie code in case if something doesn't work. 
+
 
         //as long as there are still movies not displayed in the list then set them to the states.
         //...and iterate the list.
         if (index < max) {
             movie = this.state.movies.body.results[movieIndex[index]];
+            
             index++;
 
             console.log(movie);
@@ -90,6 +155,7 @@ class Movie extends React.Component {
             //TODO: add more movies to the list when out of movies.
         }
     }
+        */
 
     //method for when the user "likes" the movie on display
     likeMovie = async () => {
