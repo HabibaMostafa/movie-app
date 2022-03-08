@@ -1,5 +1,7 @@
 import React from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./Movie.css";
 
 var movie;
@@ -101,19 +103,18 @@ class Movie extends React.Component {
             if (response.status === 201) {
                 //means new matches were made,
                 //make a notification appear or something here
-
+                const toastData = () => (
+                    <div>
+                      <a href="/matches" style={{ textDecoration: 'none' }}>{"New match with " + response.data[0].user2Username + "!"}</a>
+                    </div>
+                );
+                toast.info(toastData);
                 //should be in response.data
                 console.log("new match!");
                 console.log(response.data);
             }
         });
     };
-
-    //method for when the user "dislikes" the movie on display
-    dislikeMovie() {
-        //TODO: add (movie) to the database as a "liked" movie.
-        console.log("dislike pressed");
-    }
 
     render() {
         return (
@@ -157,6 +158,18 @@ class Movie extends React.Component {
                             <p>{this.state.overview}</p>
                         </div>
                     </div>
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="dark"
+                    />
                 </div>
             </section>
         );

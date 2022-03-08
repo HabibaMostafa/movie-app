@@ -6,7 +6,7 @@
         "frontend": "npm start --prefix ./packages/react",
         "frontend_production": "npm run build --prefix ./packages/react",
         "dev_backend": "cd ./packages/backend && npm run dev",
-        "backend": "npm start --prefix ./packages/backend",
+        "backend": "npm start dev --prefix ./packages/backend",
         "install_all": "npm install && npm run install_backend &&  npm run install_frontend",
         "install_backend": "cd ./packages/backend && npm install",
         "install_frontend": "cd ./packages/react && npm install",
