@@ -62,7 +62,7 @@ class RequestsToUser extends React.Component {
     render() {
         return (
             <div className="requestsToUserContainer">
-                <h3>Friend Requests To User</h3>
+                <h3>My Friend Requests</h3>
                 <div>
                     <Paper
                         style={{

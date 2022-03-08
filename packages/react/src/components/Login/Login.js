@@ -165,7 +165,7 @@ export default function Login({ setToken }) {
                                 required
                                 style={{
                                     backgroundColor: "white",
-                                    width: "435px"
+                                    width: "435px",
                                 }}
                                 className="login-input"
                                 type="text"
@@ -179,7 +179,6 @@ export default function Login({ setToken }) {
                                 style={{
                                     backgroundColor: "white",
                                     width: "435px",
-                                    borderRadius: "20px"
                                 }}
                                 className="login-input"
                                 type="password"
