@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import "./Movie.css";
+import Button from '@mui/material/Button';
 
 var movie;
 var min;
@@ -121,38 +122,39 @@ class Movie extends React.Component {
                 <div className="content">
                     <div className="movie-grid">
                         <div className="movie-display">
-                            <div className="movie-visual">
-                                <h3 className="movie-title">
-                                    {this.state.title}
-                                </h3>
+                            <div >
                                 <img
                                     src={this.state.poster_path}
-                                    alt="Movie Poster"
+                                    alt="Movie Poster" 
+                                    className="movie-visual"
                                 ></img>
                             </div>
-                            <div className="like-dislike-btns">
+                            <div className="like-dislike-btns" >
                                 <button
-                                    className="movie-btn"
+                                    className="like-btn"
                                     onClick={() => {
                                         this.likeMovie();
                                         this.setMovie();
                                     }}
                                 >
-                                    Like
+                                    LIKE
                                 </button>
+                                <p> </p>
                                 <button
-                                    id="dislike-btn"
-                                    className="movie-btn"
+                                    className="dislike-btn"
                                     onClick={() => {
                                         this.dislikeMovie();
                                         this.setMovie();
                                     }}
                                 >
-                                    Dislike
+                                    DISLIKE
                                 </button>
                             </div>
                         </div>
                         <div className="movie-info">
+                            <h1 className="movie-title">
+                                {this.state.title}
+                            </h1>
                             <h3>Description</h3>
                             <p>{this.state.overview}</p>
                         </div>

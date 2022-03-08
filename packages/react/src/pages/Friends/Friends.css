@@ -1,12 +1,6 @@
-.friendsContainer {
-    padding: 300px;
-    margin: 300px;
-}
-
-.wrapper {
-    width: 300px;
-    border: 15px solid green;
-    padding: 50px;
-    margin-right: 200px;
-    margin-left: 200px;
+.friends-wrapper{
+    padding-left: 9%;
+    padding-right: 9%;
+    padding-top: 1%;
+    padding-bottom: 1%;
 }

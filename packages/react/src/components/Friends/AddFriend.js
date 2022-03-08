@@ -88,13 +88,7 @@ class AddFriend extends React.Component {
     render() {
         return (
             <div className="addFriendContainer">
-                <h3>Add User:</h3>
-                <Button variant="contained"
-                    id="friend-request-btn"
-                    onClick={this.friendRequestHandler}
-                >
-                    Send Friend Request
-                </Button>
+                <h3>Invite a Friend</h3>
                 <div ref={this.userListRef}>
                     <Autocomplete
                         disablePortal
@@ -108,6 +102,12 @@ class AddFriend extends React.Component {
                         }}
                     />
                 </div>
+                <Button variant="contained"
+                    id="friend-request-btn"
+                    onClick={this.friendRequestHandler}
+                >
+                    Send Friend Request
+                </Button>
             </div>
         );
     }

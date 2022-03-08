@@ -5,6 +5,7 @@ import AddFriend from "../../components/Friends/AddFriend";
 import FriendsList from "../../components/Friends/FriendsList";
 import RequestsFromUser from "../../components/Friends/RequestsFromUser";
 import RequestsToUser from "../../components/Friends/RequestsToUser";
+import "./Friends.css";
 
 const Friends = () => {
     const { token, setToken, getTokenObj } = useToken();
@@ -14,8 +15,7 @@ const Friends = () => {
     return (
         <div className="friendsContainer">
             <Navbar />
-            <div className="wrapper">
-                <h1>Friends</h1>
+            <div className="friends-wrapper">
                 <AddFriend _id={userID} />
                 <FriendsList _id={userID} />
                 <RequestsFromUser _id={userID} />
