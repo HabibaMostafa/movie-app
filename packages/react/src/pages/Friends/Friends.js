@@ -14,11 +14,13 @@ const Friends = () => {
     return (
         <div className="friendsContainer">
             <Navbar />
-            <h1>Friends</h1>
-            <AddFriend _id={userID} />
-            <FriendsList _id={userID} />
-            <RequestsFromUser _id={userID} />
-            <RequestsToUser _id={userID} />
+            <div className="wrapper">
+                <h1>Friends</h1>
+                <AddFriend _id={userID} />
+                <FriendsList _id={userID} />
+                <RequestsFromUser _id={userID} />
+                <RequestsToUser _id={userID} />
+            </div>
         </div>
     );
 };

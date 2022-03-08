@@ -84,40 +84,52 @@ export default function Login({ setToken }) {
             <Fragment>
                 <div className="login-wrapper">
                     <img src={logo} />
-                    <h1>Log In</h1>
-                    <form onSubmit={handleLogin}>
-                        <label>
-                            <p>  </p>
-                            <TextField id="filled-basic" label="Username" variant="filled"
-                                className="login-input"
-                                type="text"
-                                onChange={(e) => setUserName(e.target.value)}
-                            />
-                        </label>
-                        <label>
-                            <p>  </p>
-                            <TextField id="filled-basic" label="Password" variant="filled" 
-                                className="login-input"
-                                type="password"
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </label>
-                        <div>
-                            <button variant="outlined" href="#outlined-buttons"
-                                className="authentication-btn"
-                                type="submit"
-                            >
-                                LOG IN     
-                            </button>
-                            
-                            <button variant="outlined" href="#outlined-buttons"
-                                className="signup-btn"
-                                onClick={() => setState("signUp")}
-                            >
-                                SIGN UP
-                            </button>
-                        </div>
-                    </form>
+                    <div className="login-form">
+                    <h1>Login</h1>
+                        <form onSubmit={handleLogin}>
+                            <label>
+                                <p>  </p>
+                                <TextField id="filled-basic" label="Username" variant="filled"
+                                    required
+                                    style={{
+                                        backgroundColor: "white",
+                                        width: "355px"
+                                    }}
+                                    className="login-input"
+                                    type="text"
+                                    onChange={(e) => setUserName(e.target.value)}
+                                />
+                            </label>
+                            <label>
+                                <p>  </p>
+                                <TextField id="filled-basic" label="Password" variant="filled" 
+                                    required
+                                    style={{
+                                        backgroundColor: "white",
+                                        width: "355px"
+                                    }}
+                                    className="login-input"
+                                    type="password"
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                            </label>
+                            <div>
+                                <button variant="outlined" href="#outlined-buttons"
+                                    className="authentication-btn"
+                                    type="submit"
+                                >
+                                    LOG IN     
+                                </button>
+                                &nbsp;&nbsp;
+                                <button variant="outlined" href="#outlined-buttons"
+                                    className="signup-btn"
+                                    onClick={() => setState("signUp")}
+                                >
+                                    SIGN UP
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </Fragment>
             </ThemeProvider>
@@ -131,11 +143,17 @@ export default function Login({ setToken }) {
             <Fragment>
                 <div className="login-wrapper">
                     <img src={logo} />
+                    <div className="login-form">
                     <h1>Sign Up</h1>
                     <form onSubmit={handlesignUp}>
                         <label>
                             <p> </p>
                             <TextField id="filled-basic" label="Name" variant="filled"
+                                required
+                                style={{
+                                    backgroundColor: "white",
+                                    width: "435px"
+                                }}
                                 className="login-input"
                                 type="text"
                                 onChange={(e) => setName(e.target.value)}
@@ -144,6 +162,11 @@ export default function Login({ setToken }) {
                         <label>
                             <p> </p>
                             <TextField id="filled-basic" label="Username" variant="filled"
+                                required
+                                style={{
+                                    backgroundColor: "white",
+                                    width: "435px"
+                                }}
                                 className="login-input"
                                 type="text"
                                 onChange={(e) => setUserName(e.target.value)}
@@ -152,6 +175,11 @@ export default function Login({ setToken }) {
                         <label>
                             <p>  </p>
                             <TextField id="filled-basic" label="Password" variant="filled"
+                                required
+                                style={{
+                                    backgroundColor: "white",
+                                    width: "435px"
+                                }}
                                 className="login-input"
                                 type="password"
                                 onChange={(e) => setPassword(e.target.value)}
@@ -162,16 +190,18 @@ export default function Login({ setToken }) {
                                 className="authentication-btn"
                                 type="submit"
                             >
-                                Create Account
+                                CREATE ACCOUNT
                             </button>
+                            &nbsp;&nbsp;
                             <button variant="outlined" href="#outlined-buttons"
                                 className="signup-btn"
                                 onClick={() => setState("login")}
                             >
-                                Back
+                                BACK
                             </button>
                         </div>
                     </form>
+                    </div>
                 </div>
             </Fragment>
             </ThemeProvider>
