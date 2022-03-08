@@ -13,8 +13,19 @@
   background-color: black;
   color: white;
   stroke: white;
-  font-size: 16px;
-  padding: 8px 50px;
+  font-size: 18px;
+  padding: 10px 50px;
+  border-radius: 20px;
+  margin: 10px 0px;
+  cursor: pointer;
+}
+
+.signup-btn {
+  background-color: rgba(128, 123, 123, 0.37);
+  color: white;
+  stroke: white;
+  font-size: 18px;
+  padding: 10px 50px;
   border-radius: 20px;
   margin: 10px 0px;
   cursor: pointer;
@@ -31,5 +42,11 @@
 
 .login-input {
    color: black !important;
+   width: 350px;
+   border-radius: 20px;
 }
 
+.login-form {
+  position: fixed; /* or absolute */
+  top: 30%;
+}
