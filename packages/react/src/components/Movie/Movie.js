@@ -3,9 +3,12 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Movie.css";
-import Button from '@mui/material/Button';
+
+import { getGenre } from "./Genre.js";
+
 
 var movie;
+var likesList;
 var min;
 var max;
 var page = 1;
@@ -22,6 +25,10 @@ class Movie extends React.Component {
         const params = {
             pageNum: page,
         };
+        this.setState({ showDescrption: true });
+
+        //get a list of previously "liked" movies
+        this.getLikedList();
 
         axios.post("/movies", params).then((res) => {
             // console.log(res.data);
@@ -53,15 +60,78 @@ class Movie extends React.Component {
         return movieIndex;
     }
 
+    getLikedList = async() => {
+        axios.get(`/votes?user=${this.props._id}`).then((result) => {
+            if (result.status === 200) {
+                this.setState({ likes: result.data });
+            }
+        });
+    }
+
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
-        //const coverSize = 300;
+        movie = this.state.movies.body.results[movieIndex[index]];
+        likesList = this.state.likes;
+        var i = 0;
+        var exit = false;
+
+        try {
+            for (i=0; i<likesList.length; i++){
+                //check if the movie and liked movie are the same
+                if (likesList[i].movieID === movie.id) {
+                    index++;
+    
+                    //check if we are at the end of the movie list and need to 
+                    // call API for more movies. 
+                    if (index >= max) {
+                        page++;
+                        this.componentDidMount();
+                        i = likesList.length+9;
+                        exit = true;
+    
+                        //set the next movie to be cheched
+                    } else {
+                        movie = this.state.movies.body.results[movieIndex[index]];
+                        i = 0;
+                    }
+                }
+            }
+    
+            if (!exit) {
+                this.setState({ title: movie.title });
+                this.setState({
+                    poster_path:
+                        "https://image.tmdb.org/t/p/w300" + movie.poster_path,
+                });
+                this.setState({ overview: movie.overview });
+                this.setState({ release: movie.release_date });
+    
+                //grab genre ids then convert and save genre names
+                var genreIDArr = movie.genre_ids;
+                var genresArr = [];
+                for (let g=0; g<genreIDArr.length; g++) {
+                    genresArr.push(getGenre(genreIDArr[g]));
+                }
+                this.setState({ genres: genresArr.join(', ') });
+    
+                index++;
+            }
+        } catch (error) {
+            console.log("out of movies. Error: " + error);
+        }
+    }
+
+        /* //old set movie code in case if something doesn't work. 
+
 
         //as long as there are still movies not displayed in the list then set them to the states.
         //...and iterate the list.
         if (index < max) {
             movie = this.state.movies.body.results[movieIndex[index]];
+            
             index++;
+
+            console.log(movie);
 
             //// probably a better way to restructure this?
             this.setState({ title: movie.title });
@@ -70,6 +140,16 @@ class Movie extends React.Component {
                     "https://image.tmdb.org/t/p/w300" + movie.poster_path,
             });
             this.setState({ overview: movie.overview });
+            this.setState({ release: movie.release_date });
+
+            //grab genre ids then convert and save genre names
+            var genreIDArr = movie.genre_ids;
+            var genresArr = [];
+            for (let g=0; g<genreIDArr.length; g++) {
+                genresArr.push(getGenre(genreIDArr[g]));
+            }
+            this.setState({ genres: genresArr.join(', ') });
+
             //// this.setState({ title : mov.title });
         } else {
             //show an alert or update list and data with new movies.
@@ -79,6 +159,7 @@ class Movie extends React.Component {
             //TODO: add more movies to the list when out of movies.
         }
     }
+        */
 
     //method for when the user "likes" the movie on display
     likeMovie = async () => {
@@ -117,14 +198,46 @@ class Movie extends React.Component {
         });
     };
 
+
+    //method for when the user "dislikes" the movie on display
+    dislikeMovie() {
+        //TODO: add (movie) to the database as a "liked" movie.
+        console.log("dislike pressed");
+    }
+
+    //if movie poster is clicked then change state to display or hide description
+    displayData() {
+        //console.log(movieInfo.style.display);
+        if (this.state.showDescrption) {
+            this.setState({ showDescrption: false });
+        } else {
+            this.setState({ showDescrption: true });
+        }
+    }
+
+    //if description is hidden then chnage movie elements to block to center in screen
+    // otherwise make then follow the grid display to center everything together. 
+    className() {
+        if (this.state.showDescrption) {
+            return "movie-grid";
+        } else {
+            return "movie-block";
+        }
+    }
+
+
     render() {
         return (
             <section className="movie">
                 <div className="content">
-                    <div className="movie-grid">
+                    <div className={ this.className() }>
                         <div className="movie-display">
                             <div >
                                 <img
+                                    className="movie-poster"
+                                    onClick={() => {
+                                        this.displayData();
+                                    }}
                                     src={this.state.poster_path}
                                     alt="Movie Poster" 
                                     className="movie-visual"
@@ -152,12 +265,21 @@ class Movie extends React.Component {
                                 </button>
                             </div>
                         </div>
-                        <div className="movie-info">
-                            <h1 className="movie-title">
-                                {this.state.title}
-                            </h1>
-                            <h3>Description</h3>
-                            <p>{this.state.overview}</p>
+
+                        <div>
+                            {this.state.showDescrption ?(
+                                <div id='minfo' className="movie-info">
+                                    <h3>Description</h3>
+                                    <p>{this.state.overview}</p>
+                                    <h4>Release Date</h4>
+                                    <p>{this.state.release}</p>
+                                    <h4>Genre(s)</h4>
+                                    <p>{this.state.genres}</p>
+                                </div>
+                            ) : (
+                                <div className="hidden"></div>
+                            )}
+
                         </div>
                     </div>
                     <ToastContainer
