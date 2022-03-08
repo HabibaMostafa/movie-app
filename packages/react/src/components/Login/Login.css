@@ -9,6 +9,9 @@
     color: aliceblue;
 }
 
+.signup-btn:hover { border: 1px solid var(--movie-yellow); }
+.authentication-btn:hover { border: 1px solid var(--movie-yellow); }
+
 .authentication-btn {
   background-color: black;
   color: white;
@@ -43,7 +46,7 @@
 .login-input {
    color: black !important;
    width: 350px;
-   border-radius: 20px;
+   border-radius: 20px !important;
 }
 
 .login-form {

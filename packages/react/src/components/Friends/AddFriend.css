@@ -5,15 +5,15 @@
 
 .MuiTextField-root, .MuiTextField-inputFocused {
     color: whitesmoke !important;
-    background-color:  slategrey;
+    background-color:  rgb(82, 82, 82);
 }
 
 .MuiAutocomplete-listbox {
-    color: whitesmoke;
-    background-color: slategrey;
+    color: whitesmoke !important;
+    background-color:  rgb(82, 82, 82);
 }
 .MuiAutocomplete-focused {
-    color: whitesmoke;
+    color: whitesmoke !important;
     background-color: goldenrod;
 }
 

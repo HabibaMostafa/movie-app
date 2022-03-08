@@ -4,9 +4,11 @@ import axios from "axios";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
+import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 // import CommentIcon from "@mui/icons-material/Comment";
 import IconButton from "@mui/material/IconButton";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import "./RequestsFromUser.css";
 
@@ -62,7 +64,7 @@ class RequestsFromUser extends React.Component {
     render() {
         return (
             <div className="requestsFromUserContainer">
-                <h3>Friend Requests From User</h3>
+                <h3>Pending Friend Requests</h3>
                 <div>
                     <Paper
                         style={{
@@ -82,15 +84,20 @@ class RequestsFromUser extends React.Component {
                                 <ListItem
                                     key={value}
                                     disableGutters
+                                    sx={{
+                                        padding: "10px"
+                                    }}
                                     secondaryAction={
                                         <IconButton
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 this.deleteButtonHandler(value);
                                             }}
+                                            aria-label="delete"
                                         >
-                                            [X]
+                                            x
                                         </IconButton>
+                                        
                                     }
                                 >
                                     <ListItemText primary={value.username} />
