@@ -88,6 +88,7 @@ class CreateRoom extends React.Component {
                 axios.post("/member", newMember).then((res) => {
                     if (res.status === 201) {
                         // a user was successfully added as a member
+                        window.location.reload(true);
                     }
                 });
 
