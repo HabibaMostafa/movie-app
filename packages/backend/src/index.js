@@ -5,6 +5,8 @@ const User = require("./database/models/user");
 const Vote = require("./database/models/vote");
 const Friend = require("./database/models/friend");
 const Match = require("./database/models/match");
+const Room = require("./database/models/room");
+const Member = require("./database/models/member");
 
 const express = require("express");
 
@@ -43,6 +45,68 @@ app.post("/matches", (req, res) => {
     });
 });
 
+// creates a new room
+app.post("/room", (req, res) => {
+    const roomName = req.body.roomName;
+    const owner = req.body.owner;
+
+    if (roomName === undefined || owner === undefined) {
+        return res.status(400).send();
+    }
+
+    const newRoom = new Room({
+        roomName,
+        owner,
+        genres: req.body.genres,
+        ratings: req.body.ratings,
+        minYear: req.body.minYear,
+        maxYear: req.body.maxYear,
+    });
+
+    newRoom
+        .save()
+        .then((savedRoom) => {
+            return res.status(201).send(savedRoom);
+        })
+        .catch((e) => {
+            return res.status(400).send(e);
+        });
+});
+
+app.post("/member", (req, res) => {
+    const memberData = req.body;
+
+    if (memberData.userId === undefined || memberData.roomId === undefined) {
+        return res.status(400).send();
+    }
+
+    const newMember = new Member(memberData);
+
+    newMember
+        .save()
+        .then((savedMember) => {
+            return res.status(201).send(savedMember);
+        })
+        .catch((e) => {
+            return res.status(400).send(e);
+        });
+});
+
+//TMDB endpoints
+// sample api get request
+app.post("/movies", (req, res) => {
+    // make request to api
+    var pageNum = req.body.pageNum;
+    const test = tmdb({ pageNum }, (error, response) => {
+        if (error) {
+            console.log("Error! =(");
+            return;
+        }
+
+        res.send(response);
+    });
+});
+
 // checks for and possible creates matches, this should be called after every vote is made
 // will need to add a voteId to the req body
 app.post("/matches/vote", (req, res) => {
@@ -75,18 +139,15 @@ app.post("/matches/check", (req, res) => {
     //get complete list of votes by the user and put into an array
 
     Vote.find({ user: userId }).then((votes) => {
-
         let counter = 0;
         let size = votes.length;
 
         for (let vote of votes) {
-
             const voteId = vote._id.toString();
 
             checkForMatchesWithVote(voteId)
                 .then(() => {
                     counter++;
-
 
                     if (counter === size) {
                         res.status(200).send({});
@@ -132,7 +193,6 @@ app.post("/votes", (req, res) => {
     };
 
     Vote.find(parameters).then((result) => {
-
         // means a vote and save if one does not exist yet
         if (result.length === 0) {
             // make a new vote object
@@ -470,22 +530,6 @@ app.delete("/friend", (req, res) => {
             return res.status(400).send();
             // return res.status(400).send("error, could not delete requested document");
         });
-});
-
-//TMDB endpoints
-
-// sample api get request
-app.post("/movies", (req, res) => {
-    // make request to api
-    var pageNum = req.body.pageNum;
-    const test = tmdb({ pageNum }, (error, response) => {
-        if (error) {
-            console.log("Error! =(");
-            return;
-        }
-
-        res.send(response);
-    });
 });
 
 //helper functions
