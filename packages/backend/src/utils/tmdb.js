@@ -29,7 +29,7 @@ const tmdb = (params, callback) => {
 };
 
 const getMovie = async (id, callback) => {
-    const getUrl = `${tmdb_url}/movie/${id}?api_key=${key}&language=en-US`;
+    const getUrl = `${tmdb_url}/movie/${id}?api_key=${key}&append_to_response=videos`;
     // const getUrl = `https://api.themoviedb.org/3/movie/774825?api_key=c2e4c84ff690ddf904bc717e174d2c61&language=en-US`;
 
     request({ url: getUrl, json: true }, (error, response) => {

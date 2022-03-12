@@ -3,6 +3,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Movie.css";
+import YouTube from "react-youtube"
 
 import { getGenre } from "./Genre.js";
 
@@ -14,6 +15,7 @@ var max;
 var page = 1;
 const movieIndex = [];
 var index = 0;
+var trailer = null;
 
 class Movie extends React.Component {
     constructor(props) {
@@ -113,6 +115,7 @@ class Movie extends React.Component {
                     genresArr.push(getGenre(genreIDArr[g]));
                 }
                 this.setState({ genres: genresArr.join(', ') });
+                this.setState({ movietrailer: this.getMovieTrailer(movie.id) });
     
                 index++;
             }
@@ -225,7 +228,43 @@ class Movie extends React.Component {
         }
     }
 
+    getMovieTrailer = async (id) => {
+        var data = null;
+        await axios.get(`/movie?id=${id}`).then((result) => {
+            if (result.status === 200) {
+                data = result.data.body;
+            }
+        });
 
+        console.log(data);
+
+        if (data.videos && data.videos.results) {
+            trailer = data.videos.results.find(vid => vid.name === "Official Trailer")
+            return (trailer ? trailer : data.videos.results[0]);
+        }
+    }
+
+    /*<YouTube 
+                                        videoId={trailer.key}
+                                        className="youtube"
+                                        opts={
+                                            {
+                                                width: '100%',
+                                                height: '100%',
+                                                playerVars: {
+                                                    autoplay: 1,
+                                                    controls: 0,
+                                                    cc_load_policy: 0,
+                                                    fs: 0,
+                                                    iv_load_policy: 0,
+                                                    modestbranding: 0,
+                                                    rel: 0,
+                                                    showinfo: 0,
+                                                },
+                                            }
+                                        }
+                                    />
+                                    */
     render() {
         return (
             <section className="movie">
@@ -234,13 +273,12 @@ class Movie extends React.Component {
                         <div className="movie-display">
                             <div >
                                 <img
-                                    className="movie-poster"
+                                    className="movie-poster movie-visual"
                                     onClick={() => {
                                         this.displayData();
                                     }}
                                     src={this.state.poster_path}
                                     alt="Movie Poster" 
-                                    className="movie-visual"
                                 ></img>
                             </div>
                             <div className="like-dislike-btns" >
@@ -275,6 +313,27 @@ class Movie extends React.Component {
                                     <p>{this.state.release}</p>
                                     <h4>Genre(s)</h4>
                                     <p>{this.state.genres}</p>
+                                    <h4>Trailer</h4>
+                                    <YouTube
+                                        videoId={this.state.movietrailer}
+                                        className="youtube"
+                                        opts={
+                                            {
+                                                width: '100%',
+                                                height: '100%',
+                                                playerVars: {
+                                                    autoplay: 1,
+                                                    controls: 0,
+                                                    cc_load_policy: 0,
+                                                    fs: 0,
+                                                    iv_load_policy: 0,
+                                                    modestbranding: 0,
+                                                    rel: 0,
+                                                    showinfo: 0,
+                                                },
+                                            }
+                                        }
+                                    />
                                 </div>
                             ) : (
                                 <div className="hidden"></div>
