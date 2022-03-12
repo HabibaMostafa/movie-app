@@ -20,10 +20,6 @@ const Rooms = () => {
             <p>{userID}</p> */}
             <CreateRoom _id={userID} />
             <RoomList _id={userID} />
-
-            {/* show incoming room requests */}
-
-            {/* show room requests you made*/}
         </div>
     );
 };

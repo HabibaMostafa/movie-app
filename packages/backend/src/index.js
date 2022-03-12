@@ -28,6 +28,14 @@ app.use(cors());
 
 ////////////////// POST //////////////////
 
+
+// adds multiple members to the room, should be an array of user ids
+app.post("/room-add", (req, res) => {
+    console.log(req.body)
+    
+    return res.send(req.body.users);
+});
+
 //
 app.post("/matches", (req, res) => {
     const users = [req.body.user1, req.body.user2];
@@ -394,6 +402,42 @@ app.get("/movie", (req, res) => {
     });
 });
 
+// gets all rooms that a user is a member of
+app.get("/rooms", (req, res) => {
+    const userId = req.query.userId;
+
+    //if no id added with the get request, exit
+    if (userId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getUserRooms(userId)
+        .then((rooms) => {
+            return res.status(200).send(rooms);
+        })
+        .catch((e) => {
+            return res.status(500).send([]);
+        });
+});
+
+// get all the members of a specific room
+app.get("/members", (req, res) => {
+    const roomId = req.query.roomId;
+
+    //if no id added with the get request, exit
+    if (roomId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getRoomMembers(roomId)
+        .then((members) => {
+            return res.status(200).send(members);
+        })
+        .catch((e) => {
+            return res.status(500).send([]);
+        });
+});
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
@@ -534,6 +578,73 @@ app.delete("/friend", (req, res) => {
 
 //helper functions
 
+// gets all the members of a specified room
+const getRoomMembers = async (roomId) => {
+    if (roomId === undefined) {
+        return [];
+    }
+
+    const memberQuery = {
+        roomId,
+    };
+
+    const roomMembers = await Member.find(memberQuery);
+
+    // get the userIds
+    let userIds = [];
+    for (let member of roomMembers) {
+        userIds.push(member.userId);
+    }
+
+    // get the complete user details
+    const usersQuery = {
+        _id: { $in: userIds },
+    };
+
+    const users = await User.find(usersQuery);
+    let usersNoPsw = [];
+
+    // remove the password field
+    for (let user of users) {
+        usersNoPsw.push({
+            userId: user._id.toString(),
+            name: user.name,
+            username: user.username,
+        });
+    }
+
+    return usersNoPsw;
+};
+
+// gets all the rooms a user is a member of
+const getUserRooms = async (user) => {
+    if (user === undefined) {
+        return [];
+    }
+
+    const memberQuery = {
+        userId: user,
+    };
+    const memberships = await Member.find(memberQuery);
+
+    // just get the roomIds
+    let roomIds = [];
+    for (let membership of memberships) {
+        // console.log(membership.roomId);
+        roomIds.push(membership.roomId);
+    }
+
+    // do another query on the room collection,
+    // getting the rooms the user is a member of
+    const roomQuery = {
+        _id: { $in: roomIds },
+    };
+
+    const rooms = await Room.find(roomQuery);
+
+    return rooms;
+};
+
 // gets an array of friend request documents the user made
 const getRequestsFromUser = async (user) => {
     let requestsFromMe = [];
@@ -602,6 +713,9 @@ const getListExcludeUser = async (userId) => {
 
     return userList;
 };
+
+// get an array of objects containing the rooms the user is a member of
+const getRooms = async (userId) => {};
 
 const getFriends = async (userId) => {
     // list of all users minus the passed userId

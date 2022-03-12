@@ -1,30 +1,4 @@
-// import React from "react";
 import axios from "axios";
-// import "./Drawer.css";
-// import Button from '@mui/material/Button';
-
-// class CreateRoom extends React.Component {
-//     constructor(props) {
-//         if (props === {}) {
-//             return;
-//         }
-
-//         super(props);
-//         this.props = props;
-//     }
-
-//     componentDidMount() {}
-//     render() {
-//         return (
-//             <div class="createroom-container">
-
-//                 {/* create new room? */}
-//                 <Button>New Room</Button>
-
-//             </div>
-//         );
-//     }
-// }
 
 import * as React from "react";
 import Button from "@mui/material/Button";

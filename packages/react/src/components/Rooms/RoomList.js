@@ -1,6 +1,10 @@
 import React from "react";
 import axios from "axios";
-import "./Drawer.css";
+
+import Room from "./Room";
+
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 class RoomList extends React.Component {
     constructor(props) {
@@ -10,17 +14,48 @@ class RoomList extends React.Component {
 
         super(props);
         this.props = props;
+
+        this.state = { userId: "", userRooms: [], selectedRoom: {} };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        axios.get(`/rooms?userId=${this.props._id}`).then((res) => {
+            if (res.status === 200) {
+                this.setState({ userRooms: res.data });
+            }
+        });
+    }
+
+    setRoom = (room) => {
+        this.setState({ selectedRoom: room });
+    };
     render() {
-        return (
-            <div className="roomlist-container">
-                {/* create new room? */}
-                {/*  */}
-                {this.props._id}
-            </div>
-        );
+        if (this.state.userRooms.length > 0) {
+            return (
+                <div className="roomlist-container">
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-rooms"
+                        options={this.state.userRooms} // set this to notFriends array
+                        getOptionLabel={(option) => option.roomName}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => <TextField {...params} />}
+                        onChange={(e, selectedRoom) => {
+                            this.setRoom(selectedRoom);
+                        }}
+                    />
+                    <Room
+                        room={this.state.selectedRoom}
+                        userId={this.props._id}
+                    />
+                </div>
+            );
+        }
+
+        // return this if user is not a member of any rooms
+        else {
+            return <div className="roomlist-container"></div>;
+        }
     }
 }
 
