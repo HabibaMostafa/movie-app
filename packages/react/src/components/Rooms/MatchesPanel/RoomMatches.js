@@ -42,7 +42,7 @@ class RoomMatches extends React.Component {
                             rowHeight={164}
                         >
                             {this.state.matches.map((value) => (
-                                <MovieListElement movieID={value} />
+                                <MovieListElement movieID={value} onClick={console.log("clicked!")} />
                             ))}
                         </ImageList>
                     </div>
