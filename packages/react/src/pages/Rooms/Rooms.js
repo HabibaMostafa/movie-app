@@ -14,10 +14,8 @@ const Rooms = () => {
     const userID = tokenObj._id;
 
     return (
-        <div class="container">
+        <div className="rooms-container">
             <Navbar />
-            {/* <h1>Rooms!</h1>
-            <p>{userID}</p> */}
             <CreateRoom _id={userID} />
             <RoomList _id={userID} />
         </div>

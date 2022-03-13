@@ -17,8 +17,12 @@ class Members extends React.Component {
         super(props);
         this.props = props;
 
-        this.state = { members: [] };
+        this.state = { members: [], updateKey: new Date().getTime() };
     }
+
+    addMemberCallback = () => {
+        this.setState({ members: [] });
+    };
 
     componentDidMount() {
         axios
@@ -33,14 +37,30 @@ class Members extends React.Component {
             });
     }
 
+    recallComponent = async () => {
+        await axios
+            .get(`/members?roomId=${this.props.roomId}`)
+            .then((res) => {
+                if (res.status === 200) {
+                    this.setState({ members: res.data });
+                }
+            })
+            .catch((e) => {
+                console.log("error getting memberlist... ", e);
+            });
+    };
+
     removeButtonHandler = async (data) => {};
 
     render() {
         if (this.state.members.length !== 0) {
             return (
                 <div>
-                    <h3>Add</h3>
-                    <AddMember />
+                    <AddMember
+                        userId={this.props.userId}
+                        roomId={this.props.roomId}
+                        memberCallback={this.addMemberCallback}
+                    />
 
                     <h3>Members</h3>
                     <div>
@@ -91,6 +111,7 @@ class Members extends React.Component {
                 </div>
             );
         } else {
+            this.recallComponent();
             return <div>loading...</div>;
         }
     }

@@ -28,11 +28,10 @@ app.use(cors());
 
 ////////////////// POST //////////////////
 
-
 // adds multiple members to the room, should be an array of user ids
-app.post("/room-add", (req, res) => {
-    console.log(req.body)
-    
+app.post("/room/add", (req, res) => {
+    console.log(req.body);
+
     return res.send(req.body.users);
 });
 
@@ -98,6 +97,35 @@ app.post("/member", (req, res) => {
         .catch((e) => {
             return res.status(400).send(e);
         });
+});
+
+app.post("/members", (req, res) => {
+    const { users, roomId } = req.body;
+
+    if (users === undefined || roomId === undefined) {
+        return res.status(400).send();
+    }
+
+    let newMembers = [];
+
+    for (let i = 0; i < users.length; i++) {
+        const userData = {
+            userId: users[i].userId,
+            roomId,
+            status: "accepted",
+            chosenMovie: null,
+        };
+
+        const newMember = new Member(userData);
+
+        const added = addNewMember(newMember);
+
+        if (added !== []) {
+            newMembers.push(added);
+        }
+    }
+
+    return res.status(201).send(newMembers);
 });
 
 //TMDB endpoints
@@ -438,6 +466,26 @@ app.get("/members", (req, res) => {
         });
 });
 
+// get an array of friends of a user
+// that are not members of a specified room
+app.get("/non-members", (req, res) => {
+    const roomId = req.query.roomId;
+    const userId = req.query.userId;
+
+    if (roomId === undefined || userId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getNonMembers(userId, roomId)
+        .then((result) => {
+            return res.status(200).send(result);
+        })
+        .catch((e) => {
+            console.log(e);
+            return res.status(500).send(e);
+        });
+});
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
@@ -707,6 +755,45 @@ const mergeFromUserInfoRequests = async (requestId, userId) => {
     return consolidated;
 };
 
+const getNonMembers = async (userId, roomId) => {
+    // first get the list of friends of userID
+
+    // console.log(userId, roomId);
+    const friends = await getFriends(userId);
+
+    // get the current member list of the room
+    let memberList = [];
+    const members = await getRoomMembers(roomId);
+    for (let member of members) {
+        memberList.push(member.userId);
+    }
+
+    // get a list of Ids that are not already members
+    let nonMemberIds = [];
+
+    for (let friend of friends) {
+        if (!memberList.includes(friend.userId)) {
+            nonMemberIds.push(friend.userId);
+        }
+    }
+
+    const userQuery = { _id: { $in: nonMemberIds } };
+
+    const nonMembers = await User.find(userQuery);
+
+    let nonMembersNoPsw = [];
+
+    for (let nonMember of nonMembers) {
+        const userId = nonMember._id.toString();
+        const { name, username } = nonMember;
+        const entry = { userId, name, username };
+
+        nonMembersNoPsw.push(entry);
+    }
+
+    return nonMembersNoPsw;
+};
+
 // get a list of all users on the database excluding an inputted userid
 const getListExcludeUser = async (userId) => {
     const userList = await User.find({ _id: { $ne: userId } }).exec();
@@ -971,6 +1058,19 @@ const matchVotes = async (friendList, theVote) => {
 const checkForMatchesWithUser = async (user) => {};
 
 const createNewMatch = async (vote1, vote2, movie) => {};
+
+const addNewMember = async (memberData) => {
+    const newMember = new Member(memberData);
+
+    await newMember
+        .save()
+        .then((newMember) => {
+            return newMember;
+        })
+        .catch((e) => {
+            return [];
+        });
+};
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));

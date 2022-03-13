@@ -67,9 +67,6 @@ class Room extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps !== this.props) {
-            this.setState({ room: this.props.room });
-            this.setState({ roomId: this.props.room._id });
-            this.setState({ userId: this.props.userId });
             this.setState({ remountKey: new Date().getTime() });
         }
     }
@@ -119,13 +116,13 @@ class Room extends React.Component {
                         </Box>
                         <TabPanel value={this.state.selectedTab} index={0}>
                             <Nominations
-                                roomId={this.state.roomId}
+                                roomId={this.props.room._id}
                                 userId={this.state.userId}
                             />
                         </TabPanel>
                         <TabPanel value={this.state.selectedTab} index={1}>
                             <RoomMatches
-                                roomId={this.state.roomId}
+                                roomId={this.props.room._id}
                                 userId={this.state.userId}
                             />
                         </TabPanel>
@@ -138,7 +135,7 @@ class Room extends React.Component {
                         </TabPanel>
                         <TabPanel value={this.state.selectedTab} index={3}>
                             <Details
-                                roomId={this.state.roomId}
+                                roomId={this.props.room._id}
                                 userId={this.state.userId}
                             />
                         </TabPanel>
