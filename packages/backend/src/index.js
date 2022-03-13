@@ -9,6 +9,7 @@ const Room = require("./database/models/room");
 const Member = require("./database/models/member");
 
 const express = require("express");
+const _= require('underscore');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -484,6 +485,25 @@ app.get("/non-members", (req, res) => {
             console.log(e);
             return res.status(500).send(e);
         });
+});
+
+// gets all the common "votes" that like a movie within a room
+app.get("/room-matches", (req, res) => {
+    const roomId = req.query.roomId;
+
+    if (roomId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getRoomMatches(roomId)
+        .then((result) => {
+            return res.status(200).send(result);
+        })
+        .catch((e) => {
+            return res.status(500).send(e);
+        });
+
+    // get all the
 });
 
 app.get("/", (req, res) => {
@@ -1111,6 +1131,39 @@ const addNewMember = async (memberData) => {
             return [];
         });
 };
+
+// will only return an array of numbers
+const getLikesMoviesOnly = async (userId) => {
+    const query = {
+        user: userId,
+        liked: true,
+    };
+
+    const ignoreFields = ["-_id", "-user", "-liked", "-__v"];
+
+    const likedMovies = await Vote.find(query).select(ignoreFields).lean();
+
+    const idOnly = likedMovies.map((movie) => movie.movieID);
+
+    return idOnly;
+};
+
+// first get all the members of the room
+const getRoomMatches = async (roomId) => {
+    const members = await getRoomMembers(roomId);
+
+    let memberLikes = [];
+
+    for (let member of members) {
+        memberLikes.push(await getLikesMoviesOnly(member.userId));
+    }
+
+    // get the intersection
+    const intersection = _.intersection.apply(_,memberLikes)
+
+    return intersection;
+};
+
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));

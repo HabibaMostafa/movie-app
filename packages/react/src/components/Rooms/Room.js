@@ -2,7 +2,7 @@
 
 import React from "react";
 import Nominations from "./TabPanels/Nominations";
-import RoomMatches from "./TabPanels/RoomMatches";
+import RoomMatches from "./MatchesPanel/RoomMatches";
 import Members from "./MembersPanel/Members";
 import Details from "./TabPanels/Details";
 
