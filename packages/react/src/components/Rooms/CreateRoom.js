@@ -88,8 +88,10 @@ class CreateRoom extends React.Component {
                     Create New Room
                 </Button>
                 <Dialog open={this.state.open} onClose={this.handleClose}>
-                    <DialogTitle>Create New Room</DialogTitle>
-                    <DialogContent>
+                    <DialogTitle sx={{ background: "#242424" }}>
+                        Create New Room
+                    </DialogTitle>
+                    <DialogContent sx={{ background: "#242424" }}>
                         {/* <DialogContentText>New Room Name</DialogContentText> */}
                         <TextField
                             autoFocus
@@ -100,9 +102,12 @@ class CreateRoom extends React.Component {
                             fullWidth
                             variant="standard"
                             onChange={this.handleNameChange}
+                            sx={{ background: "#242424" }}
+
+                            InputProps={{style:{color:"whitesmoke"}}}
                         />
                     </DialogContent>
-                    <DialogActions>
+                    <DialogActions sx={{ background: "#242424" }}>
                         <Button onClick={this.handleClose}>Cancel</Button>
                         <Button onClick={this.createNewRoom}>Create</Button>
                     </DialogActions>
