@@ -84,7 +84,7 @@ class FriendMatches extends React.Component {
                     // <p>{value.movieID}</p>
                     ))} */}
 
-                <ImageList sx={{ width: 900, height: 450 }} cols={4} rowHeight={164}>
+                <ImageList sx={{ width: 1800, height: 450 }} cols={7} rowHeight={164}>
                 {this.state.matches.map((value) => (
                     <MovieListElement movieID={value.movieID} />
                     // <ImageListItem key={item.img}>
