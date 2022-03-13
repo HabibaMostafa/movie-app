@@ -557,12 +557,33 @@ app.patch("/friend", (req, res) => {
 
 //DELETE
 
+//remove member from room
+app.delete("/member", (req, res) => {
+    const { userId, roomId } = req.body;
+
+    if (userId === undefined || roomId === undefined) {
+        return res.status(400).send();
+    }
+
+    const query = {
+        userId,
+        roomId,
+    };
+
+    Member.deleteOne(query)
+        .then((result) => {
+            res.status(200).send(result);
+        })
+        .catch((e) => {
+            res.status(500).send(e);
+        });
+});
+
 // delete all matches between two users
 app.delete("/matches", (req, res) => {
     const { user1, user2 } = req.body;
 
     if (user1 === undefined || user2 === undefined) {
-        console.log(user1, user2);
         return res.status(400).send();
     }
 

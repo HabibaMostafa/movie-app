@@ -82,7 +82,7 @@ class Room extends React.Component {
         ) {
             return (
                 <div className="room-container">
-                    <h1>Room: {this.props.room.roomName}</h1>
+                    <h1>{this.props.room.roomName}</h1>
                     {/* tabs containing room matches, room details(members, etc),  */}
 
                     <Box sx={{ width: "100%" }}>

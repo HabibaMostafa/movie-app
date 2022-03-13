@@ -39,7 +39,6 @@ class FriendsList extends React.Component {
 
     deleteMatches = async (user1, user2) => {
         if (user1 === undefined || user2 === undefined) {
-            console.log(user1, user2);
             return;
         }
 

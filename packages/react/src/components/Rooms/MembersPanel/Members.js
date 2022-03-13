@@ -50,7 +50,39 @@ class Members extends React.Component {
             });
     };
 
-    removeButtonHandler = async (data) => {};
+    removeButtonHandler = async (data) => {
+        const roomId = this.props.roomId;
+        const userId = data.userId;
+
+        if (roomId === undefined || userId === undefined) {
+            return;
+        }
+
+
+        if (userId === this.props.userId) {
+            console.log("You can't remove yourself from the memberlist.... must goto room details")
+            return
+        }
+
+        const params = {
+            roomId,
+            userId,
+        };
+
+        await axios
+            .delete("/member", { data: params })
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log(response.data);
+
+                    // this.recallComponent();
+                    this.setState({ members: [] });
+                }
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
 
     render() {
         if (this.state.members.length !== 0) {
@@ -79,10 +111,11 @@ class Members extends React.Component {
                                 }}
                             >
                                 {this.state.members.map((value) => (
+                                    
                                     <ListItem
                                         key={value}
                                         disableGutters
-                                        secondaryAction={
+                                        secondaryAction={ 
                                             <IconButton
                                                 onClick={(e) => {
                                                     e.preventDefault();
