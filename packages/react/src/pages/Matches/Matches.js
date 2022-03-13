@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import useToken from "../../components/App/useToken";
-
+import "./Matches.css";
 
 
 import MatchList from "../../components/Matches/MatchList";
@@ -14,7 +14,7 @@ const Matches = () => {
 
     return (
       
-        <div className="container">
+        <div className="matches-wrapper">
             <Navbar />
             <MatchList _id={userID} />
         </div>

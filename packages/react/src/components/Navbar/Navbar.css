@@ -2,11 +2,23 @@
 * {
     font-family: 'Montserrat', sans-serif;
   }
+
+  .MuiList-root, .MuiMenuItem-root{ 
+    background-color: #1f1d1d;
+  }
   
   body {
     background-color: #000000;
   }
   
+  .labels {
+    color: #ffffff !important;
+  }
+
+  .divider {
+    background-color: rgba(255, 255, 255, 0.308);
+  }
+
   .pages {
     color: #000000;
     text-align: center;
@@ -44,6 +56,11 @@
     background-color:rgba(0,0,0,0.3);
   }
   
+  .fa-square-user {
+    background-color: #243c64
+
+  }
+
   .nav-logo {
     color: #f5b921;
     align-items: center;
@@ -75,6 +92,12 @@
   .nav-item {
     line-height: 40px;
     margin-right: 1rem;
+  }
+
+  .nav-item-menu {
+    line-height: 40px;
+    margin-right: 1rem;
+    background-color: #000000;
   }
   
   .nav-item:after {
@@ -110,6 +133,7 @@
       position: absolute;
       top: 80px;
       left: -110%;
+      background-color: #000000;
       opacity: 1;
       transition: all 0.5s ease;
     }
@@ -142,3 +166,5 @@
       color: #ffdd40;
     }
   }
+
+  /* <p className="welcome-msg"> {tokenObj.username} </p> */
