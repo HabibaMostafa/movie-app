@@ -24,8 +24,8 @@ function Home() {
             <Navbar />
             <div className="home-wrapper">
                 <p className="welcome-msg">Hey {tokenObj.username}! Checkout our latest movies </p>
-                <img src={ placeholder1 } alt="profile" className="image" />
                 <img src={ placeholder2 } alt="profile" className="image" />
+                <img src={ placeholder1 } alt="profile" className="image" />
                 <img src={ placeholder3 } alt="profile" className="image" />
             </div>
         </div>

@@ -1,6 +1,10 @@
 import React from "react";
 import axios from "axios";
 import "./FriendMatches.css";
+import PropTypes from 'prop-types';
+import LinearProgress from '@mui/material/LinearProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 
 import MovieListElement from "../../components/Movie/MovieListElement";

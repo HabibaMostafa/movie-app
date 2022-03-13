@@ -7,6 +7,11 @@
     background-color: #000000;
   }
   
+  .labels {
+    background-color: #000000  !important;
+    color: #ffffff !important;
+  }
+
   .pages {
     color: #000000;
     text-align: center;
@@ -44,6 +49,11 @@
     background-color:rgba(0,0,0,0.3);
   }
   
+  .fa-square-user {
+    background-color: #243c64
+
+  }
+
   .nav-logo {
     color: #f5b921;
     align-items: center;
@@ -75,6 +85,12 @@
   .nav-item {
     line-height: 40px;
     margin-right: 1rem;
+  }
+
+  .nav-item-menu {
+    line-height: 40px;
+    margin-right: 1rem;
+    background-color: #000000;
   }
   
   .nav-item:after {
@@ -142,3 +158,5 @@
       color: #ffdd40;
     }
   }
+
+  /* <p className="welcome-msg"> {tokenObj.username} </p> */
