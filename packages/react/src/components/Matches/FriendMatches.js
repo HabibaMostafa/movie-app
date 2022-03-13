@@ -72,7 +72,7 @@ class FriendMatches extends React.Component {
 
         return (
             <div className="friendMatches">
-                <h3 class="match-friend">{this.state.friendUsername} ({this.state.friendName})</h3>
+                <h3 class="match-friend">MATCHES WITH {this.state.friendUsername.toUpperCase()} </h3>
                 {/* <p>----------list of all movies that were matched</p> */}
                 {/* <p>my id: {this.state._id}</p>
                 <p>friend id: {this.state.friend.userId}</p> */}

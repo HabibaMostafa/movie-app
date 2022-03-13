@@ -2,14 +2,21 @@
 * {
     font-family: 'Montserrat', sans-serif;
   }
+
+  .MuiList-root, .MuiMenuItem-root{ 
+    background-color: #1f1d1d;
+  }
   
   body {
     background-color: #000000;
   }
   
   .labels {
-    background-color: #000000  !important;
     color: #ffffff !important;
+  }
+
+  .divider {
+    background-color: rgba(255, 255, 255, 0.308);
   }
 
   .pages {
@@ -126,6 +133,7 @@
       position: absolute;
       top: 80px;
       left: -110%;
+      background-color: #000000;
       opacity: 1;
       transition: all 0.5s ease;
     }

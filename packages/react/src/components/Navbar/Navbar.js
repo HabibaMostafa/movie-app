@@ -153,7 +153,7 @@ const Navbar = () => {
                             <MenuItem className="labels">
                               <Avatar /> {tokenObj.username}
                             </MenuItem>
-                            <Divider />
+                            <Divider className="divider" />
                             <MenuItem className="labels">
                               {/* <ListItemIcon>
                                 <Logout fontSize="small" />
