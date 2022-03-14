@@ -1,6 +1,10 @@
 import React from "react";
 import axios from "axios";
 import "./FriendMatches.css";
+import PropTypes from 'prop-types';
+import LinearProgress from '@mui/material/LinearProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 import MovieListElement from "../../components/Movie/MovieListElement";
 import ImageList from "@mui/material/ImageList";
@@ -80,23 +84,19 @@ class FriendMatches extends React.Component {
                     // <p>{value.movieID}</p>
                     ))} */}
 
-                <ImageList
-                    sx={{ width: 900, height: 450 }}
-                    cols={4}
-                    rowHeight={164}
-                >
-                    {this.state.matches.map((value) => (
-                        <MovieListElement movieID={value.movieID} />
-                        // <ImageListItem key={item.img}>
-                        // <img
-                        //     src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                        //     srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                        //     alt={item.title}
-                        //     loading="lazy"
-                        // />
-                        // </ImageListItem>
-                        // <FriendMatches friend={value} _id={this.props._id} />
-                    ))}
+                <ImageList sx={{ width: 1350, height: 450 }} cols={6} rowHeight={164}>
+                {this.state.matches.map((value) => (
+                    <MovieListElement movieID={value.movieID} />
+                    // <ImageListItem key={item.img}>
+                    // <img
+                    //     src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                    //     srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                    //     alt={item.title}
+                    //     loading="lazy"
+                    // />
+                    // </ImageListItem>
+                    // <FriendMatches friend={value} _id={this.props._id} />
+                ))}
                 </ImageList>
             </div>
         );
