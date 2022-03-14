@@ -101,7 +101,7 @@ const Navbar = () => {
                             </NavLink>
                         </li>
                         <li className="nav-item-menu">
-                        <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', backgroundColor: 'black'}}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', backgroundColor: 'black'}}>
                             <Tooltip title="Account settings">
                               <IconButton
                                 onClick={handleClickEvent}
@@ -164,14 +164,16 @@ const Navbar = () => {
                                 activeClassName="active"
                                 className="nav-links"
                                 onClick={click ? handleClick : null}
-                            >
+                              >
                                 Rooms
-                            </NavLink>
+                              </NavLink>
+                            </MenuItem>
+                          </Menu>
                         </li>
-
-
                         <li className="nav-item">
-                            <NavLink
+                          <Menu>
+                            <MenuItem className="labels">
+                              <NavLink
                                 exact
                                 to="/"
                                 activeClassName="active"
