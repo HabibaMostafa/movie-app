@@ -116,8 +116,6 @@ class Movie extends React.Component {
                 }
                 this.setState({ genres: genresArr.join(", ") });
 
-                // this.setState({ movietrailer: this.getMovieTrailer(movie.id) });
-
                 //setState is called in the below function for movietrailer
                 this.getMovieTrailerID(movie.id);
 
@@ -127,46 +125,6 @@ class Movie extends React.Component {
             console.log("out of movies. Error: " + error);
         }
     }
-
-    /* //old set movie code in case if something doesn't work. 
-
-
-        //as long as there are still movies not displayed in the list then set them to the states.
-        //...and iterate the list.
-        if (index < max) {
-            movie = this.state.movies.body.results[movieIndex[index]];
-            
-            index++;
-
-            console.log(movie);
-
-            //// probably a better way to restructure this?
-            this.setState({ title: movie.title });
-            this.setState({
-                poster_path:
-                    "https://image.tmdb.org/t/p/w300" + movie.poster_path,
-            });
-            this.setState({ overview: movie.overview });
-            this.setState({ release: movie.release_date });
-
-            //grab genre ids then convert and save genre names
-            var genreIDArr = movie.genre_ids;
-            var genresArr = [];
-            for (let g=0; g<genreIDArr.length; g++) {
-                genresArr.push(getGenre(genreIDArr[g]));
-            }
-            this.setState({ genres: genresArr.join(', ') });
-
-            //// this.setState({ title : mov.title });
-        } else {
-            //show an alert or update list and data with new movies.
-            console.log("refreshing movie list");
-            page++;
-            this.componentDidMount();
-            //TODO: add more movies to the list when out of movies.
-        }
-    }
-        */
 
     //method for when the user "likes" the movie on display
     likeMovie = async () => {
@@ -211,6 +169,7 @@ class Movie extends React.Component {
 
     // HIIII ALEXXX 😆
     // should proabbly throw this into the backend instead but w/e,
+    // Hello Miles! :D yeah we can move this later. if it isn't broken why fix it right? 
     getMovieTrailerID = async (movieId) => {
         const apiKey = "c2e4c84ff690ddf904bc717e174d2c61";
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`;
@@ -269,16 +228,76 @@ class Movie extends React.Component {
         }
     };
 
-    /*<YouTube 
-                                        videoId={trailer.key}
-                                        className="youtube"
-                                        opts={
-                                            {
-                                                width: '100%',
-                                                height: '100%',
+    render() {
+        return (
+            <section className="movie">
+                <div className="content">
+                    <div className="top">
+                        <div className={this.className()}>
+                            <div className="movie-display">
+                                <div>
+                                    <img
+                                        className="movie-poster movie-visual"
+                                        onClick={() => {
+                                            this.displayData();
+                                        }}
+                                        src={this.state.poster_path}
+                                        alt="Movie Poster"
+                                    ></img>
+                                </div>
+                                <div className="like-dislike-btns">
+                                    <button
+                                        className="like-btn"
+                                        onClick={() => {
+                                            this.likeMovie();
+                                            this.setMovie();
+                                        }}
+                                    >
+                                        LIKE
+                                    </button>
+                                    <p> </p>
+                                    <button
+                                        className="dislike-btn"
+                                        onClick={() => {
+                                            this.dislikeMovie();
+                                            this.setMovie();
+                                        }}
+                                    >
+                                        DISLIKE
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                {this.state.showDescrption ? (
+                                    <div id="minfo" className="movie-info">
+                                        <h3>Description</h3>
+                                        <p>{this.state.overview}</p>
+                                        <h4>Release Date</h4>
+                                        <p>{this.state.release}</p>
+                                        <h4>Genre(s)</h4>
+                                        <p>{this.state.genres}</p>
+                                    </div>
+                                ) : (
+                                    <div className="hidden"></div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        {this.state.showDescrption ? (
+                            <div className="bottom">
+                                <div className="movie-trailer">
+                                    <h4>Trailer</h4>
+                                    <div className="video-player">
+                                        <YouTube
+                                            videoId={this.state.movietrailer}
+                                            className="youtube"
+                                            opts={{
+                                                width: "100%",
+                                                height: "100%",
                                                 playerVars: {
-                                                    autoplay: 1,
-                                                    controls: 0,
+                                                    autoplay: 0,
+                                                    controls: 1,
                                                     cc_load_policy: 0,
                                                     fs: 0,
                                                     iv_load_policy: 0,
@@ -286,83 +305,14 @@ class Movie extends React.Component {
                                                     rel: 0,
                                                     showinfo: 0,
                                                 },
-                                            }
-                                        }
-                                    />
-                                    */
-    render() {
-        return (
-            <section className="movie">
-                <div className="content">
-                    <div className={this.className()}>
-                        <div className="movie-display">
-                            <div>
-                                <img
-                                    className="movie-poster movie-visual"
-                                    onClick={() => {
-                                        this.displayData();
-                                    }}
-                                    src={this.state.poster_path}
-                                    alt="Movie Poster"
-                                ></img>
-                            </div>
-                            <div className="like-dislike-btns">
-                                <button
-                                    className="like-btn"
-                                    onClick={() => {
-                                        this.likeMovie();
-                                        this.setMovie();
-                                    }}
-                                >
-                                    LIKE
-                                </button>
-                                <p> </p>
-                                <button
-                                    className="dislike-btn"
-                                    onClick={() => {
-                                        this.dislikeMovie();
-                                        this.setMovie();
-                                    }}
-                                >
-                                    DISLIKE
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            {this.state.showDescrption ? (
-                                <div id="minfo" className="movie-info">
-                                    <h3>Description</h3>
-                                    <p>{this.state.overview}</p>
-                                    <h4>Release Date</h4>
-                                    <p>{this.state.release}</p>
-                                    <h4>Genre(s)</h4>
-                                    <p>{this.state.genres}</p>
-                                    <h4>Trailer</h4>
-
-                                    <YouTube
-                                        videoId={this.state.movietrailer}
-                                        className="youtube"
-                                        opts={{
-                                            width: "100%",
-                                            height: "100%",
-                                            playerVars: {
-                                                autoplay: 1,
-                                                controls: 0,
-                                                cc_load_policy: 0,
-                                                fs: 0,
-                                                iv_load_policy: 0,
-                                                modestbranding: 0,
-                                                rel: 0,
-                                                showinfo: 0,
-                                            },
-                                        }}
-                                    />
+                                            }}
+                                        />
+                                    </div>
                                 </div>
-                            ) : (
+                            </div>
+                        ) : (
                                 <div className="hidden"></div>
-                            )}
-                        </div>
+                        )}
                     </div>
                     <ToastContainer
                         position="top-right"
