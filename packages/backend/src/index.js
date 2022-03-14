@@ -5,8 +5,11 @@ const User = require("./database/models/user");
 const Vote = require("./database/models/vote");
 const Friend = require("./database/models/friend");
 const Match = require("./database/models/match");
+const Room = require("./database/models/room");
+const Member = require("./database/models/member");
 
 const express = require("express");
+const _= require('underscore');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -26,6 +29,13 @@ app.use(cors());
 
 ////////////////// POST //////////////////
 
+// adds multiple members to the room, should be an array of user ids
+app.post("/room/add", (req, res) => {
+    console.log(req.body);
+
+    return res.send(req.body.users);
+});
+
 //
 app.post("/matches", (req, res) => {
     const users = [req.body.user1, req.body.user2];
@@ -40,6 +50,97 @@ app.post("/matches", (req, res) => {
 
     Match.find(queryParameters).then((queryResult) => {
         res.status(200).send(queryResult);
+    });
+});
+
+// creates a new room
+app.post("/room", (req, res) => {
+    const roomName = req.body.roomName;
+    const owner = req.body.owner;
+
+    if (roomName === undefined || owner === undefined) {
+        return res.status(400).send();
+    }
+
+    const newRoom = new Room({
+        roomName,
+        owner,
+        genres: req.body.genres,
+        ratings: req.body.ratings,
+        minYear: req.body.minYear,
+        maxYear: req.body.maxYear,
+    });
+
+    newRoom
+        .save()
+        .then((savedRoom) => {
+            return res.status(201).send(savedRoom);
+        })
+        .catch((e) => {
+            return res.status(400).send(e);
+        });
+});
+
+app.post("/member", (req, res) => {
+    const memberData = req.body;
+
+    if (memberData.userId === undefined || memberData.roomId === undefined) {
+        return res.status(400).send();
+    }
+
+    const newMember = new Member(memberData);
+
+    newMember
+        .save()
+        .then((savedMember) => {
+            return res.status(201).send(savedMember);
+        })
+        .catch((e) => {
+            return res.status(400).send(e);
+        });
+});
+
+app.post("/members", (req, res) => {
+    const { users, roomId } = req.body;
+
+    if (users === undefined || roomId === undefined) {
+        return res.status(400).send();
+    }
+
+    let newMembers = [];
+
+    for (let i = 0; i < users.length; i++) {
+        const userData = {
+            userId: users[i].userId,
+            roomId,
+            status: "accepted",
+            chosenMovie: null,
+        };
+
+        const newMember = new Member(userData);
+
+        const added = addNewMember(newMember);
+
+        if (added !== []) {
+            newMembers.push(added);
+        }
+    }
+
+    return res.status(201).send(newMembers);
+});
+
+//TMDB endpoints
+// sample api get request
+app.post("/movies", (req, res) => {
+    // make request to api
+    var pageNum = req.body.pageNum;
+    const test = tmdb({ pageNum }, (error, response) => {
+        if (error) {
+            console.log("Error! =(");
+            return;
+        }
+
+        res.send(response);
     });
 });
 
@@ -75,20 +176,15 @@ app.post("/matches/check", (req, res) => {
     //get complete list of votes by the user and put into an array
 
     Vote.find({ user: userId }).then((votes) => {
-        console.log(votes.length);
         let counter = 0;
         let size = votes.length;
 
         for (let vote of votes) {
-            // console.log(vote._id.toString());
-
             const voteId = vote._id.toString();
 
             checkForMatchesWithVote(voteId)
                 .then(() => {
                     counter++;
-
-                    console.log(counter, size);
 
                     if (counter === size) {
                         res.status(200).send({});
@@ -134,8 +230,6 @@ app.post("/votes", (req, res) => {
     };
 
     Vote.find(parameters).then((result) => {
-        // console.log(result);
-
         // means a vote and save if one does not exist yet
         if (result.length === 0) {
             // make a new vote object
@@ -337,6 +431,81 @@ app.get("/movie", (req, res) => {
     });
 });
 
+// gets all rooms that a user is a member of
+app.get("/rooms", (req, res) => {
+    const userId = req.query.userId;
+
+    //if no id added with the get request, exit
+    if (userId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getUserRooms(userId)
+        .then((rooms) => {
+            return res.status(200).send(rooms);
+        })
+        .catch((e) => {
+            return res.status(500).send([]);
+        });
+});
+
+// get all the members of a specific room
+app.get("/members", (req, res) => {
+    const roomId = req.query.roomId;
+
+    //if no id added with the get request, exit
+    if (roomId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getRoomMembers(roomId)
+        .then((members) => {
+            return res.status(200).send(members);
+        })
+        .catch((e) => {
+            return res.status(500).send([]);
+        });
+});
+
+// get an array of friends of a user
+// that are not members of a specified room
+app.get("/non-members", (req, res) => {
+    const roomId = req.query.roomId;
+    const userId = req.query.userId;
+
+    if (roomId === undefined || userId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getNonMembers(userId, roomId)
+        .then((result) => {
+            return res.status(200).send(result);
+        })
+        .catch((e) => {
+            console.log(e);
+            return res.status(500).send(e);
+        });
+});
+
+// gets all the common "votes" that like a movie within a room
+app.get("/room-matches", (req, res) => {
+    const roomId = req.query.roomId;
+
+    if (roomId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    getRoomMatches(roomId)
+        .then((result) => {
+            return res.status(200).send(result);
+        })
+        .catch((e) => {
+            return res.status(500).send(e);
+        });
+
+    // get all the
+});
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
@@ -407,6 +576,88 @@ app.patch("/friend", (req, res) => {
 });
 
 //DELETE
+
+//remove member from room
+app.delete("/member", (req, res) => {
+    const { userId, roomId } = req.body;
+
+    if (userId === undefined || roomId === undefined) {
+        return res.status(400).send();
+    }
+
+    const query = {
+        userId,
+        roomId,
+    };
+
+    Member.deleteOne(query)
+        .then((result) => {
+            res.status(200).send(result);
+
+            //todo!
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            // do a query for members with the room id to see if there are any members left,
+            // if no members then delete the room
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////
+            //todo!
+        })
+        .catch((e) => {
+            res.status(500).send(e);
+        });
+});
+
+// delete all matches between two users
+app.delete("/matches", (req, res) => {
+    const { user1, user2 } = req.body;
+
+    if (user1 === undefined || user2 === undefined) {
+        return res.status(400).send();
+    }
+
+    const query = {
+        $or: [
+            {
+                $and: [
+                    {
+                        user1Id: user1,
+                        user2Id: user2,
+                    },
+                ],
+            },
+            {
+                $and: [
+                    {
+                        user1Id: user2,
+                        user2Id: user1,
+                    },
+                ],
+            },
+        ],
+    };
+
+    Match.deleteMany(query)
+        .then((result) => {
+            res.status(200).send(result);
+        })
+        .catch((e) => {
+            console.log("error in match deletion, endpoint: delete/matches");
+            console.log(e);
+            res.status(500).send();
+        });
+});
+
 app.delete("/friend", (req, res) => {
     const idToDelete = req.body;
 
@@ -433,23 +684,74 @@ app.delete("/friend", (req, res) => {
         });
 });
 
-//TMDB endpoints
-
-// sample api get request
-app.post("/movies", (req, res) => {
-    // make request to api
-    var pageNum = req.body.pageNum;
-    const test = tmdb({ pageNum }, (error, response) => {
-        if (error) {
-            console.log("Error! =(");
-            return;
-        }
-
-        res.send(response);
-    });
-});
-
 //helper functions
+
+// gets all the members of a specified room
+const getRoomMembers = async (roomId) => {
+    if (roomId === undefined) {
+        return [];
+    }
+
+    const memberQuery = {
+        roomId,
+    };
+
+    const roomMembers = await Member.find(memberQuery);
+
+    // get the userIds
+    let userIds = [];
+    for (let member of roomMembers) {
+        userIds.push(member.userId);
+    }
+
+    // get the complete user details
+    const usersQuery = {
+        _id: { $in: userIds },
+    };
+
+    const users = await User.find(usersQuery);
+    let usersNoPsw = [];
+
+    // remove the password field
+    for (let user of users) {
+        usersNoPsw.push({
+            userId: user._id.toString(),
+            name: user.name,
+            username: user.username,
+        });
+    }
+
+    return usersNoPsw;
+};
+
+// gets all the rooms a user is a member of
+const getUserRooms = async (user) => {
+    if (user === undefined) {
+        return [];
+    }
+
+    const memberQuery = {
+        userId: user,
+    };
+    const memberships = await Member.find(memberQuery);
+
+    // just get the roomIds
+    let roomIds = [];
+    for (let membership of memberships) {
+        // console.log(membership.roomId);
+        roomIds.push(membership.roomId);
+    }
+
+    // do another query on the room collection,
+    // getting the rooms the user is a member of
+    const roomQuery = {
+        _id: { $in: roomIds },
+    };
+
+    const rooms = await Room.find(roomQuery);
+
+    return rooms;
+};
 
 // gets an array of friend request documents the user made
 const getRequestsFromUser = async (user) => {
@@ -513,12 +815,54 @@ const mergeFromUserInfoRequests = async (requestId, userId) => {
     return consolidated;
 };
 
+const getNonMembers = async (userId, roomId) => {
+    // first get the list of friends of userID
+
+    // console.log(userId, roomId);
+    const friends = await getFriends(userId);
+
+    // get the current member list of the room
+    let memberList = [];
+    const members = await getRoomMembers(roomId);
+    for (let member of members) {
+        memberList.push(member.userId);
+    }
+
+    // get a list of Ids that are not already members
+    let nonMemberIds = [];
+
+    for (let friend of friends) {
+        if (!memberList.includes(friend.userId)) {
+            nonMemberIds.push(friend.userId);
+        }
+    }
+
+    const userQuery = { _id: { $in: nonMemberIds } };
+
+    const nonMembers = await User.find(userQuery);
+
+    let nonMembersNoPsw = [];
+
+    for (let nonMember of nonMembers) {
+        const userId = nonMember._id.toString();
+        const { name, username } = nonMember;
+        const entry = { userId, name, username };
+
+        nonMembersNoPsw.push(entry);
+    }
+
+    return nonMembersNoPsw;
+};
+
 // get a list of all users on the database excluding an inputted userid
 const getListExcludeUser = async (userId) => {
     const userList = await User.find({ _id: { $ne: userId } }).exec();
 
     return userList;
 };
+
+// get an array of objects containing the rooms the user is a member of
+const getRooms = async (userId) => {};
 
 const getFriends = async (userId) => {
     // list of all users minus the passed userId
@@ -730,11 +1074,22 @@ const matchVotes = async (friendList, theVote) => {
         // check if a record already exist.
 
         const searchParameters = {
-            user1Id: user1._id.toString(),
-            user1Vote: user1Vote,
-            user2Id: user2._id.toString(),
-            user2Vote: match._id.toString(),
-            movieID: movie,
+            $or: [
+                {
+                    user1Id: user1._id.toString(),
+                    user1Vote: user1Vote,
+                    user2Id: user2._id.toString(),
+                    user2Vote: match._id.toString(),
+                    movieID: movie,
+                },
+                {
+                    user2Id: user1._id.toString(),
+                    user2Vote: user1Vote,
+                    user1Id: user2._id.toString(),
+                    user1Vote: match._id.toString(),
+                    movieID: movie,
+                },
+            ],
         };
         const existingDocument = await Match.find(searchParameters);
 
@@ -763,6 +1118,52 @@ const matchVotes = async (friendList, theVote) => {
 const checkForMatchesWithUser = async (user) => {};
 
 const createNewMatch = async (vote1, vote2, movie) => {};
+
+const addNewMember = async (memberData) => {
+    const newMember = new Member(memberData);
+
+    await newMember
+        .save()
+        .then((newMember) => {
+            return newMember;
+        })
+        .catch((e) => {
+            return [];
+        });
+};
+
+// will only return an array of numbers
+const getLikesMoviesOnly = async (userId) => {
+    const query = {
+        user: userId,
+        liked: true,
+    };
+
+    const ignoreFields = ["-_id", "-user", "-liked", "-__v"];
+
+    const likedMovies = await Vote.find(query).select(ignoreFields).lean();
+
+    const idOnly = likedMovies.map((movie) => movie.movieID);
+
+    return idOnly;
+};
+
+// first get all the members of the room
+const getRoomMatches = async (roomId) => {
+    const members = await getRoomMembers(roomId);
+
+    let memberLikes = [];
+
+    for (let member of members) {
+        memberLikes.push(await getLikesMoviesOnly(member.userId));
+    }
+
+    // get the intersection
+    const intersection = _.intersection.apply(_,memberLikes)
+
+    return intersection;
+};
+
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));

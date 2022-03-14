@@ -56,10 +56,22 @@ div.movie, div.movie > * {
     }
 }
 
+@media (min-width: 721px) {
+    .movie-block {
+        display: block;
+    }
+}
+
 .movie-display {
     display: flex;
     justify-content: center;
     flex-direction: column;
+}
+
+.movie-poster {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .like-dislike-btns {
@@ -93,7 +105,6 @@ div.movie, div.movie > * {
 }
 
 .movie-info {
-    display: flex;
     justify-content: center;
     flex-direction: column;
 }
@@ -117,4 +128,9 @@ div.movie, div.movie > * {
         padding-top: 2em;
         margin-top: 2em;
     }
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
 }

@@ -6,7 +6,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-
 import MovieListElement from "../../components/Movie/MovieListElement";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
@@ -20,7 +19,13 @@ class FriendMatches extends React.Component {
         super(props);
         this.props = props;
 
-        this.state = { friendName: "", friendUsername: "", friend: [], _id: "", matches: [] };
+        this.state = {
+            friendName: "",
+            friendUsername: "",
+            friend: [],
+            _id: "",
+            matches: [],
+        };
     }
     componentDidMount() {
         // need to have this in a if statement or else it breaks,
@@ -35,14 +40,7 @@ class FriendMatches extends React.Component {
             // {/* <p>my id: {this.state._id}</p>
             // <p>friend id: {this.state.friend.userId}</p> */}
 
-
-
             // search for any new matches here first!
-
-
-
-
-
 
             // populate the list of matches here
             const matchQuery = {
@@ -66,23 +64,21 @@ class FriendMatches extends React.Component {
         // this is just a band aid....
 
         // render nothing if there are no matches
-        if (this.props.friend === undefined || this.state.matches.length === 0) {
+        if (
+            this.props.friend === undefined ||
+            this.state.matches.length === 0
+        ) {
             return <div></div>;
         }
 
         return (
             <div className="friendMatches">
-                <h3 class="match-friend">MATCHES WITH {this.state.friendUsername.toUpperCase()} </h3>
+                <h3 class="match-friend">
+                    {this.state.friendUsername} ({this.state.friendName})
+                </h3>
                 {/* <p>----------list of all movies that were matched</p> */}
                 {/* <p>my id: {this.state._id}</p>
                 <p>friend id: {this.state.friend.userId}</p> */}
-
-
-
-
-
-
-
 
                 {/* {this.state.matches.map((value) => (
                     // <p>{value.movieID}</p>
@@ -102,8 +98,6 @@ class FriendMatches extends React.Component {
                     // <FriendMatches friend={value} _id={this.props._id} />
                 ))}
                 </ImageList>
-
-
             </div>
         );
     }
