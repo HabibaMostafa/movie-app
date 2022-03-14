@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import "./FriendMatches.css";
 
-
 import MovieListElement from "../../components/Movie/MovieListElement";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
@@ -16,7 +15,13 @@ class FriendMatches extends React.Component {
         super(props);
         this.props = props;
 
-        this.state = { friendName: "", friendUsername: "", friend: [], _id: "", matches: [] };
+        this.state = {
+            friendName: "",
+            friendUsername: "",
+            friend: [],
+            _id: "",
+            matches: [],
+        };
     }
     componentDidMount() {
         // need to have this in a if statement or else it breaks,
@@ -31,14 +36,7 @@ class FriendMatches extends React.Component {
             // {/* <p>my id: {this.state._id}</p>
             // <p>friend id: {this.state.friend.userId}</p> */}
 
-
-
             // search for any new matches here first!
-
-
-
-
-
 
             // populate the list of matches here
             const matchQuery = {
@@ -62,44 +60,44 @@ class FriendMatches extends React.Component {
         // this is just a band aid....
 
         // render nothing if there are no matches
-        if (this.props.friend === undefined || this.state.matches.length === 0) {
+        if (
+            this.props.friend === undefined ||
+            this.state.matches.length === 0
+        ) {
             return <div></div>;
         }
 
         return (
             <div className="friendMatches">
-                <h3 class="match-friend">{this.state.friendUsername} ({this.state.friendName})</h3>
+                <h3 class="match-friend">
+                    {this.state.friendUsername} ({this.state.friendName})
+                </h3>
                 {/* <p>----------list of all movies that were matched</p> */}
                 {/* <p>my id: {this.state._id}</p>
                 <p>friend id: {this.state.friend.userId}</p> */}
-
-
-
-
-
-
-
 
                 {/* {this.state.matches.map((value) => (
                     // <p>{value.movieID}</p>
                     ))} */}
 
-                <ImageList sx={{ width: 900, height: 450 }} cols={4} rowHeight={164}>
-                {this.state.matches.map((value) => (
-                    <MovieListElement movieID={value.movieID} />
-                    // <ImageListItem key={item.img}>
-                    // <img
-                    //     src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                    //     srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                    //     alt={item.title}
-                    //     loading="lazy"
-                    // />
-                    // </ImageListItem>
-                    // <FriendMatches friend={value} _id={this.props._id} />
-                ))}
+                <ImageList
+                    sx={{ width: 900, height: 450 }}
+                    cols={4}
+                    rowHeight={164}
+                >
+                    {this.state.matches.map((value) => (
+                        <MovieListElement movieID={value.movieID} />
+                        // <ImageListItem key={item.img}>
+                        // <img
+                        //     src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                        //     srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                        //     alt={item.title}
+                        //     loading="lazy"
+                        // />
+                        // </ImageListItem>
+                        // <FriendMatches friend={value} _id={this.props._id} />
+                    ))}
                 </ImageList>
-
-
             </div>
         );
     }
