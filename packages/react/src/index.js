@@ -18,6 +18,7 @@ ReactDOM.render(
             <Route path="/matches" element={<Matches />} />
             <Route path="/matches/*" element={<Matches />} />
             <Route path="/rooms" element={<Rooms />} />
+            <Route path="/rooms*" element={<Rooms />} />
             <Route path="/rooms/*" element={<Rooms />} />
             <Route path="/matches/*" element={<Matches />} />
 

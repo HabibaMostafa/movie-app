@@ -20,7 +20,8 @@ class RoomList extends React.Component {
     }
 
     componentDidMount() {
-        axios.get(`/rooms?userId=${this.props._id}`).then((res) => {
+        // axios.get(`/rooms?userId=${this.props._id}`).then((res) => {
+        axios.get(`/roomsList?userId=${this.props._id}`).then((res) => {
             if (res.status === 200) {
                 this.setState({ userRooms: res.data });
             }

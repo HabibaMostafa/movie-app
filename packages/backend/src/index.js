@@ -432,7 +432,8 @@ app.get("/movie", (req, res) => {
 });
 
 // gets all rooms that a user is a member of
-app.get("/rooms", (req, res) => {
+app.get("/roomsList", (req, res) => {
+// app.get("/rooms", (req, res) => {
     const userId = req.query.userId;
 
     //if no id added with the get request, exit
