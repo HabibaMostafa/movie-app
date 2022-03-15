@@ -1,4 +1,5 @@
 // used examples from https://mui.com/components/tabs/
+import "./Room.css";
 
 import React from "react";
 import Nominations from "./TabPanels/Nominations";

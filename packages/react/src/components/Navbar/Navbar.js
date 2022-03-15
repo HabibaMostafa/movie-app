@@ -100,6 +100,17 @@ const Navbar = () => {
                                 Matches
                             </NavLink>
                         </li>
+                        <li className="nav-item">
+                            <NavLink
+                                exact
+                                to="/rooms"
+                                activeClassName="active"
+                                className="nav-links"
+                                onClick={click ? handleClick : null}
+                            >
+                                Rooms
+                            </NavLink>
+                        </li>
                         <li className="nav-item-menu">
                           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', backgroundColor: 'black'}}>
                             <Tooltip title="Account settings">
@@ -154,24 +165,6 @@ const Navbar = () => {
                               <Avatar /> {tokenObj.username}
                             </MenuItem>
                             <Divider className="divider" />
-                            <MenuItem className="labels">
-                              {/* <ListItemIcon>
-                                <Logout fontSize="small" />
-                              </ListItemIcon> */}
-                              <NavLink
-                                exact
-                                to="/rooms"
-                                activeClassName="active"
-                                className="nav-links"
-                                onClick={click ? handleClick : null}
-                              >
-                                Rooms
-                              </NavLink>
-                            </MenuItem>
-                          </Menu>
-                        </li>
-                        <li className="nav-item">
-                          <Menu>
                             <MenuItem className="labels">
                               <NavLink
                                 exact

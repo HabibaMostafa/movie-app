@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import "./Room.css";
 
 import Room from "./Room";
 
@@ -32,7 +33,7 @@ class RoomList extends React.Component {
     render() {
         if (this.state.userRooms.length > 0) {
             return (
-                <div className="roomlist-container">
+                <div className="room-wrapper">
                     <Autocomplete
                         disablePortal
                         id="combo-box-rooms"
@@ -54,7 +55,7 @@ class RoomList extends React.Component {
 
         // return this if user is not a member of any rooms
         else {
-            return <div className="roomlist-container"></div>;
+            return <div className="room-wrapper"></div>;
         }
     }
 }

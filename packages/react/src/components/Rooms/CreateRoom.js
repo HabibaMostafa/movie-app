@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import "./Room.css";
 import * as React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -83,7 +83,7 @@ class CreateRoom extends React.Component {
     };
     render() {
         return (
-            <div>
+            <div className="room-wrapper">
                 <Button variant="outlined" onClick={this.handleClickOpen}>
                     Create New Room
                 </Button>
