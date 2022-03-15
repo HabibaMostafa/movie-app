@@ -119,12 +119,14 @@ class Room extends React.Component {
                             <Nominations
                                 roomId={this.props.room._id}
                                 userId={this.state.userId}
+                                key={this.state.remountKey}
                             />
                         </TabPanel>
                         <TabPanel value={this.state.selectedTab} index={1}>
                             <RoomMatches
                                 roomId={this.props.room._id}
                                 userId={this.state.userId}
+                                key={this.state.remountKey}
                             />
                         </TabPanel>
                         <TabPanel value={this.state.selectedTab} index={2}>
@@ -138,6 +140,7 @@ class Room extends React.Component {
                             <Details
                                 roomId={this.props.room._id}
                                 userId={this.state.userId}
+                                key={this.state.remountKey}
                             />
                         </TabPanel>
                     </Box>
