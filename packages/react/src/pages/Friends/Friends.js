@@ -12,6 +12,8 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
+import Grid from '@mui/material/Grid';
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -65,25 +67,35 @@ const Friends = () => {
             <Navbar />
             <div className="friends-wrapper">
             <Box sx={{ width: '100%', bgcolor: 'black' }}>
-                <Tabs value={value} onChange={handleChange} centered>
-                    <Tab label="Invite Friend" sx={{ color: "white" }}/>
+                <Tabs value={value} onChange={handleChange} centered TabIndicatorProps={{ style: { background: "#daa520" }}} >
                     <Tab label="My Friends"  sx={{ color: "white" }}/>
-                    <Tab label="Pending Requests"  sx={{ color: "white" }}/>
-                    <Tab label="My Requests"  sx={{ color: "white" }}/>
+                    <Tab label="Requests" sx={{ color: "white" }}/>
                 </Tabs>
             </Box>
-            <TabPanel value={value} index={0} >
-                <AddFriend _id={userID} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <FriendsList _id={userID} />
-            </TabPanel>
-            <TabPanel value={value} index={2} >
-                <RequestsFromUser _id={userID} />
-            </TabPanel>
-            <TabPanel value={value} index={3} >
-                <RequestsToUser _id={userID} />
-            </TabPanel>
+            <Grid
+                container
+                spacing={0}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                style={{ minHeight: '10vh' }}
+              >
+                <Grid item xs={8}>
+                    <TabPanel value={value} index={0} >
+                      <AddFriend _id={userID} />
+                      <FriendsList _id={userID} />
+                    </TabPanel>
+                </Grid>
+                <Grid item xs={8}>
+                    <TabPanel value={value} index={1}>
+                      <RequestsToUser _id={userID} />
+                      <RequestsFromUser _id={userID} />
+                    </TabPanel>
+                </Grid>
+            </Grid>
+            
+            
+           
             </div>
         </div>
     );

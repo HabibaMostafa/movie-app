@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Movie.css";
 import YouTube from "react-youtube";
-
+import Button from '@mui/material/Button';
 import { getGenre } from "./Genre.js";
 
 var movie;
@@ -246,25 +246,31 @@ class Movie extends React.Component {
                                     ></img>
                                 </div>
                                 <div className="like-dislike-btns">
-                                    <button
-                                        className="like-btn"
-                                        onClick={() => {
-                                            this.likeMovie();
-                                            this.setMovie();
-                                        }}
-                                    >
-                                        LIKE
-                                    </button>
-                                    <p> </p>
-                                    <button
-                                        className="dislike-btn"
-                                        onClick={() => {
-                                            this.dislikeMovie();
-                                            this.setMovie();
-                                        }}
-                                    >
-                                        DISLIKE
-                                    </button>
+                                   
+                                        <Button
+                                            id = "like-button"
+                                            size = "large"
+                                            variant="contained"
+                                            onClick={() => {
+                                                this.likeMovie();
+                                                this.setMovie();
+                                            }}
+                                            
+                                        >
+                                            LIKE
+                                        </Button>
+                                        &nbsp;&nbsp;
+                                        <Button 
+                                            id = "dislike-button"
+                                            size = "large"
+                                            variant="contained"
+                                            onClick={() => {
+                                                this.dislikeMovie();
+                                                this.setMovie();
+                                            }}
+                                        >
+                                            DISLIKE
+                                        </Button>
                                 </div>
                             </div>
                             <div>

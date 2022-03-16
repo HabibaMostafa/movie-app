@@ -4,6 +4,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import "./AddFriend.css";
+import { Grid } from "@mui/material";
+import { Paper } from "@mui/material";
 
 class AddFriend extends React.Component {
     constructor(props) {
@@ -120,26 +122,35 @@ class AddFriend extends React.Component {
             return (
                 <div className="addFriendContainer">
                     <h3>Invite a Friend</h3>
-                    <div ref={this.userListRef}>
+                        <div ref={this.userListRef}>
                         <Autocomplete
+                            size="small"
                             disablePortal
                             id="combo-box-users"
                             options={this.state.notFriends} // set this to notFriends array
                             getOptionLabel={(option) => option.username}
-                            sx={{ width: 300 }}
+                            sx={{ width: 360}}
                             renderInput={(params) => <TextField {...params} />}
                             onChange={(e, selectedUser) => {
                                 this.setUserToAdd(selectedUser);
                             }}
+                            PaperComponent={({ children }) => (
+                                <Paper style={{ background: "yellow" }}>{children}</Paper>
+                              )}
                         />
-                    </div>
-                    <Button
-                        variant="contained"
-                        id="friend-request-btn"
-                        onClick={this.friendRequestHandler}
-                    >
-                        Send Friend Request
-                    </Button>
+                        </div>
+                        <div className="centered">
+                            <Button
+                            variant="contained"
+                            id="friend-request-btn"
+                            onClick={this.friendRequestHandler}
+                            >
+                            Send Friend Request
+                            </Button>
+                        </div>
+                       
+                  
+                    
                 </div>
             );
         } else {

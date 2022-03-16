@@ -113,20 +113,22 @@ export default function Login({ setToken }) {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </label>
-                            <div>
-                                <button variant="outlined" href="#outlined-buttons"
+                            <div className="centered">
+                                <Button size = "large" variant="contained"
+                                    id = "buttons"
                                     className="authentication-btn"
                                     type="submit"
                                 >
                                     LOG IN     
-                                </button>
+                                </Button>
                                 &nbsp;&nbsp;
-                                <button variant="outlined" href="#outlined-buttons"
+                                <Button size = "large" variant="contained" 
+                                    id = "buttons"
                                     className="signup-btn"
                                     onClick={() => setState("signUp")}
                                 >
                                     SIGN UP
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>
@@ -185,20 +187,22 @@ export default function Login({ setToken }) {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </label>
-                        <div>
-                        <button variant="outlined" href="#outlined-buttons"
+                        <div className="centered">
+                        <Button size = "large" variant="contained"
+                                id = "buttons"
                                 className="authentication-btn"
                                 type="submit"
                             >
                                 CREATE ACCOUNT
-                            </button>
+                            </Button>
                             &nbsp;&nbsp;
-                            <button variant="outlined" href="#outlined-buttons"
+                            <Button size = "large" variant="contained" 
+                                id = "buttons"
                                 className="signup-btn"
                                 onClick={() => setState("login")}
                             >
                                 BACK
-                            </button>
+                            </Button>
                         </div>
                     </form>
                     </div>

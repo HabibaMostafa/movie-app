@@ -2,15 +2,18 @@
 /* mui docs https://mui.com/components/autocomplete/ */
 /* mui docs https://mui.com/api/autocomplete/ */
 /* mui docs https://mui.com/api/text-field/ */
-
-.MuiTextField-root, .MuiTextField-inputFocused {
+.MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
+    color: whitesmoke;
+    background-color: #202020;
+}
+.MuiTextField-inputFocused {
     color: whitesmoke !important;
-    background-color:  rgb(82, 82, 82);
+    background-color: #202020;
 }
 
 .MuiAutocomplete-listbox {
     color: whitesmoke !important;
-    background-color:  rgb(82, 82, 82);
+    background-color:  #202020;
 }
 .MuiAutocomplete-focused {
     color: whitesmoke !important;
@@ -20,15 +23,18 @@
 #friend-request-btn {
     background-color: goldenrod;
     color: white;
-    font-size: 16px;
-    padding: 8px 50px;
-    border-radius: 20px;
-    margin: 10px 0px;
     cursor: pointer;
 }
 
 .addFriendContainer {
     padding-bottom: 60px;
 }
+
+.centered {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
 

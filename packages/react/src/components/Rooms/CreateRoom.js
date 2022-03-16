@@ -84,7 +84,7 @@ class CreateRoom extends React.Component {
     render() {
         return (
             <div className="room-wrapper">
-                <Button variant="outlined" onClick={this.handleClickOpen}>
+                <Button variant="contained" id="createRoomButton" onClick={this.handleClickOpen}>
                     Create New Room
                 </Button>
                 <Dialog open={this.state.open} onClose={this.handleClose}>

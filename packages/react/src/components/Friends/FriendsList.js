@@ -101,16 +101,17 @@ class FriendsList extends React.Component {
                 <div>
                     <Paper
                         style={{
-                            maxHeight: 200,
+                            maxHeight: 500,
                             overflow: "auto",
-                            maxWidth: 300,
+                            maxWidth: 360,
+                            padding: '10px',
                         }}
                     >
                         <List
                             sx={{
                                 width: "100%",
                                 maxWidth: 360,
-                                bgcolor: "background.paper",
+                                bgcolor: "#FFFFFF",
                             }}
                         >
                             {this.state.userFriends.map((value) => (

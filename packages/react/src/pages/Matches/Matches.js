@@ -13,10 +13,11 @@ const Matches = () => {
     const userID = tokenObj._id;
 
     return (
-      
-        <div className="matches-wrapper">
+        <div>
             <Navbar />
-            <MatchList _id={userID} />
+            <div className="matches-wrapper">
+                <MatchList _id={userID} />
+            </div>
         </div>
     );
 };

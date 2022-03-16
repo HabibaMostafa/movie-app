@@ -1,6 +1,23 @@
 .room-wrapper {
-    padding-left: 9%;
-    padding-right: 9%;
-    padding-top: 1%;
-    padding-bottom: 1%;
+    padding-top: 3%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.content-wrapper {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding-bottom: 3%;
+}
+
+#createRoomButton {
+    background-color: goldenrod;
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
 }
