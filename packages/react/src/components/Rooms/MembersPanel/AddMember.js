@@ -127,8 +127,6 @@ class AddMember extends React.Component {
                         Add to Room
                     </Button>
                     </Stack>
-                        
-                    
                     </div>
                 </div>
             );
