@@ -21,3 +21,18 @@
     margin: 10px 0px;
     cursor: pointer;
 }
+
+
+.MuiAutocomplete-inputRoot {
+    color: whitesmoke;
+    background-color: #202020;
+}
+.MuiTextField-inputFocused {
+    color: whitesmoke !important;
+    background-color: #202020;
+}
+
+.MuiAutocomplete-listbox {
+    color: whitesmoke !important;
+    background-color:  #202020;
+}

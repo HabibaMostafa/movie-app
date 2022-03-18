@@ -95,12 +95,13 @@ class Members extends React.Component {
                     />
 
                     <h3>Members</h3>
-                    <div>
+                    <div className="content-wrapper">
                         <Paper
                             style={{
                                 maxHeight: 200,
                                 overflow: "auto",
                                 maxWidth: 300,
+                                padding: 2
                             }}
                         >
                             <List
