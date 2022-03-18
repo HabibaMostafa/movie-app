@@ -32,7 +32,6 @@ class Movie extends React.Component {
         this.getLikedList();
 
         axios.post("/movies", params).then((res) => {
-            // console.log(res.data);
             if (res.status === 200) {
                 index = 0;
                 this.setState({ movies: res.data });
@@ -119,6 +118,8 @@ class Movie extends React.Component {
                 //setState is called in the below function for movietrailer
                 this.getMovieTrailerID(movie.id);
 
+                this.getMovieCast(movie.id);
+
                 index++;
             }
         } catch (error) {
@@ -160,9 +161,6 @@ class Movie extends React.Component {
                     </div>
                 );
                 toast.info(toastData);
-                //should be in response.data
-                console.log("new match!");
-                console.log(response.data);
             }
         });
     };
@@ -184,15 +182,32 @@ class Movie extends React.Component {
         });
     };
 
-    //method for when the user "dislikes" the movie on display
-    dislikeMovie() {
-        //TODO: add (movie) to the database as a "liked" movie.
-        console.log("dislike pressed");
-    }
+    getMovieCast = async (movieId) => {
+        const apiKey = "c2e4c84ff690ddf904bc717e174d2c61";
+        const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}&language=en-US`;
+        
+        await axios.get(tmdb_url).then((res) => {
+            
+            const cast = res.data.cast;
+            let castString = cast[0].name;
+
+            // only show top 10 actors
+            if(cast.length < 10) {
+                for(let i = 1; i < cast.length; i++) {
+                    castString = castString.concat(", " + cast[i].name);
+                }
+            } else {
+                for(let i = 1; i < 10; i++) {
+                    castString = castString.concat(", " + cast[i].name);
+                }
+            }
+            
+            this.setState({ cast: castString });
+        });
+    };
 
     //if movie poster is clicked then change state to display or hide description
     displayData() {
-        //console.log(movieInfo.style.display);
         if (this.state.showDescrption) {
             this.setState({ showDescrption: false });
         } else {
@@ -217,8 +232,6 @@ class Movie extends React.Component {
                 data = result.data.body;
             }
         });
-
-        console.log(data);
 
         if (data.videos && data.videos.results) {
             trailer = data.videos.results.find(
@@ -265,7 +278,6 @@ class Movie extends React.Component {
                                             size = "large"
                                             variant="contained"
                                             onClick={() => {
-                                                this.dislikeMovie();
                                                 this.setMovie();
                                             }}
                                         >
@@ -282,6 +294,8 @@ class Movie extends React.Component {
                                         <p>{this.state.release}</p>
                                         <h4>Genre(s)</h4>
                                         <p>{this.state.genres}</p>
+                                        <h4>Cast</h4>
+                                        <p>{this.state.cast}</p>
                                     </div>
                                 ) : (
                                     <div className="hidden"></div>
