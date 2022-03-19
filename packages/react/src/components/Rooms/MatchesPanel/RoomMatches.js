@@ -113,7 +113,12 @@ class RoomMatches extends React.Component {
                             multiple
                             id="tags-standard"
                             options={this.state.providers}
-                            getOptionLabel={(option) => option +" (" +this.state.providersCount[option] + ")"}
+                            getOptionLabel={(option) =>
+                                option +
+                                " (" +
+                                this.state.providersCount[option] +
+                                ")"
+                            }
                             renderInput={(params) => (
                                 <TextField {...params} variant="standard" />
                             )}
@@ -136,7 +141,11 @@ class RoomMatches extends React.Component {
             // return element.stream
 
             if (
-                element.stream.some((provider) => this.state.selectedProviders.includes(provider) || this.state.selectedProviders.length < 1 )
+                element.stream.some(
+                    (provider) =>
+                        this.state.selectedProviders.includes(provider) ||
+                        this.state.selectedProviders.length < 1
+                )
             ) {
                 return element;
             }
@@ -197,6 +206,7 @@ class RoomMatches extends React.Component {
                                     showStreamOptions:
                                         !this.state.showStreamOptions,
                                 });
+                                this.setState({ selectedProviders: [] });
                             }}
                         >
                             <FilterListIcon />
