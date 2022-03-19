@@ -15,6 +15,7 @@ class RoomMatches extends React.Component {
     }
 
     componentDidMount() {
+        
         axios
             .get(`/room-matches?roomId=${this.props.roomId}`)
             .then((result) => {
@@ -24,6 +25,21 @@ class RoomMatches extends React.Component {
 
                 this.setState({ fetchedData: true });
             });
+
+        axios
+            .get(`/room-matches-providers?roomId=${this.props.roomId}`)
+            .then((result) => {
+                if (result.status === 200) {
+                    // this.setState({ matches: result.data });
+
+                    console.log(result.data);
+                }
+
+                // this.setState({ fetchedData: true });
+            });
+
+
+
     }
 
     render() {
