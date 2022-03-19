@@ -1186,16 +1186,25 @@ const getStreamProviders = async (movieId) => {
 
     const getReq = await axios
         .get(
-            // "https://api.themoviedb.org/3/movie/563/watch/providers?api_key=c2e4c84ff690ddf904bc717e174d2c61"
             `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=c2e4c84ff690ddf904bc717e174d2c61`
         )
         .then((res) => {
             const streamingProviders = res.data.results.CA.flatrate;
+            if (
+                res.data.results.CA.flatrate !== undefined &&
+                res.data.results.CA.flatrate.length > 0
+            ) {
+                // for each provider,
 
-            if (streamingProviders === undefined) {
-                return [];
+                let companies = [];
+
+                for (let company of streamingProviders) {
+                    companies.push(company.provider_name);
+                }
+
+                return companies;
             } else {
-                return streamingProviders;
+                return ["None"];
             }
         })
         .catch((e) => {
@@ -1216,11 +1225,15 @@ const combineMovieStreams = async (roomId) => {
     for (let movie of movieMatches) {
         let streams = await getStreamProviders(movie);
 
+        if (typeof streams[0] !== "string") {
+            streams = ["None"];
+        }
+
         const movieIdAndStream = {
             movieId: movie,
             stream: streams,
         };
-        console.log(movieIdAndStream);
+        // console.log(movieIdAndStream);
         combined.push(movieIdAndStream);
     }
 
