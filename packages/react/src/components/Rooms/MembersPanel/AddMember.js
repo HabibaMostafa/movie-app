@@ -13,6 +13,7 @@ class AddMember extends React.Component {
         if (props === {}) {
             return;
         }
+        //
 
         super(props);
         this.props = props;
