@@ -1,5 +1,7 @@
 require("./database/mongoose");
 
+const axios = require("axios");
+
 // load database models
 const User = require("./database/models/user");
 const Vote = require("./database/models/vote");
@@ -9,7 +11,7 @@ const Room = require("./database/models/room");
 const Member = require("./database/models/member");
 
 const express = require("express");
-const _= require('underscore');
+const _ = require("underscore");
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -433,7 +435,7 @@ app.get("/movie", (req, res) => {
 
 // gets all rooms that a user is a member of
 app.get("/roomsList", (req, res) => {
-// app.get("/rooms", (req, res) => {
+    // app.get("/rooms", (req, res) => {
     const userId = req.query.userId;
 
     //if no id added with the get request, exit
@@ -505,6 +507,18 @@ app.get("/room-matches", (req, res) => {
         });
 
     // get all the
+});
+
+app.get("/room-matches-providers", (req, res) => {
+    const roomId = req.query.roomId;
+
+    if (roomId === undefined) {
+        return res.status(400).send([]);
+    }
+
+    combineMovieStreams(roomId).then((results) => {
+        res.send(results);
+    });
 });
 
 app.get("/", (req, res) => {
@@ -1160,11 +1174,71 @@ const getRoomMatches = async (roomId) => {
     }
 
     // get the intersection
-    const intersection = _.intersection.apply(_,memberLikes)
+    const intersection = _.intersection.apply(_, memberLikes);
 
     return intersection;
 };
 
+const getStreamProviders = async (movieId) => {
+    if (movieId === undefined) {
+        return [];
+    }
+
+    const getReq = await axios
+        .get(
+            `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=c2e4c84ff690ddf904bc717e174d2c61`
+        )
+        .then((res) => {
+            const streamingProviders = res.data.results.CA.flatrate;
+            if (
+                res.data.results.CA.flatrate !== undefined &&
+                res.data.results.CA.flatrate.length > 0
+            ) {
+                // for each provider,
+
+                let companies = [];
+
+                for (let company of streamingProviders) {
+                    companies.push(company.provider_name);
+                }
+
+                return companies;
+            } else {
+                return ["None"];
+            }
+        })
+        .catch((e) => {
+            return [e];
+        });
+    return getReq;
+};
+
+const combineMovieStreams = async (roomId) => {
+    if (roomId === undefined) {
+        return [];
+    }
+
+    const movieMatches = await getRoomMatches(roomId);
+
+    let combined = [];
+
+    for (let movie of movieMatches) {
+        let streams = await getStreamProviders(movie);
+
+        if (typeof streams[0] !== "string") {
+            streams = ["None"];
+        }
+
+        const movieIdAndStream = {
+            movieId: movie,
+            stream: streams,
+        };
+        // console.log(movieIdAndStream);
+        combined.push(movieIdAndStream);
+    }
+
+    return combined;
+};
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
