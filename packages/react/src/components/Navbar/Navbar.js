@@ -112,7 +112,7 @@ const Navbar = () => {
                             </NavLink>
                         </li>
                         <li className="nav-item-menu">
-                          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', backgroundColor: 'black'}}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', backgroundColor: '#202020'}}>
                             <Tooltip title="Account settings">
                               <IconButton
                                 onClick={handleClickEvent}

@@ -147,7 +147,7 @@ class Room extends React.Component {
                 </div>
             );
         } else {
-            return <div className="room-container">Please Select a Room</div>;
+            return <div className="room-container"></div>;
         }
     }
 }

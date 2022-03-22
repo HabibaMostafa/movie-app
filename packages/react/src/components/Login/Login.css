@@ -53,3 +53,20 @@
   position: fixed; /* or absolute */
   top: 30%;
 }
+
+.centered {
+  height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#buttons {
+  background-color: goldenrod;
+  color: white;
+  font-size: 16px;
+  padding: 8px 50px;
+  border-radius: 20px;
+  margin: 10px 0px;
+  cursor: pointer;
+}

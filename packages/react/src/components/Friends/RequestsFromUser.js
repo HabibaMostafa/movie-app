@@ -68,9 +68,10 @@ class RequestsFromUser extends React.Component {
                 <div>
                     <Paper
                         style={{
-                            maxHeight: 200,
+                            maxHeight: 500,
                             overflow: "auto",
-                            maxWidth: 300,
+                            maxWidth: 360,
+                            padding: '10px',
                         }}
                     >
                         <List
@@ -80,6 +81,7 @@ class RequestsFromUser extends React.Component {
                                 bgcolor: "background.paper",
                             }}
                         >
+                            
                             {this.state.reqFromMe.map((value) => (
                                 <ListItem
                                     key={value}

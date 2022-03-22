@@ -4,7 +4,7 @@
     --off-white: #cfcfcf;
     --black: #000000;
     --dark-blue: #031d72;
-    --movie-yellow: #ecb220;
+    --movie-yellow: #cc9b1e;
 }
 
 div.movie, div.movie > * {
@@ -87,9 +87,12 @@ div.movie, div.movie > * {
 }
 
 .like-dislike-btns {
+
+    height: 10vh;
     display: flex;
     justify-content: center;
-    flex-direction: row;
+    align-items: center;
+      
 }
 
 .like-btn {
@@ -160,4 +163,24 @@ iframe {
 .hidden {
     display: none;
     visibility: hidden;
+}
+
+#like-button {
+    background-color: goldenrod;
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+
+#dislike-button {
+    background-color: rgb(32, 32, 32);
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
 }

@@ -98,8 +98,10 @@ class AddMember extends React.Component {
     render() {
         if (this.state.nonMembers.length > 0) {
             return (
-                <div className="add-member-container">
+                <div>
                     <h3>Add friends to room</h3>
+                    <div className="content-wrapper">
+                        
                     <Stack spacing={3} sx={{ width: 300 }}>
                         <Autocomplete
                             multiple
@@ -118,14 +120,15 @@ class AddMember extends React.Component {
                                 this.setUserToAdd(selection);
                             }}
                         />
-                    </Stack>
-                    <Button
+                        <Button
                         variant="contained"
                         id="add-member-btn"
                         onClick={this.addButtonHandler}
                     >
                         Add to Room
                     </Button>
+                    </Stack>
+                    </div>
                 </div>
             );
         } else {
