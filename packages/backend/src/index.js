@@ -225,6 +225,12 @@ app.post("/votes", (req, res) => {
     const user = req.body.user;
     const liked = true;
 
+    let mustWatch = req.body.mustWatch;
+
+    if (mustWatch === undefined || mustWatch === null) {
+        mustWatch = false;
+    }
+
     const parameters = {
         movieID,
         user,
@@ -240,6 +246,7 @@ app.post("/votes", (req, res) => {
                 movieID,
                 user,
                 liked,
+                mustWatch,
             });
 
             newVote
