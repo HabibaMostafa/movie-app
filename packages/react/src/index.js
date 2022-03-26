@@ -1,11 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { Home, Friends, Movies, Matches, Rooms } from "./pages/index";
+import { Home, Friends, Movies, Matches, Rooms, UserPage } from "./pages/index";
 
 import reportWebVitals from "./reportWebVitals";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+import { BrowserRouter as Router, Route, Routes, useHistory, useParams } from "react-router-dom";
+
+
+
 
 ReactDOM.render(
     <Router>
@@ -18,10 +22,15 @@ ReactDOM.render(
             <Route path="/matches" element={<Matches />} />
             <Route path="/matches/*" element={<Matches />} />
             <Route path="/rooms" element={<Rooms />} />
-            <Route path="/rooms*" element={<Rooms />} />
+            {/* <Route path="/rooms*" element={<Rooms />} /> */}
             <Route path="/rooms/*" element={<Rooms />} />
             <Route path="/matches/*" element={<Matches />} />
+            <Route path="/matches/*" element={<Matches />} />
 
+            <Route path="/UserPage/" element={<Home />} />
+            <Route path="/UserPage/:id" element={<UserPage /> } />
+
+            {/* <Route path="*"/> */}
             <Route path="*" element={<Home />} />
         </Routes>
     </Router>,
