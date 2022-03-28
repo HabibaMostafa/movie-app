@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
-import { Home, Friends, Movies, Matches } from "./pages/index";
+import { Home, Friends, Movies, Matches, Rooms } from "./pages/index";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -13,12 +12,17 @@ ReactDOM.render(
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/friends" element={<Friends />} />
-                <Route path="/friends/*" element={<Friends />} />
+            <Route path="/friends/*" element={<Friends />} />
             <Route path="/movies" element={<Movies />} />
+            <Route path="/movies/*" element={<Movies />} />
             <Route path="/matches" element={<Matches />} />
+            <Route path="/matches/*" element={<Matches />} />
+            <Route path="/rooms" element={<Rooms />} />
+            <Route path="/rooms*" element={<Rooms />} />
+            <Route path="/rooms/*" element={<Rooms />} />
+            <Route path="/matches/*" element={<Matches />} />
 
             <Route path="*" element={<Home />} />
-            
         </Routes>
     </Router>,
     document.getElementById("root")

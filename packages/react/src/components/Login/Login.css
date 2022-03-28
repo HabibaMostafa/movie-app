@@ -9,12 +9,26 @@
     color: aliceblue;
 }
 
+.signup-btn:hover { border: 1px solid var(--movie-yellow); }
+.authentication-btn:hover { border: 1px solid var(--movie-yellow); }
+
 .authentication-btn {
   background-color: black;
   color: white;
   stroke: white;
-  font-size: 16px;
-  padding: 8px 50px;
+  font-size: 18px;
+  padding: 10px 50px;
+  border-radius: 20px;
+  margin: 10px 0px;
+  cursor: pointer;
+}
+
+.signup-btn {
+  background-color: rgba(128, 123, 123, 0.37);
+  color: white;
+  stroke: white;
+  font-size: 18px;
+  padding: 10px 50px;
   border-radius: 20px;
   margin: 10px 0px;
   cursor: pointer;
@@ -31,5 +45,28 @@
 
 .login-input {
    color: black !important;
+   width: 350px;
+   border-radius: 20px !important;
 }
 
+.login-form {
+  position: fixed; /* or absolute */
+  top: 30%;
+}
+
+.centered {
+  height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#buttons {
+  background-color: goldenrod;
+  color: white;
+  font-size: 16px;
+  padding: 8px 50px;
+  border-radius: 20px;
+  margin: 10px 0px;
+  cursor: pointer;
+}

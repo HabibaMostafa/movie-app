@@ -4,7 +4,7 @@
     --off-white: #cfcfcf;
     --black: #000000;
     --dark-blue: #031d72;
-    --movie-yellow: #ecb220;
+    --movie-yellow: #cc9b1e;
 }
 
 div.movie, div.movie > * {
@@ -15,17 +15,20 @@ div.movie, div.movie > * {
 
 .movie-title {
     margin-bottom: 1em;
-    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+    color: var(--movie-yellow);
+    
 }
 
-.movie-btn:hover { border: 1px solid var(--movie-yellow); }
+.like-btn:hover { border: 1px white; }
+.dislike-btn:hover { border: 1px solid var(--movie-yellow); }
 
 .movie-btn {
     height: 4em;
     width: 4em;
     margin: 1em;
     border-radius: 50%;
-    border: 1px solid var(--dark-blue);
     color: var(--white);
     background-color: var(--black);
 }
@@ -53,27 +56,77 @@ div.movie, div.movie > * {
     }
 }
 
+@media (min-width: 721px) {
+    .movie-block {
+        display: block;
+    }
+}
+
+.top {
+    display: block;
+}
+
+.bottom {
+    display: block;
+    border-top: 1px solid var(--movie-yellow);
+    padding-top: 2em;
+    margin-top: 2em;
+
+}
+
 .movie-display {
     display: flex;
     justify-content: center;
     flex-direction: column;
 }
 
+.movie-poster {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .like-dislike-btns {
+
+    height: 10vh;
     display: flex;
     justify-content: center;
-    flex-direction: row;
+    align-items: center;
+      
+}
+
+.like-btn {
+    background-color: var(--movie-yellow);
+    color: var(--white);
+    font-weight: bold;
+    stroke: white;
+    font-size: 18px;
+    padding: 10px 40px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+
+.dislike-btn {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    stroke: white;
+    font-size: 18px;
+    padding: 10px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
 }
 
 .movie-info {
-    display: flex;
     justify-content: center;
     flex-direction: column;
 }
 
 .movie-info {
     position: relative;
-    padding: 4em 1em 6em;
+    padding: 4em 1em 1em;
 }
 
 @media (min-width: 721px) {
@@ -90,4 +143,44 @@ div.movie, div.movie > * {
         padding-top: 2em;
         margin-top: 2em;
     }
+}
+
+.video-player {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+}
+
+iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+#like-button {
+    background-color: goldenrod;
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+
+#dislike-button {
+    background-color: rgb(32, 32, 32);
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
 }
