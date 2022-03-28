@@ -7,6 +7,12 @@ import YouTube from "react-youtube";
 import Button from '@mui/material/Button';
 import { getGenre } from "./Genre.js";
 
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ToggleButton from "@mui/material/ToggleButton";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+
 var movie;
 var likesList;
 var min;
@@ -15,11 +21,15 @@ var page = 1;
 const movieIndex = [];
 var index = 0;
 var trailer = null;
+const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western', 'Unknown'];
 
 class Movie extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            showGenreOptions: false,
+            selectedGenre: [],
+        };
     }
 
     componentDidMount() {
@@ -30,6 +40,7 @@ class Movie extends React.Component {
 
         //get a list of previously "liked" movies
         this.getLikedList();
+        this.populateGenreList();
 
         axios.post("/movies", params).then((res) => {
             if (res.status === 200) {
@@ -44,6 +55,91 @@ class Movie extends React.Component {
             }
         });
     }
+
+    showOnlySelectedGenre = (selection) => {};
+
+    setSelectedGenre = (selection) => {
+        this.setState({ selectedGenre: selection });
+    };
+
+    filterByGenre = (show) => {
+        if(show) {  
+            return (
+                <Stack spacing={3} sx={{ width: 300 }}>
+                    <Autocomplete
+                        multiple
+                        id="tags-standard"
+                        options={genreList}
+                         getOptionLabel={(option) =>
+                            option 
+                        }
+                        renderInput={(params) => (
+                            <TextField {...params} variant="standard" />
+                        )}
+                        onChange={(e, selection) => {
+                            this.setSelectedGenre(selection);
+                        }}
+                    />
+                </Stack>
+            );
+        }
+        
+    };
+
+  /*  filteredMovieList = (show) => {
+        const filteredList = this.state.matchesAndProvider.filter((element) => {
+            // console.log(element.stream)
+            // console.log(this.state.selectedProviders)
+            // return element.stream
+
+            if (
+                element.stream.some(
+                    (provider) =>
+                        this.state.selectedProviders.includes(provider) ||
+                        this.state.selectedProviders.length < 1
+                )
+            ) {
+                return element;
+            }
+        });
+
+        
+
+        if (show) {
+            return (
+                <ImageList
+                    // sx={{ width: 1900, height: 450 }}
+                    cols={6}
+                    rowHeight={164}
+                >
+                    {filteredList.map((value) => (
+                        // console.log(value.movieId)
+                        <MovieListElement
+                            movieID={value.movieId}
+                            //onClick will handle nominations...
+                            // onClick={console.log("clicked!")}
+                        />
+                    ))}
+                </ImageList>
+            );
+        } else {
+            return (
+                <ImageList
+                    // sx={{ width: 1900, height: 450 }}
+                    cols={6}
+                    rowHeight={164}
+                >
+                    {this.state.matches.map((value) => (
+                        <MovieListElement
+                            movieID={value}
+                            //onClick will handle nominations...
+                            // onClick={console.log("clicked!")}
+                        />
+                    ))}
+                </ImageList>
+            );
+        }
+    };*/
 
     //create a list of movies to display in carousel
     setMovieIndex() {
@@ -245,6 +341,20 @@ class Movie extends React.Component {
         return (
             <section className="movie">
                 <div className="content">
+                    <ToggleButton
+                        value="check"
+                        selected={this.state.showGenreOptions}
+                        onChange={() => {
+                            this.setState({
+                                showGenreOptions:
+                                !this.state.showGenreOptions,
+                            });
+                            this.setState({ selectedGenres: [] });
+                        }}
+                    >
+                        <FilterListIcon />
+                    </ToggleButton>
+                    {this.filterByGenre(this.state.showGenreOptions)}
                     <div className="top">
                         <div className={this.className()}>
                             <div className="movie-display">
