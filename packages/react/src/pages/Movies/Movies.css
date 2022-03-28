@@ -4,3 +4,8 @@
     padding-top: 1%;
     padding-bottom: 1%;
 }
+
+.MuiAutocomplete-inputRoot {
+    color: whitesmoke;
+    background-color: #202020;
+}
