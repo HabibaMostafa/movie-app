@@ -6,7 +6,7 @@ import "./Movie.css";
 import YouTube from "react-youtube";
 import Button from '@mui/material/Button';
 import { getGenre, getGenreID } from "./Genre.js";
-import { getGenre, getGenreID } from "./Genre.js";
+import { getLanguage, getlanguageISO } from "./Language.js";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -23,7 +23,7 @@ const movieIndex = [];
 var index = 0;
 var trailer = null;
 const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
-const languageList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
+const languageList = ['Estonian', 'French', 'Irish', 'Croatian', 'Hungarian', 'Indonesian', 'Italian', 'Japanese', 'Korean', 'Latin', 'Dutch', 'Portuguese', 'Russian', 'Spanish', 'Swedish', 'Turkish', 'Arabic', 'Persian', 'English', 'Punjabi'];
 
 class Movie extends React.Component {
     constructor(props) {
@@ -259,7 +259,6 @@ class Movie extends React.Component {
             // just getting the first element to be safe
 
             const youtubeKey = res.data.results[0].key;
-            console.log(youtubeKey);
             this.setState({ movietrailer: youtubeKey });
         });
     };
@@ -270,12 +269,6 @@ class Movie extends React.Component {
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`;
 
         await axios.get(tmdb_url).then((res) => {
-
-            console.log("HERE");
-
-            console.log(res.data);
-            const movieLanguage = res.data.results.iso_639_1;
-            console.log(movieLanguage);
 
             this.setState({ language: movieLanguage });
         });
@@ -410,8 +403,7 @@ class Movie extends React.Component {
                                         <h4>Cast</h4>
                                         <p>{this.state.cast}</p>
                                         <h4>Language</h4>
-                                        <p>{this.state.language}</p>
-                                    </div>
+                                        <p>{getLanguage(String(this.state.language))}</p>                                          </div>
                                 ) : (
                                     <div className="hidden"></div>
                                 )}

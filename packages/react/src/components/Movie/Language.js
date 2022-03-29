@@ -16,7 +16,7 @@ export function getLanguage(iso) {
         case "hu":
             language = "Hungarian";
             break;
-        case "genre":
+        case "iso":
             language = "Indonesian";
             break;
         case "it":
@@ -71,65 +71,65 @@ export function getlanguageISO(language) {
     var iso;
     switch(language) {
         case "Estonian":
-            genre = "et";
+            iso = "et";
             break;
         case "French":
-            genre = "fr";
+            iso = "fr";
             break;
         case "Irish":
-            genre = "ga";
+            iso = "ga";
             break;
         case "Croatian":
-            genre = "hr";
+            iso = "hr";
             break;
         case "Hungarian":
-            genre = "hu";
+            iso = "hu";
             break;
         case "Indonesian":
-            genre = "id";
+            iso = "id";
             break;
         case "Italian":
-            genre = "it";
+            iso = "it";
             break;
         case "Japanese":
-            genre = "ja";
+            iso = "ja";
             break;
         case "Korean":
-            genre = "ko";
+            iso = "ko";
             break;
         case "Latin":
-            genre = "la";
+            iso = "la";
             break;
         case "Dutch":
-            genre = "nl";
+            iso = "nl";
             break;
         case "Portuguese":
-            genre = "pt";
+            iso = "pt";
             break;
         case "Russian":
-            genre = "ru";
+            iso = "ru";
             break;
         case "Spanish":
-            genre = "es";
+            iso = "es";
             break;
         case "Swedish":
-            genre = "sv";
+            iso = "sv";
             break;
         case "Turkish":
-            genre = "tr";
+            iso = "tr";
             break;
         case "Arabic":
-            genre = "ar";
+            iso = "ar";
             break;
         case "Persian":
-            genre = "fa";
+            iso = "fa";
             break;
         case "English":
-            genre = "en";
+            iso = "en";
             break;
         case "Punjabi":
-            genre = "pa";
+            iso = "pa";
             break;
     }
-    return genre;
+    return iso;
 }
