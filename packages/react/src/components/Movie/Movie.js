@@ -6,6 +6,7 @@ import "./Movie.css";
 import YouTube from "react-youtube";
 import Button from '@mui/material/Button';
 import { getGenre, getGenreID } from "./Genre.js";
+import { getGenre, getGenreID } from "./Genre.js";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -22,6 +23,7 @@ const movieIndex = [];
 var index = 0;
 var trailer = null;
 const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
+const languageList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
 
 class Movie extends React.Component {
     constructor(props) {
@@ -182,6 +184,8 @@ class Movie extends React.Component {
                 });
                 this.setState({ overview: movie.overview });
                 this.setState({ release: movie.release_date });
+                this.setState({ language: movie.original_language });
+
 
                 //grab genre ids then convert and save genre names
                 var genresArr = [];
@@ -194,6 +198,8 @@ class Movie extends React.Component {
                 this.getMovieTrailerID(movie.id);
 
                 this.getMovieCast(movie.id);
+
+                this.getMovieLanguagesFullName(movie.id);
 
                 index++;
             }
@@ -253,8 +259,25 @@ class Movie extends React.Component {
             // just getting the first element to be safe
 
             const youtubeKey = res.data.results[0].key;
-
+            console.log(youtubeKey);
             this.setState({ movietrailer: youtubeKey });
+        });
+    };
+    
+
+    getMovieLanguagesFullName = async (movieId) => {
+        const apiKey = "c2e4c84ff690ddf904bc717e174d2c61";
+        const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`;
+
+        await axios.get(tmdb_url).then((res) => {
+
+            console.log("HERE");
+
+            console.log(res.data);
+            const movieLanguage = res.data.results.iso_639_1;
+            console.log(movieLanguage);
+
+            this.setState({ language: movieLanguage });
         });
     };
 
@@ -386,6 +409,8 @@ class Movie extends React.Component {
                                         <p>{this.state.genres}</p>
                                         <h4>Cast</h4>
                                         <p>{this.state.cast}</p>
+                                        <h4>Language</h4>
+                                        <p>{this.state.language}</p>
                                     </div>
                                 ) : (
                                     <div className="hidden"></div>
