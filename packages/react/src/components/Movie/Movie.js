@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Movie.css";
 import YouTube from "react-youtube";
+
 import Button from '@mui/material/Button';
 import { getGenre, getGenreID } from "./Genre.js";
 
@@ -12,6 +13,10 @@ import ToggleButton from "@mui/material/ToggleButton";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
+
+
+//icon for the must watch button
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 var movie;
 var likesList;
@@ -241,9 +246,51 @@ class Movie extends React.Component {
         });
     };
 
+    //method for selecting a movie  as a must watch
+    mustWatchMovie = async () => {
+        let userID = this.props._id;
+
+        let data = JSON.stringify({
+            id: movie.id,
+            user: userID,
+            mustWatch: true,
+        });
+
+        const like = await fetch("/votes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: data,
+        }).then((res) => res.json());
+
+        // now check if there are any new matches using the
+        const params = {
+            voteId: like._id.toString(),
+        };
+
+        axios.post("/matches/vote", params).then((response) => {
+            //need new match notification here
+            if (response.status === 201) {
+                //means new matches were made,
+                //make a notification appear or something here
+                const toastData = () => (
+                    <div>
+                        <a href="/matches" style={{ textDecoration: "none" }}>
+                            {"New match with " +
+                                response.data[0].user2Username +
+                                "!"}
+                        </a>
+                    </div>
+                );
+                toast.info(toastData);
+            }
+        });
+    };
+
     // HIIII ALEXXX 😆
     // should proabbly throw this into the backend instead but w/e,
-    // Hello Miles! :D yeah we can move this later. if it isn't broken why fix it right? 
+    // Hello Miles! :D yeah we can move this later. if it isn't broken why fix it right?
     getMovieTrailerID = async (movieId) => {
         const apiKey = "c2e4c84ff690ddf904bc717e174d2c61";
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`;
@@ -261,23 +308,22 @@ class Movie extends React.Component {
     getMovieCast = async (movieId) => {
         const apiKey = "c2e4c84ff690ddf904bc717e174d2c61";
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}&language=en-US`;
-        
+
         await axios.get(tmdb_url).then((res) => {
-            
             const cast = res.data.cast;
             let castString = cast[0].name;
 
             // only show top 10 actors
-            if(cast.length < 10) {
-                for(let i = 1; i < cast.length; i++) {
+            if (cast.length < 10) {
+                for (let i = 1; i < cast.length; i++) {
                     castString = castString.concat(", " + cast[i].name);
                 }
             } else {
-                for(let i = 1; i < 10; i++) {
+                for (let i = 1; i < 10; i++) {
                     castString = castString.concat(", " + cast[i].name);
                 }
             }
-            
+
             this.setState({ cast: castString });
         });
     };
@@ -348,31 +394,40 @@ class Movie extends React.Component {
                                         alt="Movie Poster"
                                     ></img>
                                 </div>
+
                                 <div className="like-dislike-btns">
-                                   
-                                        <Button
-                                            id = "like-button"
-                                            size = "large"
-                                            variant="contained"
+                                    <div className="must-watch">
+                                        <FavoriteIcon
                                             onClick={() => {
-                                                this.likeMovie();
+                                                this.mustWatchMovie();
                                                 this.setMovie();
                                             }}
-                                            
-                                        >
-                                            LIKE
-                                        </Button>
-                                        &nbsp;&nbsp;
-                                        <Button 
-                                            id = "dislike-button"
-                                            size = "large"
-                                            variant="contained"
-                                            onClick={() => {
-                                                this.setMovie();
-                                            }}
-                                        >
-                                            DISLIKE
-                                        </Button>
+                                            sx={{ cursor: 'pointer' }}
+                                        />
+                                    </div>
+                                    &nbsp;&nbsp;
+                                    <Button
+                                        id="like-button"
+                                        size="large"
+                                        variant="contained"
+                                        onClick={() => {
+                                            this.likeMovie();
+                                            this.setMovie();
+                                        }}
+                                    >
+                                        LIKE
+                                    </Button>
+                                    &nbsp;&nbsp;
+                                    <Button
+                                        id="dislike-button"
+                                        size="large"
+                                        variant="contained"
+                                        onClick={() => {
+                                            this.setMovie();
+                                        }}
+                                    >
+                                        DISLIKE
+                                    </Button>
                                 </div>
                             </div>
                             <div>
@@ -421,7 +476,7 @@ class Movie extends React.Component {
                                 </div>
                             </div>
                         ) : (
-                                <div className="hidden"></div>
+                            <div className="hidden"></div>
                         )}
                     </div>
                     <ToastContainer
