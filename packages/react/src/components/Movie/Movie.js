@@ -119,29 +119,16 @@ class Movie extends React.Component {
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
         movie = this.state.movies.body.results[movieIndex[index]];
-        likesList = this.state.likes;
-        var i = 0;
-        var exit = false;
-        var foundGenre = false;
+        
+        var filters = false;
 
         try {
-            while(foundGenre === false) {
-                var genreIDArr = movie.genre_ids;
-                
-                if(this.state.selectedGenre != 0) {
-                    for(let i = 0; i < genreIDArr.length; i++) {
-                        if(genreIDArr[i] === this.state.selectedGenre) {
-                            foundGenre = true;
-                        }
-                    }
+            while(filters === false) {
+                if(this.genreFilter(movie) === true && this.likeFilter(movie) === true) {
+                    filters = true;
                 } else {
-                    foundGenre = true;
-                }
-                
-                if(!foundGenre) {
+                    //get new movie
                     index++;
-                //check if we are at the end of the movie list and need to
-                        // call API for more movies.
                     if (index >= max) {
                         page++;
                         this.componentDidMount();
@@ -149,54 +136,31 @@ class Movie extends React.Component {
         
                     movie = this.state.movies.body.results[movieIndex[index]];
                 }
-            }
+            }            
 
             
-            for (i = 0; i < likesList.length; i++) {
-                //check if the movie and liked movie are the same
-                if (likesList[i].movieID === movie.id) {
-                    index++;
-    
-                    //check if we are at the end of the movie list and need to
-                    // call API for more movies.
-                    if (index >= max) {
-                        page++;
-                        this.componentDidMount();
-                        i = likesList.length + 9;
-                        exit = true;
-    
-                        //set the next movie to be cheched
-                    } else {
-                        movie = this.state.movies.body.results[movieIndex[index]];
-                        i = 0;
-                    }
-                }
+            this.setState({ title: movie.title });
+            this.setState({
+                poster_path:
+                    "https://image.tmdb.org/t/p/w300" + movie.poster_path,
+            });
+            this.setState({ overview: movie.overview });
+            this.setState({ release: movie.release_date });
+
+            //grab genre ids then convert and save genre names
+            var genreIDArr = movie.genre_ids;
+            var genresArr = [];
+            for (let g = 0; g < genreIDArr.length; g++) {
+                genresArr.push(getGenre(genreIDArr[g]));
             }
-            
+            this.setState({ genres: genresArr.join(", ") });
 
-            if (!exit) {
-                this.setState({ title: movie.title });
-                this.setState({
-                    poster_path:
-                        "https://image.tmdb.org/t/p/w300" + movie.poster_path,
-                });
-                this.setState({ overview: movie.overview });
-                this.setState({ release: movie.release_date });
+            //setState is called in the below function for movietrailer
+            this.getMovieTrailerID(movie.id);
 
-                //grab genre ids then convert and save genre names
-                var genresArr = [];
-                for (let g = 0; g < genreIDArr.length; g++) {
-                    genresArr.push(getGenre(genreIDArr[g]));
-                }
-                this.setState({ genres: genresArr.join(", ") });
+            this.getMovieCast(movie.id);
 
-                //setState is called in the below function for movietrailer
-                this.getMovieTrailerID(movie.id);
-
-                this.getMovieCast(movie.id);
-
-                index++;
-            }
+            index++;
         
         } catch (error) {
             console.log("out of movies. Error: " + error);
@@ -316,6 +280,36 @@ class Movie extends React.Component {
             return trailer ? trailer : data.videos.results[0];
         }
     };
+
+    genreFilter(movie) {
+        var foundGenre = false;
+        var genreIDArr = movie.genre_ids;
+       
+        if(this.state.selectedGenre != 0) {
+            for(let i = 0; i < genreIDArr.length; i++) {
+                if(genreIDArr[i] === this.state.selectedGenre) {
+                    return true;
+                }
+            }
+        } else {
+            return true;
+        }
+        
+        return false;
+    }
+
+    likeFilter(movie) {
+        likesList = this.state.likes;
+
+        for (let i = 0; i < likesList.length; i++) {
+            //check if the movie and liked movie are the same
+            if (likesList[i].movieID === movie.id) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     render() {
         return (
