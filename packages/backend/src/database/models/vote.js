@@ -16,6 +16,11 @@ const Vote = mongoose.model("Vote", {
         type: Boolean,
         default: false,
         required: true,
+    },
+    mustWatch: {
+        type: Boolean,
+        default: false,
+        required: false,
     }
 });
 
