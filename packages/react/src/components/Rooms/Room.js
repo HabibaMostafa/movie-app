@@ -93,11 +93,11 @@ class Room extends React.Component {
                                 onChange={this.tabHandleChange}
                                 aria-label="basic tabs example"
                             >
-                                <Tab
+                                {/* <Tab
                                     label="Nominations"
                                     {...a11yProps(0)}
                                     sx={tabStyling}
-                                />
+                                /> */}
                                 <Tab
                                     label="Matches"
                                     {...a11yProps(1)}
