@@ -7,6 +7,8 @@ import YouTube from "react-youtube";
 import Button from "@mui/material/Button";
 import { getGenre } from "./Genre.js";
 
+import PlatformFilter from "./PlatformFilter";
+
 //icon for the must watch button
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
