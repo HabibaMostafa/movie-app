@@ -7,7 +7,16 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 
-const platformList = ["Crave", "Disney Plus", "Netflix", "Amazon Prime Video"];
+const platformList = [
+    { name: "Netflix", id: 8 },
+    { name: "Disney Plus", id: 337 },
+    { name: "Amazon Prime Video", id: 119 },
+    { name: "Crave", id: 230 },
+    { name: "Crave Plus", id: 231 },
+    { name: "Crave Starz", id: 305 },
+    { name: "Google Play Movies", id: 3 },
+    { name: "Apple iTunes", id: 2 },
+];
 
 class PlatformFilter extends React.Component {
     constructor(props) {
@@ -27,11 +36,12 @@ class PlatformFilter extends React.Component {
                         multiple
                         id="tags-standard"
                         options={platformList}
-                        getOptionLabel={(option) => option}
+                        getOptionLabel={(option) => option.name}
                         renderInput={(params) => (
                             <TextField {...params} variant="standard" />
                         )}
                         onChange={(e, selection) => {
+                            // console.log(selection)
                             this.platformSelectionHandler(selection);
                         }}
                     />

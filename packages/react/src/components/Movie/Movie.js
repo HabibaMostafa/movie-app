@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Movie.css";
 import YouTube from "react-youtube";
 
-
 import _ from "underscore";
 
 import Button from "@mui/material/Button";
@@ -64,8 +63,14 @@ class Movie extends React.Component {
     }
 
     componentDidMount() {
+
+        // need to start at the first page on every new api call
+        page = 1
+
         const params = {
             pageNum: page,
+            platforms: this.state.selectedPlatforms,
+            genre: this.state.selectedGenre,
         };
         this.setState({ showDescrption: true });
 
@@ -147,19 +152,22 @@ class Movie extends React.Component {
     setMovie() {
         movie = this.state.movies.body.results[movieIndex[index]];
 
-        this.getStreamProviders(movie.id)
+        // this.getStreamProviders(movie.id);
 
         // console.log(this.state);
 
         var filters = false;
 
         try {
-
-            while (filters === false && this.state.availablePlatforms.length > 0) {
+            while (
+                filters === false &&
+                this.state.availablePlatforms.length > 0
+            ) {
                 if (
+                    // this.streamFilter(movie) === true
+
                     this.genreFilter(movie) === true &&
-                    this.likeFilter(movie) === true &&
-                    this.streamFilter(movie) === true
+                    this.likeFilter(movie) === true
                 ) {
                     filters = true;
                 } else {
@@ -197,6 +205,13 @@ class Movie extends React.Component {
 
             index++;
         } catch (error) {
+
+            // we enter this error branch if the user presses dislike or like too fast
+            // leading to the page getting stuck
+            // calling componentDidMount() again fixes the problem 
+            page++;
+            this.componentDidMount();
+
             console.log("out of movies. Error: " + error);
         }
     }
@@ -322,55 +337,59 @@ class Movie extends React.Component {
     };
 
     streamFilter = (movie) => {
-        
-        const intersection = _.intersection(this.state.selectedPlatforms, this.state.availablePlatforms )
-        
-        
-        if(intersection.length > 0 || this.state.selectedPlatforms.length === 0 ) {
-            
-            console.log(movie.title, "platforms: ", this.state.availablePlatforms)
-            console.log("selected platforms: ", this.state.selectedPlatforms)
-            console.log("intersection ", intersection)
-            return true
-        }
+        return true;
 
-        else {
-            return false
-        }
+        //will fix this...
+        const intersection = _.intersection(
+            this.state.selectedPlatforms,
+            this.state.availablePlatforms
+        );
 
-    }
+        if (
+            intersection.length > 0 ||
+            this.state.selectedPlatforms.length === 0
+        ) {
+            console.log(
+                movie.title,
+                "platforms: ",
+                this.state.availablePlatforms
+            );
+            console.log("selected platforms: ", this.state.selectedPlatforms);
+            console.log("intersection ", intersection);
+            return true;
+        } else {
+            return false;
+        }
+    };
 
     getStreamProviders = async (movieId) => {
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=c2e4c84ff690ddf904bc717e174d2c61`;
-        await axios.get(tmdb_url).then((res) => {
-            const streamingProviders = res.data.results.CA.flatrate;
-            if (
-                res.data.results.CA.flatrate !== undefined &&
-                res.data.results.CA.flatrate.length > 0
-            ) {
-                // for each provider,
+        await axios
+            .get(tmdb_url)
+            .then((res) => {
+                const streamingProviders = res.data.results.CA.flatrate;
+                if (
+                    res.data.results.CA.flatrate !== undefined &&
+                    res.data.results.CA.flatrate.length > 0
+                ) {
+                    // for each provider,
 
-                let companies = [];
+                    let companies = [];
 
-                for (let company of streamingProviders) {
-                    companies.push(company.provider_name);
+                    for (let company of streamingProviders) {
+                        companies.push(company.provider_id);
+                    }
+
+                    this.setState({ availablePlatforms: companies });
+                } else {
+                    this.setState({ availablePlatforms: ["None"] });
                 }
-
-
-                this.setState({availablePlatforms: companies})
-            } else {
-                this.setState({availablePlatforms: ["None"]})
-                
-            }
-        })
-        .catch((e) => {
-            this.setState({availablePlatforms: ["error"]})
-            // console.log(["error"]);
-        });
+            })
+            .catch((e) => {
+                this.setState({ availablePlatforms: ["error"] });
+                // console.log(["error"]);
+            });
     };
-
-
-
 
     //if movie poster is clicked then change state to display or hide description
     displayData() {
@@ -443,10 +462,27 @@ class Movie extends React.Component {
 
     // callback function used by PlatformFilter
     selectedPlatformsCallback = (selected) => {
-
         this.setState({ selectedPlatforms: selected });
         // debugging to check that the component is returning the selected streaming platforms
         // console.log("setPlatforms: ", this.state.selectedPlatforms);
+    };
+
+    applyFilteringBtn = () => {
+        return (
+            <div>
+                <Button
+                    onClick={() => {
+                        this.getNewList();
+                    }}
+                >
+                    Apply Filtering
+                </Button>
+            </div>
+        );
+    };
+
+    getNewList = () => {
+        this.componentDidMount();
     };
 
     render() {
@@ -470,6 +506,8 @@ class Movie extends React.Component {
                     <PlatformFilter
                         platformCallback={this.selectedPlatformsCallback}
                     />
+
+                    {this.applyFilteringBtn()}
 
                     <div className="top">
                         <div className={this.className()}>
