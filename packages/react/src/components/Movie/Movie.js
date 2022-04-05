@@ -5,7 +5,9 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Movie.css";
 import YouTube from "react-youtube";
 
-import Button from '@mui/material/Button';
+import _ from "underscore";
+
+import Button from "@mui/material/Button";
 import { getGenre, getGenreID } from "./Genre.js";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -14,6 +16,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 
+import PlatformFilter from "./PlatformFilter";
 
 //icon for the must watch button
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -26,8 +29,10 @@ var page = 1;
 const movieIndex = [];
 var index = 0;
 var trailer = null;
+
 const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
 const decadeList = ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+
 
 class Movie extends React.Component {
     constructor(props) {
@@ -35,14 +40,25 @@ class Movie extends React.Component {
         this.state = {
             showGenreOptions: false,
             selectedGenre: 0,
+
+            selectedPlatforms: [],
+            availablePlatforms: [],
+
             showDecadeOptions: false,
             selectedDecade: 0,
+
         };
     }
 
     componentDidMount() {
+
+        // need to start at the first page on every new api call
+        page = 1
+
         const params = {
             pageNum: page,
+            platforms: this.state.selectedPlatforms,
+            genre: this.state.selectedGenre,
         };
         this.setState({ showDescrption: true });
 
@@ -55,6 +71,7 @@ class Movie extends React.Component {
                 this.setState({ movies: res.data });
                 //create a list of movies to display in carousel
                 this.setMovieIndex();
+
                 //set the next movie to display
                 this.setMovie();
             } else {
@@ -63,18 +80,16 @@ class Movie extends React.Component {
         });
     }
 
-
-
     setSelectedGenre = (selection) => {
-        if(selection === undefined || selection === null) {
+        if (selection === undefined || selection === null) {
             this.setState({ selectedGenre: 0 }, () => {
                 return;
-              }); 
+            });
         } else {
             let id = getGenreID(selection);
             this.setState({ selectedGenre: id }, () => {
                 return;
-              }); 
+            });
         }
     };
 
@@ -91,15 +106,13 @@ class Movie extends React.Component {
     };
 
     filterByGenre = (show) => {
-        if(show) {  
+        if (show) {
             return (
                 <Stack spacing={3} sx={{ width: 300 }}>
                     <Autocomplete
                         id="tags-standard"
                         options={genreList}
-                         getOptionLabel={(option) =>
-                            option 
-                        }
+                        getOptionLabel={(option) => option}
                         renderInput={(params) => (
                             <TextField {...params} variant="standard" />
                         )}
@@ -110,7 +123,6 @@ class Movie extends React.Component {
                 </Stack>
             );
         }
-        
     };
 
     filterByDecade = (show) => {
@@ -162,12 +174,29 @@ class Movie extends React.Component {
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
         movie = this.state.movies.body.results[movieIndex[index]];
-        
+
+        // this.getStreamProviders(movie.id);
+
+        // console.log(this.state);
+
         var filters = false;
 
         try {
-            while(filters === false) {
-                if(this.genreFilter(movie) === true && this.decadeFilter(movie) === true && this.likeFilter(movie) === true) {
+
+            while (
+                filters === false &&
+                this.state.availablePlatforms.length > 0
+            ) {
+                if (
+                    // this.streamFilter(movie) === true
+
+                    this.genreFilter(movie) === true &&
+                    this.decadeFilter(movie) === true &&
+                    this.likeFilter(movie) === true
+                  
+                  
+                ) {
+
                     filters = true;
                 } else {
                     //get new movie
@@ -176,12 +205,11 @@ class Movie extends React.Component {
                         page++;
                         this.componentDidMount();
                     }
-        
+
                     movie = this.state.movies.body.results[movieIndex[index]];
                 }
-            }            
+            }
 
-            
             this.setState({ title: movie.title });
             this.setState({
                 poster_path:
@@ -205,8 +233,14 @@ class Movie extends React.Component {
             this.setState({ showMovie: true });
 
             index++;
-        
         } catch (error) {
+
+            // we enter this error branch if the user presses dislike or like too fast
+            // leading to the page getting stuck
+            // calling componentDidMount() again fixes the problem 
+            page++;
+            this.componentDidMount();
+
             console.log("out of movies. Error: " + error);
             this.setState({ showMovie: false });
         }
@@ -332,6 +366,61 @@ class Movie extends React.Component {
         });
     };
 
+    streamFilter = (movie) => {
+        return true;
+
+        //will fix this...
+        const intersection = _.intersection(
+            this.state.selectedPlatforms,
+            this.state.availablePlatforms
+        );
+
+        if (
+            intersection.length > 0 ||
+            this.state.selectedPlatforms.length === 0
+        ) {
+            console.log(
+                movie.title,
+                "platforms: ",
+                this.state.availablePlatforms
+            );
+            console.log("selected platforms: ", this.state.selectedPlatforms);
+            console.log("intersection ", intersection);
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    getStreamProviders = async (movieId) => {
+        const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=c2e4c84ff690ddf904bc717e174d2c61`;
+        await axios
+            .get(tmdb_url)
+            .then((res) => {
+                const streamingProviders = res.data.results.CA.flatrate;
+                if (
+                    res.data.results.CA.flatrate !== undefined &&
+                    res.data.results.CA.flatrate.length > 0
+                ) {
+                    // for each provider,
+
+                    let companies = [];
+
+                    for (let company of streamingProviders) {
+                        companies.push(company.provider_id);
+                    }
+
+                    this.setState({ availablePlatforms: companies });
+                } else {
+                    this.setState({ availablePlatforms: ["None"] });
+                }
+            })
+            .catch((e) => {
+                this.setState({ availablePlatforms: ["error"] });
+                // console.log(["error"]);
+            });
+    };
+
     //if movie poster is clicked then change state to display or hide description
     displayData() {
         if (this.state.showDescrption) {
@@ -369,19 +458,24 @@ class Movie extends React.Component {
 
     genreFilter(movie) {
         var genreIDArr = movie.genre_ids;
-       
-        if(this.state.selectedGenre != 0) {
-            for(let i = 0; i < genreIDArr.length; i++) {
-                if(genreIDArr[i] === this.state.selectedGenre) {
+
+        if (this.state.selectedGenre != 0) {
+            for (let i = 0; i < genreIDArr.length; i++) {
+                if (genreIDArr[i] === this.state.selectedGenre) {
                     return true;
                 }
             }
         } else {
             return true;
         }
-        
+
         return false;
     }
+
+
+    //platformFilter = async (movie) => {
+    //    // i need to do a separate url call, the movie data does not include the stream provider list.
+    //};
 
     decadeFilter(movie) {
         var movieDate = movie.release_date.split("-");
@@ -437,6 +531,7 @@ class Movie extends React.Component {
         return false;
     }
 
+
     likeFilter(movie) {
         likesList = this.state.likes;
 
@@ -450,6 +545,31 @@ class Movie extends React.Component {
         return true;
     }
 
+    // callback function used by PlatformFilter
+    selectedPlatformsCallback = (selected) => {
+        this.setState({ selectedPlatforms: selected });
+        // debugging to check that the component is returning the selected streaming platforms
+        // console.log("setPlatforms: ", this.state.selectedPlatforms);
+    };
+
+    applyFilteringBtn = () => {
+        return (
+            <div>
+                <Button
+                    onClick={() => {
+                        this.getNewList();
+                    }}
+                >
+                    Apply Filtering
+                </Button>
+            </div>
+        );
+    };
+
+    getNewList = () => {
+        this.componentDidMount();
+    };
+
     render() {
         return (
             <section className="movie">
@@ -460,8 +580,7 @@ class Movie extends React.Component {
                         selected={this.state.showGenreOptions}
                         onChange={() => {
                             this.setState({
-                                showGenreOptions:
-                                !this.state.showGenreOptions,
+                                showGenreOptions: !this.state.showGenreOptions,
                             });
                             this.setState({ selectedGenre: 0 });
                         }}
@@ -469,6 +588,13 @@ class Movie extends React.Component {
                         <FilterListIcon />
                     </ToggleButton>
                     {this.filterByGenre(this.state.showGenreOptions)}
+
+                    <PlatformFilter
+                        platformCallback={this.selectedPlatformsCallback}
+                    />
+
+                    {this.applyFilteringBtn()}
+
                     <ToggleButton
                         value="check"
                         selected={this.state.showDecadeOptions}
@@ -483,6 +609,7 @@ class Movie extends React.Component {
                         <FilterListIcon />
                     </ToggleButton>
                     {this.filterByDecade(this.state.showDecadeOptions)}
+
                 </div>
                 {this.state.showMovie ? (
                                 <div className="content">
@@ -546,6 +673,10 @@ class Movie extends React.Component {
                                                         <p>{this.state.genres}</p>
                                                         <h4>Cast</h4>
                                                         <p>{this.state.cast}</p>
+
+
+                                                        //here...
+
                                                     </div>
                                                 ) : (
                                                     <div className="hidden"></div>

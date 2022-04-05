@@ -19,6 +19,7 @@
         "react-scripts": "5.0.0",
         "react-toastify": "^8.2.0",
         "react-youtube": "^7.14.0",
+        "underscore": "^1.13.2",
         "web-vitals": "^2.1.4"
     },
     "scripts": {

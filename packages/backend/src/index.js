@@ -136,7 +136,10 @@ app.post("/members", (req, res) => {
 app.post("/movies", (req, res) => {
     // make request to api
     var pageNum = req.body.pageNum;
-    const test = tmdb({ pageNum }, (error, response) => {
+
+    // console.log(req.body)
+    const test = tmdb(req.body, (error, response) => {
+    // const test = tmdb({ pageNum }, (error, response) => {
         if (error) {
             console.log("Error! =(");
             return;
