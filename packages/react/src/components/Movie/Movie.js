@@ -16,6 +16,11 @@ import ToggleButton from "@mui/material/ToggleButton";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 import PlatformFilter from "./PlatformFilter";
 
@@ -79,26 +84,36 @@ const languageList = [
     "Punjabi",
 ];
 
+const platformList = [
+    { name: "Netflix", id: 8 },
+    { name: "Disney Plus", id: 337 },
+    { name: "Amazon Prime Video", id: 119 },
+    { name: "Crave", id: 230 },
+    { name: "Crave Plus", id: 231 },
+    { name: "Crave Starz", id: 305 },
+    { name: "Google Play Movies", id: 3 },
+    { name: "Apple iTunes", id: 2 },
+];
+
 class Movie extends React.Component {
     constructor(props) {
+        if (props === {}) {
+            return;
+        }
         super(props);
+        this.props = props;
         this.state = {
-            showGenreOptions: false,
             selectedGenre: 0,
-
             selectedPlatforms: [],
             availablePlatforms: [],
-
-            showDecadeOptions: false,
             selectedDecade: 0,
-
-
-            showLanguageOptions: false,
             selectedLanguage: 0,
-
             dataFetched: false,
             movies: [],
-
+            filterListOpen: false,
+            platformFilterOn: false, 
+            userSelectedPlatforms: [],
+            showPlatformOptions: true,
         };
     }
 
@@ -183,28 +198,26 @@ class Movie extends React.Component {
         }
     };
 
-    filterByGenre = (show) => {
-        if (show) {
-            return (
-                <Stack spacing={3} sx={{ width: 300 }}>
-                    <Autocomplete
-                        id="tags-standard"
-                        options={genreList}
-                        getOptionLabel={(option) => option}
-                        renderInput={(params) => (
-                            <TextField {...params} variant="standard" />
-                        )}
-                        onChange={(e, selection) => {
-                            this.setSelectedGenre(selection);
-                        }}
-                    />
-                </Stack>
-            );
-        }
+    filterByGenre = () => {
+        return (
+            <Stack spacing={3} sx={{ width: 300 }}>
+                <Autocomplete
+                    id="tags-standard"
+                    options={genreList}
+                    getOptionLabel={(option) => option}
+                    renderInput={(params) => (
+                        <TextField {...params} variant="standard" />
+                    )}
+                    onChange={(e, selection) => {
+                        this.setSelectedGenre(selection);
+                    }}
+                />
+            </Stack>
+        );
     };
 
-    filterByLanguage = (show) => {
-        if(show) {  
+    filterByLanguage = () => {
+        
             return (
                 <Stack spacing={3} sx={{ width: 300 }}>
                     <Autocomplete
@@ -222,12 +235,9 @@ class Movie extends React.Component {
                     />
                 </Stack>
             );
-        }
-
     };
 
-    filterByDecade = (show) => {
-        if (show) {
+    filterByDecade = () => {
             return (
                 <Stack spacing={3} sx={{ width: 300 }}>
                     <Autocomplete
@@ -243,7 +253,31 @@ class Movie extends React.Component {
                     />
                 </Stack>
             );
-        }
+    };
+
+    filterByPlatform = () => {
+            return (
+                <Stack spacing={3} sx={{ width: 300 }}>
+                    <Autocomplete
+                        multiple
+                        id="tags-standard"
+                        options={platformList}
+                        getOptionLabel={(option) => option.name}
+                        renderInput={(params) => (
+                            <TextField {...params} variant="standard"/>
+                        )}
+                        onChange={(e, selection) => {
+                            this.platformSelectionHandler(selection);
+                        }}
+                    />
+                </Stack>
+            );
+    };
+
+    // await is needed here
+    platformSelectionHandler = async (newSelection) => {
+        await this.setState({ userSelectedPlatforms: newSelection });
+        await this.props.platformCallback(this.state.userSelectedPlatforms);
     };
 
     //create a list of movies to display in carousel
@@ -284,17 +318,8 @@ class Movie extends React.Component {
         let elementsOnThisPage = this.state.movies.body.results.length;
         let totalPages = this.state.movies.body.total_pages;
 
-
-
-
-        
-
-
         movie = this.state.movies.body.results[index];
         
-
-
-
         // movie = this.state.movies.body.results[movieIndex[index]];
 
         var filters = false;
@@ -729,69 +754,55 @@ class Movie extends React.Component {
     };
 
     getNewList = () => {
+        this.handleClose();
         this.componentDidMount();
     };
+
+    handleClickOpen = () => {
+        this.setState({ filterListOpen: true });
+    };
+    
+    handleClose = () => {
+        this.setState({ filterListOpen: false });
+    }
 
     render() {
         return (
             <section className="movie">
                 <div>
-                    <h4>Filters</h4>
                     <ToggleButton
                         value="check"
-                        selected={this.state.showGenreOptions}
-                        onChange={() => {
-                            this.setState({
-                                showGenreOptions: !this.state.showGenreOptions,
-                            });
-                            this.setState({ selectedGenre: 0 });
-                        }}
+                        onClick={this.handleClickOpen}
                     >
-                        {/* <FilterListIcon /> */}
-                        <Button>Genre</Button>
+                        <FilterListIcon />
                     </ToggleButton>
-                    {this.filterByGenre(this.state.showGenreOptions)}
 
-                    <PlatformFilter
-                        platformCallback={this.selectedPlatformsCallback}
-                    />
+                    <Dialog open={this.state.filterListOpen} onClose={this.handleClose}>
+                        <DialogTitle sx={{ background: "#242424" }}>
+                            Set Filters
+                        </DialogTitle>
+                        <DialogContent sx={{ background: "#242424" }}>
+                           
+                            <p>Genre</p>
+                            {this.filterByGenre(this.state.showGenreOptions)}
 
-                    <ToggleButton
-                        value="check"
-                        selected={this.state.showDecadeOptions}
-                        onChange={() => {
-                            this.setState({
-                                showDecadeOptions:
-                                    !this.state.showDecadeOptions,
-                            });
-                            this.setState({ selectedDecade: 0 });
-                        }}
-                    >
-                        {/* <FilterListIcon /> */}
-                        <Button>Decade</Button>
-                    </ToggleButton>
-                    {this.filterByDecade(this.state.showDecadeOptions)}
+                            <p>Platform</p>
+                            {this.filterByPlatform(this.state.showPlatformOptions)}
 
+                            <p>Decade</p>
+                            {this.filterByDecade(this.state.showDecadeOptions)}
+                            
+                            <p>Language</p>
+                            {this.filterByLanguage(this.state.showLanguageOptions)}
 
-                    <br />
-                    <ToggleButton
-                        value="check"
-                        selected={this.state.showLanguageOptions}
-                        onChange={() => {
-                            this.setState({
-                                showLanguageOptions:
-                                    !this.state.showLanguageOptions,
-                            });
-                            this.setState({ selectedLanguage: 0 });
-                        }}
-                    >
-                        {/* <FilterListIcon /> */}
-                        <Button>Language</Button>
-                    </ToggleButton>
-                    {this.filterByLanguage(this.state.showLanguageOptions)}
-
-
-                    {this.applyFilteringBtn()}
+     
+                        </DialogContent>
+                        <DialogActions sx={{ background: "#242424" }}>
+                            <Button onClick={this.handleClose}>Cancel</Button>
+                            <Button onClick={this.getNewList}>Apply</Button>
+                        </DialogActions>
+                    </Dialog>
+                    
                 </div>
                 {this.state.showMovie ? (
                     <div className="content">
