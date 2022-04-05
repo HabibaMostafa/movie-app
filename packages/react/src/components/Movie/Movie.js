@@ -789,6 +789,7 @@ class Movie extends React.Component {
                                             <p>{this.state.cast}</p>
                                             <h4>Language</h4>
                                             <p>{getLanguage(String(this.state.language))}</p>   
+
                                         </div>
                                     ) : (
                                         <div className="hidden"></div>
