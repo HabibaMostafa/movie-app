@@ -11,11 +11,15 @@ const tmdb = (params, callback) => {
 
     let genreQuery = "";
     let platformQuery = "";
+    let languageQuery = "";
 
     if (params.genre !== 0) {
         genreQuery = "&with_genres=" + params.genre.toString();
     }
 
+    if (params.language !== 0) {
+        languageQuery = "&with_original_language=" + params.language.toString();
+    }
     console.log("The params are:", params);
     // console.log(params.platforms.length);
 
@@ -87,7 +91,7 @@ const tmdb = (params, callback) => {
 
     // &with_watch_monetization_types=flatrate&with_watch_providers=8|119|337&watch_region=CA
 
-    const sample_url = `${tmdb_url}/discover/movie?api_key=${key}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_watch_monetization_types=flatrate${yearQuery}${genreQuery}${platformQuery}`;
+    const sample_url = `${tmdb_url}/discover/movie?api_key=${key}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_watch_monetization_types=flatrate${yearQuery}${genreQuery}${platformQuery}${languageQuery}`;
 
     // console.log(sample_url)
 
