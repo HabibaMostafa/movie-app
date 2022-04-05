@@ -92,14 +92,24 @@ class Movie extends React.Component {
             showDecadeOptions: false,
             selectedDecade: 0,
 
+
             showLanguageOptions: false,
             selectedLanguage: 0,
+
+            dataFetched: false,
+            movies: [],
+
         };
     }
 
     componentDidMount() {
         // need to start at the first page on every new api call
-        page = 1;
+
+        // let oldPage = page
+        // page = 1;
+
+        // start at the beginning of the page
+        index = 0;
 
         const params = {
             pageNum: page,
@@ -113,19 +123,27 @@ class Movie extends React.Component {
         //get a list of previously "liked" movies
         this.getLikedList();
 
-        axios.post("/movies", params).then((res) => {
-            if (res.status === 200) {
-                index = 0;
-                this.setState({ movies: res.data });
-                //create a list of movies to display in carousel
-                this.setMovieIndex();
+        axios
+            .post("/movies", params)
+            .then((res) => {
+                if (res.status === 200) {
+                    index = 0;
+                    this.setState({ movies: res.data });
 
-                //set the next movie to display
+                    //create a list of movies to display in carousel
+                    // this.setMovieIndex();
+
+                    //set the next movie to display
+                    // this.setMovie();
+                    // console.log(movies: res.data)
+                } else {
+                    this.setState({ movies: [] });
+                }
+            })
+            .then(() => this.setMovieIndex())
+            .then(() => {
                 this.setMovie();
-            } else {
-                this.setState({ movies: [] });
-            }
-        });
+            });
     }
 
     setSelectedGenre = (selection) => {
@@ -253,7 +271,31 @@ class Movie extends React.Component {
 
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
-        movie = this.state.movies.body.results[movieIndex[index]];
+        if (
+            this.state.movies.length < 1 ||
+            this.state.movies === undefined ||
+            this.state.movies === []
+        ) {
+            // if(!this.state.dataFetched) {
+            return;
+        }
+
+
+        let elementsOnThisPage = this.state.movies.body.results.length;
+        let totalPages = this.state.movies.body.total_pages;
+
+
+
+
+        
+
+
+        movie = this.state.movies.body.results[index];
+        
+
+
+
+        // movie = this.state.movies.body.results[movieIndex[index]];
 
         var filters = false;
 
@@ -273,12 +315,24 @@ class Movie extends React.Component {
                 } else {
                     //get new movie
                     index++;
-                    if (index >= max) {
+                    // if (index >= max) {
+                    if (index >= elementsOnThisPage) {
                         page++;
-                        this.componentDidMount();
+
+                        // loop to the beginning
+                        if (page > totalPages) {
+                            // console.log("out of movies" );
+                            // this.setState({ showMovie: false });
+                            page = 1;
+                            index = 0;
+                        } else {
+                            index = 0;
+                            this.componentDidMount();
+                        }
                     }
 
-                    movie = this.state.movies.body.results[movieIndex[index]];
+                    movie = this.state.movies.body.results[index];
+                    // movie = this.state.movies.body.results[movieIndex[index]];
                 }
             }
 
@@ -311,13 +365,27 @@ class Movie extends React.Component {
             // we enter this error branch if the user presses dislike or like too fast
             // leading to the page getting stuck
             // calling componentDidMount() again fixes the problem
-            page++;
-            this.componentDidMount();
+            // page++;
 
             // we can error check here if page is >= the number of pages specified in the data sent frfom the server
 
-            console.log("out of movies. Error: " + error);
-            this.setState({ showMovie: false });
+            let totalPages = this.state.movies.body.total_pages;
+
+            if (page + 1 > totalPages) {
+                console.log(page);
+                console.log(totalPages);
+                console.log(index);
+                console.log("out of movies. Error: " + error);
+                this.setState({ showMovie: false });
+                page = 1;
+                index = 0;
+            } else {
+                page++;
+                index = 0;
+                this.componentDidMount();
+            }
+
+            // console.log("total pages: ", this.state.movies.body.total_pages);
         }
     }
 
@@ -645,6 +713,8 @@ class Movie extends React.Component {
     };
 
     applyFilteringBtn = () => {
+        page = 1;
+        // index = 0;
         return (
             <div>
                 <Button
@@ -679,7 +749,6 @@ class Movie extends React.Component {
                     >
                         {/* <FilterListIcon /> */}
                         <Button>Genre</Button>
-
                     </ToggleButton>
                     {this.filterByGenre(this.state.showGenreOptions)}
 
@@ -687,7 +756,6 @@ class Movie extends React.Component {
                         platformCallback={this.selectedPlatformsCallback}
                     />
 
-                    
                     <ToggleButton
                         value="check"
                         selected={this.state.showDecadeOptions}
@@ -703,6 +771,7 @@ class Movie extends React.Component {
                         <Button>Decade</Button>
                     </ToggleButton>
                     {this.filterByDecade(this.state.showDecadeOptions)}
+
 
                     <br />
                     <ToggleButton
@@ -721,9 +790,8 @@ class Movie extends React.Component {
                     </ToggleButton>
                     {this.filterByLanguage(this.state.showLanguageOptions)}
 
+
                     {this.applyFilteringBtn()}
-
-
                 </div>
                 {this.state.showMovie ? (
                     <div className="content">
@@ -757,7 +825,7 @@ class Movie extends React.Component {
                                             size="large"
                                             variant="contained"
                                             onClick={() => {
-                                                this.likeMovie();
+                                                // this.likeMovie();
                                                 this.setMovie();
                                             }}
                                         >
@@ -769,6 +837,7 @@ class Movie extends React.Component {
                                             size="large"
                                             variant="contained"
                                             onClick={() => {
+                                                // index++;
                                                 this.setMovie();
                                             }}
                                         >
@@ -787,8 +856,10 @@ class Movie extends React.Component {
                                             <p>{this.state.genres}</p>
                                             <h4>Cast</h4>
                                             <p>{this.state.cast}</p>
+
                                             <h4>Language</h4>
                                             <p>{getLanguage(String(this.state.language))}</p>   
+
 
                                         </div>
                                     ) : (
