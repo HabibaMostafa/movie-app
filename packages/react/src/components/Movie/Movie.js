@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Movie.css";
 import YouTube from "react-youtube";
 
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import { getGenre, getGenreID } from "./Genre.js";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
@@ -13,7 +13,6 @@ import ToggleButton from "@mui/material/ToggleButton";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-
 
 import PlatformFilter from "./PlatformFilter";
 
@@ -28,7 +27,27 @@ var page = 1;
 const movieIndex = [];
 var index = 0;
 var trailer = null;
-const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
+const genreList = [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Documentary",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "History",
+    "Horror",
+    "Music",
+    "Mystery",
+    "Romance",
+    "Science Fiction",
+    "TV Movie",
+    "Thriller",
+    "War",
+    "Western",
+];
 
 class Movie extends React.Component {
     constructor(props) {
@@ -36,6 +55,7 @@ class Movie extends React.Component {
         this.state = {
             showGenreOptions: false,
             selectedGenre: 0,
+            selectedPlatforms: [],
         };
     }
 
@@ -62,31 +82,27 @@ class Movie extends React.Component {
         });
     }
 
-
-
     setSelectedGenre = (selection) => {
-        if(selection === undefined || selection === null) {
+        if (selection === undefined || selection === null) {
             this.setState({ selectedGenre: 0 }, () => {
                 return;
-              }); 
+            });
         } else {
             let id = getGenreID(selection);
             this.setState({ selectedGenre: id }, () => {
                 return;
-              }); 
+            });
         }
     };
 
     filterByGenre = (show) => {
-        if(show) {  
+        if (show) {
             return (
                 <Stack spacing={3} sx={{ width: 300 }}>
                     <Autocomplete
                         id="tags-standard"
                         options={genreList}
-                         getOptionLabel={(option) =>
-                            option 
-                        }
+                        getOptionLabel={(option) => option}
                         renderInput={(params) => (
                             <TextField {...params} variant="standard" />
                         )}
@@ -97,7 +113,12 @@ class Movie extends React.Component {
                 </Stack>
             );
         }
-        
+    };
+
+    // callback function used by PlatformFilter
+    selectedPlatformsCallback = (selected) => {
+        this.setState({ selectedPlatforms: selected });
+        console.log("setPlatforms: ", this.state.selectedPlatforms);
     };
 
     //create a list of movies to display in carousel
@@ -132,38 +153,37 @@ class Movie extends React.Component {
         var foundGenre = false;
 
         try {
-            while(foundGenre === false) {
+            while (foundGenre === false) {
                 var genreIDArr = movie.genre_ids;
-                
-                if(this.state.selectedGenre != 0) {
-                    for(let i = 0; i < genreIDArr.length; i++) {
-                        if(genreIDArr[i] === this.state.selectedGenre) {
+
+                if (this.state.selectedGenre != 0) {
+                    for (let i = 0; i < genreIDArr.length; i++) {
+                        if (genreIDArr[i] === this.state.selectedGenre) {
                             foundGenre = true;
                         }
                     }
                 } else {
                     foundGenre = true;
                 }
-                
-                if(!foundGenre) {
+
+                if (!foundGenre) {
                     index++;
-                //check if we are at the end of the movie list and need to
-                        // call API for more movies.
+                    //check if we are at the end of the movie list and need to
+                    // call API for more movies.
                     if (index >= max) {
                         page++;
                         this.componentDidMount();
                     }
-        
+
                     movie = this.state.movies.body.results[movieIndex[index]];
                 }
             }
 
-            
             for (i = 0; i < likesList.length; i++) {
                 //check if the movie and liked movie are the same
                 if (likesList[i].movieID === movie.id) {
                     index++;
-    
+
                     //check if we are at the end of the movie list and need to
                     // call API for more movies.
                     if (index >= max) {
@@ -171,15 +191,15 @@ class Movie extends React.Component {
                         this.componentDidMount();
                         i = likesList.length + 9;
                         exit = true;
-    
+
                         //set the next movie to be cheched
                     } else {
-                        movie = this.state.movies.body.results[movieIndex[index]];
+                        movie =
+                            this.state.movies.body.results[movieIndex[index]];
                         i = 0;
                     }
                 }
             }
-            
 
             if (!exit) {
                 this.setState({ title: movie.title });
@@ -204,7 +224,6 @@ class Movie extends React.Component {
 
                 index++;
             }
-        
         } catch (error) {
             console.log("out of movies. Error: " + error);
         }
@@ -374,15 +393,21 @@ class Movie extends React.Component {
                         selected={this.state.showGenreOptions}
                         onChange={() => {
                             this.setState({
-                                showGenreOptions:
-                                !this.state.showGenreOptions,
+                                showGenreOptions: !this.state.showGenreOptions,
                             });
+
                             this.setState({ selectedGenre: 0 });
                         }}
                     >
                         <FilterListIcon />
                     </ToggleButton>
+
                     {this.filterByGenre(this.state.showGenreOptions)}
+
+                    <PlatformFilter
+                        platformCallback={this.selectedPlatformsCallback}
+                    />
+
                     <div className="top">
                         <div className={this.className()}>
                             <div className="movie-display">
@@ -404,7 +429,7 @@ class Movie extends React.Component {
                                                 this.mustWatchMovie();
                                                 this.setMovie();
                                             }}
-                                            sx={{ cursor: 'pointer' }}
+                                            sx={{ cursor: "pointer" }}
                                         />
                                     </div>
                                     &nbsp;&nbsp;
