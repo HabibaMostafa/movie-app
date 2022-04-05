@@ -124,6 +124,8 @@ export function getGenreID(genre) {
         case "Western":
             id = 37;
             break;
+        default:
+            id = 0;
     }
     return id;
 }

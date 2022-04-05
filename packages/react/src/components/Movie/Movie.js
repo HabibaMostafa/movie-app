@@ -29,27 +29,10 @@ var page = 1;
 const movieIndex = [];
 var index = 0;
 var trailer = null;
-const genreList = [
-    "Action",
-    "Adventure",
-    "Animation",
-    "Comedy",
-    "Crime",
-    "Documentary",
-    "Drama",
-    "Family",
-    "Fantasy",
-    "History",
-    "Horror",
-    "Music",
-    "Mystery",
-    "Romance",
-    "Science Fiction",
-    "TV Movie",
-    "Thriller",
-    "War",
-    "Western",
-];
+
+const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
+const decadeList = ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+
 
 class Movie extends React.Component {
     constructor(props) {
@@ -57,8 +40,13 @@ class Movie extends React.Component {
         this.state = {
             showGenreOptions: false,
             selectedGenre: 0,
+
             selectedPlatforms: [],
             availablePlatforms: [],
+
+            showDecadeOptions: false,
+            selectedDecade: 0,
+
         };
     }
 
@@ -105,6 +93,18 @@ class Movie extends React.Component {
         }
     };
 
+    setSelectedDecade = (selection) => {
+        if(selection === undefined || selection === null) {
+            this.setState({ selectedDecade: 0 }, () => {
+                return;
+              }); 
+        } else {
+            this.setState({ selectedDecade: selection }, () => {
+                return;
+              }); 
+        }
+    };
+
     filterByGenre = (show) => {
         if (show) {
             return (
@@ -123,6 +123,29 @@ class Movie extends React.Component {
                 </Stack>
             );
         }
+    };
+
+    filterByDecade = (show) => {
+        if(show) {  
+            return (
+                <Stack spacing={3} sx={{ width: 300 }}>
+                    <Autocomplete
+                        id="tags-standard"
+                        options={decadeList}
+                         getOptionLabel={(option) =>
+                            option 
+                        }
+                        renderInput={(params) => (
+                            <TextField {...params} variant="standard" />
+                        )}
+                        onChange={(e, selection) => {
+                            this.setSelectedDecade(selection);
+                        }}
+                    />
+                </Stack>
+            );
+        }
+        
     };
 
     //create a list of movies to display in carousel
@@ -159,6 +182,7 @@ class Movie extends React.Component {
         var filters = false;
 
         try {
+
             while (
                 filters === false &&
                 this.state.availablePlatforms.length > 0
@@ -167,8 +191,12 @@ class Movie extends React.Component {
                     // this.streamFilter(movie) === true
 
                     this.genreFilter(movie) === true &&
+                    this.decadeFilter(movie) === true &&
                     this.likeFilter(movie) === true
+                  
+                  
                 ) {
+
                     filters = true;
                 } else {
                     //get new movie
@@ -202,6 +230,7 @@ class Movie extends React.Component {
             this.getMovieTrailerID(movie.id);
 
             this.getMovieCast(movie.id);
+            this.setState({ showMovie: true });
 
             index++;
         } catch (error) {
@@ -213,6 +242,7 @@ class Movie extends React.Component {
             this.componentDidMount();
 
             console.log("out of movies. Error: " + error);
+            this.setState({ showMovie: false });
         }
     }
 
@@ -427,7 +457,6 @@ class Movie extends React.Component {
     };
 
     genreFilter(movie) {
-        var foundGenre = false;
         var genreIDArr = movie.genre_ids;
 
         if (this.state.selectedGenre != 0) {
@@ -443,9 +472,65 @@ class Movie extends React.Component {
         return false;
     }
 
-    platformFilter = async (movie) => {
-        // i need to do a separate url call, the movie data does not include the stream provider list.
-    };
+
+    //platformFilter = async (movie) => {
+    //    // i need to do a separate url call, the movie data does not include the stream provider list.
+    //};
+
+    decadeFilter(movie) {
+        var movieDate = movie.release_date.split("-");
+        var decadeStart = null;
+        var decadeEnd =  null;
+
+        switch(this.state.selectedDecade) {
+            case "1950s":
+                decadeStart = 1950;
+                decadeEnd = 1959;
+                break;
+            case "1960s":
+                decadeStart = 1960;
+                decadeEnd = 1969;
+                break;
+            case "1970s":
+                decadeStart = 1970;
+                decadeEnd = 1979;
+                break;
+            case "1980s":
+                decadeStart = 1980;
+                decadeEnd = 1989;
+                break;
+            case "1990s":
+                decadeStart = 1990;
+                decadeEnd = 1999;
+                break;
+            case "2000s":
+                decadeStart = 2000;
+                decadeEnd = 2009;
+                break;
+            case "2010s":
+                decadeStart = 2010;
+                decadeEnd = 2019;
+                break;
+            case "2020s":
+                decadeStart = 2020;
+                decadeEnd = 2029;
+                break;
+            default:
+                decadeStart = null;
+                decadeEnd =  null;
+        }
+       
+        if(this.state.selectedDecade != 0) {
+            if (parseInt(movieDate[0]) <= decadeEnd && parseInt(movieDate[0]) >= decadeStart) {
+                return true;
+            }
+        } else {
+            return true;
+        }
+        
+        return false;
+    }
+
 
     likeFilter(movie) {
         likesList = this.state.likes;
@@ -488,7 +573,8 @@ class Movie extends React.Component {
     render() {
         return (
             <section className="movie">
-                <div className="content">
+                <div>
+                    <h4>Filters</h4>
                     <ToggleButton
                         value="check"
                         selected={this.state.showGenreOptions}
@@ -509,117 +595,144 @@ class Movie extends React.Component {
 
                     {this.applyFilteringBtn()}
 
-                    <div className="top">
-                        <div className={this.className()}>
-                            <div className="movie-display">
-                                <div>
-                                    <img
-                                        className="movie-poster movie-visual"
-                                        onClick={() => {
-                                            this.displayData();
-                                        }}
-                                        src={this.state.poster_path}
-                                        alt="Movie Poster"
-                                    ></img>
-                                </div>
+                    <ToggleButton
+                        value="check"
+                        selected={this.state.showDecadeOptions}
+                        onChange={() => {
+                            this.setState({
+                                showDecadeOptions:
+                                !this.state.showDecadeOptions,
+                            });
+                            this.setState({ selectedDecade: 0 });
+                        }}
+                    >
+                        <FilterListIcon />
+                    </ToggleButton>
+                    {this.filterByDecade(this.state.showDecadeOptions)}
 
-                                <div className="like-dislike-btns">
-                                    <div className="must-watch">
-                                        <FavoriteIcon
-                                            onClick={() => {
-                                                this.mustWatchMovie();
-                                                this.setMovie();
-                                            }}
-                                            sx={{ cursor: "pointer" }}
-                                        />
-                                    </div>
-                                    &nbsp;&nbsp;
-                                    <Button
-                                        id="like-button"
-                                        size="large"
-                                        variant="contained"
-                                        onClick={() => {
-                                            this.likeMovie();
-                                            this.setMovie();
-                                        }}
-                                    >
-                                        LIKE
-                                    </Button>
-                                    &nbsp;&nbsp;
-                                    <Button
-                                        id="dislike-button"
-                                        size="large"
-                                        variant="contained"
-                                        onClick={() => {
-                                            this.setMovie();
-                                        }}
-                                    >
-                                        DISLIKE
-                                    </Button>
-                                </div>
-                            </div>
-                            <div>
-                                {this.state.showDescrption ? (
-                                    <div id="minfo" className="movie-info">
-                                        <h3>Description</h3>
-                                        <p>{this.state.overview}</p>
-                                        <h4>Release Date</h4>
-                                        <p>{this.state.release}</p>
-                                        <h4>Genre(s)</h4>
-                                        <p>{this.state.genres}</p>
-                                        <h4>Cast</h4>
-                                        <p>{this.state.cast}</p>
-                                    </div>
-                                ) : (
-                                    <div className="hidden"></div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        {this.state.showDescrption ? (
-                            <div className="bottom">
-                                <div className="movie-trailer">
-                                    <h4>Trailer</h4>
-                                    <div className="video-player">
-                                        <YouTube
-                                            videoId={this.state.movietrailer}
-                                            className="youtube"
-                                            opts={{
-                                                width: "100%",
-                                                height: "100%",
-                                                playerVars: {
-                                                    autoplay: 0,
-                                                    controls: 1,
-                                                    cc_load_policy: 0,
-                                                    fs: 0,
-                                                    iv_load_policy: 0,
-                                                    modestbranding: 0,
-                                                    rel: 0,
-                                                    showinfo: 0,
-                                                },
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="hidden"></div>
-                        )}
-                    </div>
-                    <ToastContainer
-                        position="top-right"
-                        autoClose={5000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        theme="dark"
-                    />
                 </div>
+                {this.state.showMovie ? (
+                                <div className="content">
+                                    <div className="top">
+                                        <div className={this.className()}>
+                                            <div className="movie-display">
+                                                <div>
+                                                    <img
+                                                        className="movie-poster movie-visual"
+                                                        onClick={() => {
+                                                            this.displayData();
+                                                        }}
+                                                        src={this.state.poster_path}
+                                                        alt="Movie Poster"
+                                                    ></img>
+                                                </div>
+                
+                                                <div className="like-dislike-btns">
+                                                    <div className="must-watch">
+                                                        <FavoriteIcon
+                                                            onClick={() => {
+                                                                this.mustWatchMovie();
+                                                                this.setMovie();
+                                                            }}
+                                                            sx={{ cursor: 'pointer' }}
+                                                        />
+                                                    </div>
+                                                    &nbsp;&nbsp;
+                                                    <Button
+                                                        id="like-button"
+                                                        size="large"
+                                                        variant="contained"
+                                                        onClick={() => {
+                                                            this.likeMovie();
+                                                            this.setMovie();
+                                                        }}
+                                                    >
+                                                        LIKE
+                                                    </Button>
+                                                    &nbsp;&nbsp;
+                                                    <Button
+                                                        id="dislike-button"
+                                                        size="large"
+                                                        variant="contained"
+                                                        onClick={() => {
+                                                            this.setMovie();
+                                                        }}
+                                                    >
+                                                        DISLIKE
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                {this.state.showDescrption ? (
+                                                    <div id="minfo" className="movie-info">
+                                                        <h3>Description</h3>
+                                                        <p>{this.state.overview}</p>
+                                                        <h4>Release Date</h4>
+                                                        <p>{this.state.release}</p>
+                                                        <h4>Genre(s)</h4>
+                                                        <p>{this.state.genres}</p>
+                                                        <h4>Cast</h4>
+                                                        <p>{this.state.cast}</p>
+
+
+                                                        //here...
+
+                                                    </div>
+                                                ) : (
+                                                    <div className="hidden"></div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {this.state.showDescrption ? (
+                                            <div className="bottom">
+                                                <div className="movie-trailer">
+                                                    <h4>Trailer</h4>
+                                                    <div className="video-player">
+                                                        <YouTube
+                                                            videoId={this.state.movietrailer}
+                                                            className="youtube"
+                                                            opts={{
+                                                                width: "100%",
+                                                                height: "100%",
+                                                                playerVars: {
+                                                                    autoplay: 0,
+                                                                    controls: 1,
+                                                                    cc_load_policy: 0,
+                                                                    fs: 0,
+                                                                    iv_load_policy: 0,
+                                                                    modestbranding: 0,
+                                                                    rel: 0,
+                                                                    showinfo: 0,
+                                                                },
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="hidden"></div>
+                                        )}
+                                    </div>
+                                    <ToastContainer
+                                        position="top-right"
+                                        autoClose={5000}
+                                        hideProgressBar={false}
+                                        newestOnTop={false}
+                                        closeOnClick
+                                        rtl={false}
+                                        pauseOnFocusLoss
+                                        draggable
+                                        pauseOnHover
+                                        theme="dark"
+                                    />
+                                </div>
+                            ) : (
+                                <div>
+                                    <h2>Out of Movies, Maybe try a different filter?</h2>
+                                </div>
+                            )}
             </section>
         );
     }
