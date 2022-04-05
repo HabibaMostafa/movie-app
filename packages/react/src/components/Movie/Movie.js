@@ -698,7 +698,7 @@ class Movie extends React.Component {
                                             <p>{this.state.genres}</p>
                                             <h4>Cast</h4>
                                             <p>{this.state.cast}</p>
-                                            //here...
+                                            
                                         </div>
                                     ) : (
                                         <div className="hidden"></div>
