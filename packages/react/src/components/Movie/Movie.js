@@ -27,6 +27,7 @@ const movieIndex = [];
 var index = 0;
 var trailer = null;
 const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
+const decadeList = ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
 
 class Movie extends React.Component {
     constructor(props) {
@@ -34,6 +35,8 @@ class Movie extends React.Component {
         this.state = {
             showGenreOptions: false,
             selectedGenre: 0,
+            showDecadeOptions: false,
+            selectedDecade: 0,
         };
     }
 
@@ -75,6 +78,18 @@ class Movie extends React.Component {
         }
     };
 
+    setSelectedDecade = (selection) => {
+        if(selection === undefined || selection === null) {
+            this.setState({ selectedDecade: 0 }, () => {
+                return;
+              }); 
+        } else {
+            this.setState({ selectedDecade: selection }, () => {
+                return;
+              }); 
+        }
+    };
+
     filterByGenre = (show) => {
         if(show) {  
             return (
@@ -90,6 +105,29 @@ class Movie extends React.Component {
                         )}
                         onChange={(e, selection) => {
                             this.setSelectedGenre(selection);
+                        }}
+                    />
+                </Stack>
+            );
+        }
+        
+    };
+
+    filterByDecade = (show) => {
+        if(show) {  
+            return (
+                <Stack spacing={3} sx={{ width: 300 }}>
+                    <Autocomplete
+                        id="tags-standard"
+                        options={decadeList}
+                         getOptionLabel={(option) =>
+                            option 
+                        }
+                        renderInput={(params) => (
+                            <TextField {...params} variant="standard" />
+                        )}
+                        onChange={(e, selection) => {
+                            this.setSelectedDecade(selection);
                         }}
                     />
                 </Stack>
@@ -129,7 +167,7 @@ class Movie extends React.Component {
 
         try {
             while(filters === false) {
-                if(this.genreFilter(movie) === true && this.likeFilter(movie) === true) {
+                if(this.genreFilter(movie) === true && this.decadeFilter(movie) === true && this.likeFilter(movie) === true) {
                     filters = true;
                 } else {
                     //get new movie
@@ -328,7 +366,6 @@ class Movie extends React.Component {
     };
 
     genreFilter(movie) {
-        var foundGenre = false;
         var genreIDArr = movie.genre_ids;
        
         if(this.state.selectedGenre != 0) {
@@ -336,6 +373,60 @@ class Movie extends React.Component {
                 if(genreIDArr[i] === this.state.selectedGenre) {
                     return true;
                 }
+            }
+        } else {
+            return true;
+        }
+        
+        return false;
+    }
+
+    decadeFilter(movie) {
+        var movieDate = movie.release_date.split("-");
+        var decadeStart = null;
+        var decadeEnd =  null;
+
+        switch(this.state.selectedDecade) {
+            case "1950s":
+                decadeStart = 1950;
+                decadeEnd = 1959;
+                break;
+            case "1960s":
+                decadeStart = 1960;
+                decadeEnd = 1969;
+                break;
+            case "1970s":
+                decadeStart = 1970;
+                decadeEnd = 1979;
+                break;
+            case "1980s":
+                decadeStart = 1980;
+                decadeEnd = 1989;
+                break;
+            case "1990s":
+                decadeStart = 1990;
+                decadeEnd = 1999;
+                break;
+            case "2000s":
+                decadeStart = 2000;
+                decadeEnd = 2009;
+                break;
+            case "2010s":
+                decadeStart = 2010;
+                decadeEnd = 2019;
+                break;
+            case "2020s":
+                decadeStart = 2020;
+                decadeEnd = 2029;
+                break;
+            default:
+                decadeStart = null;
+                decadeEnd =  null;
+        }
+       
+        if(this.state.selectedDecade != 0) {
+            if (parseInt(movieDate[0]) <= decadeEnd && parseInt(movieDate[0]) >= decadeStart) {
+                return true;
             }
         } else {
             return true;
@@ -375,6 +466,20 @@ class Movie extends React.Component {
                         <FilterListIcon />
                     </ToggleButton>
                     {this.filterByGenre(this.state.showGenreOptions)}
+                    <ToggleButton
+                        value="check"
+                        selected={this.state.showDecadeOptions}
+                        onChange={() => {
+                            this.setState({
+                                showDecadeOptions:
+                                !this.state.showDecadeOptions,
+                            });
+                            this.setState({ selectedDecade: 0 });
+                        }}
+                    >
+                        <FilterListIcon />
+                    </ToggleButton>
+                    {this.filterByDecade(this.state.showDecadeOptions)}
                     <div className="top">
                         <div className={this.className()}>
                             <div className="movie-display">
