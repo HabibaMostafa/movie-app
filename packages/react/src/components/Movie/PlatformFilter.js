@@ -61,8 +61,6 @@ class PlatformFilter extends React.Component {
             <div className="platform-filter-wrapper">
                 {/* The button that will toggle showing or not showing the filter list */}
                 <ToggleButton
-                    // value="check"
-                    // selected={this.state.filterOn}
                     onChange={() => {
                         this.filterButtonHandler();
                     }}

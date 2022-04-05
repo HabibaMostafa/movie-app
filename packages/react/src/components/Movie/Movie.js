@@ -80,6 +80,12 @@ class Movie extends React.Component {
                 this.setState({ movies: [] });
             }
         });
+
+
+        
+
+
+
     }
 
     setSelectedGenre = (selection) => {
@@ -312,6 +318,7 @@ class Movie extends React.Component {
     // HIIII ALEXXX 😆
     // should proabbly throw this into the backend instead but w/e,
     // Hello Miles! :D yeah we can move this later. if it isn't broken why fix it right?
+    // Yes exactly, we can refactor it for the 2023 version later
     getMovieTrailerID = async (movieId) => {
         const apiKey = "c2e4c84ff690ddf904bc717e174d2c61";
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`;
