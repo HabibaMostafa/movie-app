@@ -9,6 +9,7 @@ import _ from "underscore";
 
 import Button from "@mui/material/Button";
 import { getGenre, getGenreID } from "./Genre.js";
+import { getLanguage, getLanguageISO } from "./Translations.js";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -63,6 +64,21 @@ const decadeList = [
     "2020s",
 ];
 
+const languageList = [
+    "French",
+    "Italian",
+    "Japanese",
+    "Korean",
+    "Latin",
+    "Dutch",
+    "Russian",
+    "Spanish",
+    "Turkish",
+    "Arabic",
+    "English",
+    "Punjabi",
+];
+
 class Movie extends React.Component {
     constructor(props) {
         super(props);
@@ -75,8 +91,14 @@ class Movie extends React.Component {
 
             showDecadeOptions: false,
             selectedDecade: 0,
+
+
+            showLanguageOptions: false,
+            selectedLanguage: 0,
+
             dataFetched: false,
             movies: [],
+
         };
     }
 
@@ -94,6 +116,7 @@ class Movie extends React.Component {
             platforms: this.state.selectedPlatforms,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
+            language: getLanguageISO(this.state.selectedLanguage)
         };
         this.setState({ showDescrption: true });
 
@@ -136,6 +159,18 @@ class Movie extends React.Component {
         }
     };
 
+    setSelectedLanguage = (selection) => {
+        if(selection === undefined || selection === null) {
+            this.setState({ selectedLanguage: 0 }, () => {
+                return;
+              }); 
+        } else {
+            this.setState({ selectedLanguage: selection }, () => {
+                return;
+              }); 
+        }
+    };
+
     setSelectedDecade = (selection) => {
         if (selection === undefined || selection === null) {
             this.setState({ selectedDecade: 0 }, () => {
@@ -166,6 +201,29 @@ class Movie extends React.Component {
                 </Stack>
             );
         }
+    };
+
+    filterByLanguage = (show) => {
+        if(show) {  
+            return (
+                <Stack spacing={3} sx={{ width: 300 }}>
+                    <Autocomplete
+                        id="tags-standard"
+                        options={languageList}
+                         getOptionLabel={(option) =>
+                            option 
+                        }
+                        renderInput={(params) => (
+                            <TextField {...params} variant="standard" />
+                        )}
+                        onChange={(e, selection) => {
+                            this.setSelectedLanguage(selection);
+                        }}
+                    />
+                </Stack>
+            );
+        }
+
     };
 
     filterByDecade = (show) => {
@@ -250,6 +308,7 @@ class Movie extends React.Component {
                     // this.streamFilter(movie) === true <--  not needed, the post request does it already -Miles
                     this.genreFilter(movie) === true &&
                     this.decadeFilter(movie) === true &&
+                    this.languageFilter(movie) === true &&
                     this.likeFilter(movie) === true
                 ) {
                     filters = true;
@@ -284,6 +343,7 @@ class Movie extends React.Component {
             });
             this.setState({ overview: movie.overview });
             this.setState({ release: movie.release_date });
+            this.setState({ language: movie.original_language });
 
             //grab genre ids then convert and save genre names
             var genreIDArr = movie.genre_ids;
@@ -297,6 +357,7 @@ class Movie extends React.Component {
             this.getMovieTrailerID(movie.id);
 
             this.getMovieCast(movie.id);
+
             this.setState({ showMovie: true });
 
             index++;
@@ -539,6 +600,8 @@ class Movie extends React.Component {
     };
 
     genreFilter(movie) {
+        console.log("LOL");
+
         var genreIDArr = movie.genre_ids;
 
         if (this.state.selectedGenre != 0) {
@@ -546,6 +609,20 @@ class Movie extends React.Component {
                 if (genreIDArr[i] === this.state.selectedGenre) {
                     return true;
                 }
+            }
+        } else {
+            return true;
+        }
+
+        return false;
+    }
+
+    languageFilter(movie) {
+        var movieLanguage = movie.original_language;
+        console.log(movieLanguage)
+        if (this.state.selectedLanguage != 0) {
+            if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
+                return true;
             }
         } else {
             return true;
@@ -695,6 +772,25 @@ class Movie extends React.Component {
                     </ToggleButton>
                     {this.filterByDecade(this.state.showDecadeOptions)}
 
+
+                    <br />
+                    <ToggleButton
+                        value="check"
+                        selected={this.state.showLanguageOptions}
+                        onChange={() => {
+                            this.setState({
+                                showLanguageOptions:
+                                    !this.state.showLanguageOptions,
+                            });
+                            this.setState({ selectedLanguage: 0 });
+                        }}
+                    >
+                        {/* <FilterListIcon /> */}
+                        <Button>Language</Button>
+                    </ToggleButton>
+                    {this.filterByLanguage(this.state.showLanguageOptions)}
+
+
                     {this.applyFilteringBtn()}
                 </div>
                 {this.state.showMovie ? (
@@ -760,6 +856,11 @@ class Movie extends React.Component {
                                             <p>{this.state.genres}</p>
                                             <h4>Cast</h4>
                                             <p>{this.state.cast}</p>
+
+                                            <h4>Language</h4>
+                                            <p>{getLanguage(String(this.state.language))}</p>   
+
+
                                         </div>
                                     ) : (
                                         <div className="hidden"></div>
