@@ -27,6 +27,7 @@ var likesList;
 var min;
 var max;
 var page = 1;
+console.log("line 29...", page)
 const movieIndex = [];
 var index = 0;
 var trailer = null;
@@ -92,13 +93,11 @@ class Movie extends React.Component {
             showDecadeOptions: false,
             selectedDecade: 0,
 
-
             showLanguageOptions: false,
             selectedLanguage: 0,
 
             dataFetched: false,
             movies: [],
-
         };
     }
 
@@ -108,15 +107,20 @@ class Movie extends React.Component {
         // let oldPage = page
         // page = 1;
 
-        // start at the beginning of the page
+        // start at the beginning of the page because the server sent new data
         index = 0;
+
+        const pageBeforeStateChange = page
+
+
+        console.log("component did mount page: ", page)
 
         const params = {
             pageNum: page,
             platforms: this.state.selectedPlatforms,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
-            language: getLanguageISO(this.state.selectedLanguage)
+            language: getLanguageISO(this.state.selectedLanguage),
         };
         this.setState({ showDescrption: true });
 
@@ -142,7 +146,15 @@ class Movie extends React.Component {
             })
             .then(() => this.setMovieIndex())
             .then(() => {
+                console.log("theconst", pageBeforeStateChange)
+                
+                
+                // need to reload the page number saved in pageBeforeMount
+                page = pageBeforeStateChange
+                console.log("pageeee", page)
+                
                 this.setMovie();
+
             });
     }
 
@@ -160,14 +172,14 @@ class Movie extends React.Component {
     };
 
     setSelectedLanguage = (selection) => {
-        if(selection === undefined || selection === null) {
+        if (selection === undefined || selection === null) {
             this.setState({ selectedLanguage: 0 }, () => {
                 return;
-              }); 
+            });
         } else {
             this.setState({ selectedLanguage: selection }, () => {
                 return;
-              }); 
+            });
         }
     };
 
@@ -204,15 +216,13 @@ class Movie extends React.Component {
     };
 
     filterByLanguage = (show) => {
-        if(show) {  
+        if (show) {
             return (
                 <Stack spacing={3} sx={{ width: 300 }}>
                     <Autocomplete
                         id="tags-standard"
                         options={languageList}
-                         getOptionLabel={(option) =>
-                            option 
-                        }
+                        getOptionLabel={(option) => option}
                         renderInput={(params) => (
                             <TextField {...params} variant="standard" />
                         )}
@@ -223,7 +233,6 @@ class Movie extends React.Component {
                 </Stack>
             );
         }
-
     };
 
     filterByDecade = (show) => {
@@ -280,24 +289,16 @@ class Movie extends React.Component {
             return;
         }
 
-
         let elementsOnThisPage = this.state.movies.body.results.length;
         let totalPages = this.state.movies.body.total_pages;
 
-
-
-
-        
-
-
         movie = this.state.movies.body.results[index];
-        
 
-
-
+        // console.log(movie);
         // movie = this.state.movies.body.results[movieIndex[index]];
 
         var filters = false;
+
 
         try {
             while (
@@ -312,17 +313,21 @@ class Movie extends React.Component {
                     this.likeFilter(movie) === true
                 ) {
                     filters = true;
+
+
+
                 } else {
                     //get new movie
                     index++;
                     // if (index >= max) {
                     if (index >= elementsOnThisPage) {
-                        page++;
+                        // page++;
 
                         // loop to the beginning
-                        if (page > totalPages) {
+                        if (page >= totalPages) {
                             // console.log("out of movies" );
                             // this.setState({ showMovie: false });
+                            console.log("line 329...", page)
                             page = 1;
                             index = 0;
                         } else {
@@ -360,7 +365,36 @@ class Movie extends React.Component {
 
             this.setState({ showMovie: true });
 
-            index++;
+            // check if reached the end of the page here
+            // let elementsOnThisPage = this.state.movies.body.results.length;
+            // let totalPages = this.state.movies.body.total_pages;
+            if (index >= (elementsOnThisPage-1)) {
+                index = 0;
+                
+                // check if the current page is the last page
+                if(page >= totalPages) {
+                    console.log("line 376...", page)
+                    page = 1;
+                }
+                
+                // turn the page, reset index to 0
+                else {
+
+                    
+                    
+                    
+                    page = page + 1;
+                    // page changes require another remount
+                    this.componentDidMount()
+                }
+
+            } else {
+                index++;
+            }
+
+
+
+
         } catch (error) {
             // we enter this error branch if the user presses dislike or like too fast
             // leading to the page getting stuck
@@ -377,11 +411,13 @@ class Movie extends React.Component {
                 console.log(index);
                 console.log("out of movies. Error: " + error);
                 this.setState({ showMovie: false });
+                console.log("line 413...", page)
                 page = 1;
                 index = 0;
             } else {
                 page++;
                 index = 0;
+                console.log(error)
                 this.componentDidMount();
             }
 
@@ -619,7 +655,7 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
-        console.log(movieLanguage)
+        console.log(movieLanguage);
         if (this.state.selectedLanguage != 0) {
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
@@ -713,7 +749,8 @@ class Movie extends React.Component {
     };
 
     applyFilteringBtn = () => {
-        page = 1;
+        // console.log("line 751...", page)
+        
         // index = 0;
         return (
             <div>
@@ -729,6 +766,7 @@ class Movie extends React.Component {
     };
 
     getNewList = () => {
+        page = 1;
         this.componentDidMount();
     };
 
@@ -772,7 +810,6 @@ class Movie extends React.Component {
                     </ToggleButton>
                     {this.filterByDecade(this.state.showDecadeOptions)}
 
-
                     <br />
                     <ToggleButton
                         value="check"
@@ -789,7 +826,6 @@ class Movie extends React.Component {
                         <Button>Language</Button>
                     </ToggleButton>
                     {this.filterByLanguage(this.state.showLanguageOptions)}
-
 
                     {this.applyFilteringBtn()}
                 </div>
@@ -858,9 +894,11 @@ class Movie extends React.Component {
                                             <p>{this.state.cast}</p>
 
                                             <h4>Language</h4>
-                                            <p>{getLanguage(String(this.state.language))}</p>   
-
-
+                                            <p>
+                                                {getLanguage(
+                                                    String(this.state.language)
+                                                )}
+                                            </p>
                                         </div>
                                     ) : (
                                         <div className="hidden"></div>
