@@ -4,8 +4,16 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Movie.css";
 import YouTube from "react-youtube";
-import Button from "@mui/material/Button";
-import { getGenre } from "./Genre.js";
+
+import Button from '@mui/material/Button';
+import { getGenre, getGenreID } from "./Genre.js";
+
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ToggleButton from "@mui/material/ToggleButton";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+
 
 
 
@@ -21,11 +29,15 @@ var page = 1;
 const movieIndex = [];
 var index = 0;
 var trailer = null;
+const genreList = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music', 'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'];
 
 class Movie extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            showGenreOptions: false,
+            selectedGenre: 0,
+        };
     }
 
     componentDidMount() {
@@ -50,6 +62,44 @@ class Movie extends React.Component {
             }
         });
     }
+
+
+
+    setSelectedGenre = (selection) => {
+        if(selection === undefined || selection === null) {
+            this.setState({ selectedGenre: 0 }, () => {
+                return;
+              }); 
+        } else {
+            let id = getGenreID(selection);
+            this.setState({ selectedGenre: id }, () => {
+                return;
+              }); 
+        }
+    };
+
+    filterByGenre = (show) => {
+        if(show) {  
+            return (
+                <Stack spacing={3} sx={{ width: 300 }}>
+                    <Autocomplete
+                        id="tags-standard"
+                        options={genreList}
+                         getOptionLabel={(option) =>
+                            option 
+                        }
+                        renderInput={(params) => (
+                            <TextField {...params} variant="standard" />
+                        )}
+                        onChange={(e, selection) => {
+                            this.setSelectedGenre(selection);
+                        }}
+                    />
+                </Stack>
+            );
+        }
+        
+    };
 
     //create a list of movies to display in carousel
     setMovieIndex() {
@@ -77,57 +127,49 @@ class Movie extends React.Component {
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
         movie = this.state.movies.body.results[movieIndex[index]];
-        likesList = this.state.likes;
-        var i = 0;
-        var exit = false;
+        
+        var filters = false;
 
         try {
-            for (i = 0; i < likesList.length; i++) {
-                //check if the movie and liked movie are the same
-                if (likesList[i].movieID === movie.id) {
+            while(filters === false) {
+                if(this.genreFilter(movie) === true && this.likeFilter(movie) === true) {
+                    filters = true;
+                } else {
+                    //get new movie
                     index++;
-
-                    //check if we are at the end of the movie list and need to
-                    // call API for more movies.
                     if (index >= max) {
                         page++;
                         this.componentDidMount();
-                        i = likesList.length + 9;
-                        exit = true;
-
-                        //set the next movie to be cheched
-                    } else {
-                        movie =
-                            this.state.movies.body.results[movieIndex[index]];
-                        i = 0;
                     }
+        
+                    movie = this.state.movies.body.results[movieIndex[index]];
                 }
+            }            
+
+            
+            this.setState({ title: movie.title });
+            this.setState({
+                poster_path:
+                    "https://image.tmdb.org/t/p/w300" + movie.poster_path,
+            });
+            this.setState({ overview: movie.overview });
+            this.setState({ release: movie.release_date });
+
+            //grab genre ids then convert and save genre names
+            var genreIDArr = movie.genre_ids;
+            var genresArr = [];
+            for (let g = 0; g < genreIDArr.length; g++) {
+                genresArr.push(getGenre(genreIDArr[g]));
             }
+            this.setState({ genres: genresArr.join(", ") });
 
-            if (!exit) {
-                this.setState({ title: movie.title });
-                this.setState({
-                    poster_path:
-                        "https://image.tmdb.org/t/p/w300" + movie.poster_path,
-                });
-                this.setState({ overview: movie.overview });
-                this.setState({ release: movie.release_date });
+            //setState is called in the below function for movietrailer
+            this.getMovieTrailerID(movie.id);
 
-                //grab genre ids then convert and save genre names
-                var genreIDArr = movie.genre_ids;
-                var genresArr = [];
-                for (let g = 0; g < genreIDArr.length; g++) {
-                    genresArr.push(getGenre(genreIDArr[g]));
-                }
-                this.setState({ genres: genresArr.join(", ") });
+            this.getMovieCast(movie.id);
 
-                //setState is called in the below function for movietrailer
-                this.getMovieTrailerID(movie.id);
-
-                this.getMovieCast(movie.id);
-
-                index++;
-            }
+            index++;
+        
         } catch (error) {
             console.log("out of movies. Error: " + error);
         }
@@ -288,10 +330,54 @@ class Movie extends React.Component {
         }
     };
 
+    genreFilter(movie) {
+        var foundGenre = false;
+        var genreIDArr = movie.genre_ids;
+       
+        if(this.state.selectedGenre != 0) {
+            for(let i = 0; i < genreIDArr.length; i++) {
+                if(genreIDArr[i] === this.state.selectedGenre) {
+                    return true;
+                }
+            }
+        } else {
+            return true;
+        }
+        
+        return false;
+    }
+
+    likeFilter(movie) {
+        likesList = this.state.likes;
+
+        for (let i = 0; i < likesList.length; i++) {
+            //check if the movie and liked movie are the same
+            if (likesList[i].movieID === movie.id) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     render() {
         return (
             <section className="movie">
                 <div className="content">
+                    <ToggleButton
+                        value="check"
+                        selected={this.state.showGenreOptions}
+                        onChange={() => {
+                            this.setState({
+                                showGenreOptions:
+                                !this.state.showGenreOptions,
+                            });
+                            this.setState({ selectedGenre: 0 });
+                        }}
+                    >
+                        <FilterListIcon />
+                    </ToggleButton>
+                    {this.filterByGenre(this.state.showGenreOptions)}
                     <div className="top">
                         <div className={this.className()}>
                             <div className="movie-display">
