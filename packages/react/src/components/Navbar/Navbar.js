@@ -194,6 +194,7 @@ const Navbar = () => {
                                     onClick={() => {
                                         const id = tokenObj._id;
                                         navigate(`/UserPage/${id}`);
+                                        window.location.reload(true);
                                     }}
                                 >
                                     <Avatar /> {tokenObj.username}

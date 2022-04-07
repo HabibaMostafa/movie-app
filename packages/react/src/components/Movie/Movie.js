@@ -106,7 +106,7 @@ class Movie extends React.Component {
             platforms: this.state.selectedPlatforms,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
-            language: getLanguageISO(this.state.selectedLanguage)
+            language: getLanguageISO(this.state.selectedLanguage),
         };
         this.setState({ showDescrption: true });
 
@@ -142,14 +142,14 @@ class Movie extends React.Component {
     };
 
     setSelectedLanguage = (selection) => {
-        if(selection === undefined || selection === null) {
+        if (selection === undefined || selection === null) {
             this.setState({ selectedLanguage: 0 }, () => {
                 return;
-              }); 
+            });
         } else {
             this.setState({ selectedLanguage: selection }, () => {
                 return;
-              }); 
+            });
         }
     };
 
@@ -186,15 +186,13 @@ class Movie extends React.Component {
     };
 
     filterByLanguage = (show) => {
-        if(show) {  
+        if (show) {
             return (
                 <Stack spacing={3} sx={{ width: 300 }}>
                     <Autocomplete
                         id="tags-standard"
                         options={languageList}
-                         getOptionLabel={(option) =>
-                            option 
-                        }
+                        getOptionLabel={(option) => option}
                         renderInput={(params) => (
                             <TextField {...params} variant="standard" />
                         )}
@@ -205,7 +203,6 @@ class Movie extends React.Component {
                 </Stack>
             );
         }
-
     };
 
     filterByDecade = (show) => {
@@ -325,7 +322,13 @@ class Movie extends React.Component {
     likeMovie = async () => {
         let userID = this.props._id;
 
-        let data = JSON.stringify({ id: movie.id, user: userID });
+        let data = JSON.stringify({
+            id: movie.id,
+            user: userID,
+            username: this.props.username,
+            title: movie.title,
+            poster: movie.poster_path,
+        });
 
         const like = await fetch("/votes", {
             method: "POST",
@@ -339,6 +342,8 @@ class Movie extends React.Component {
         const params = {
             voteId: like._id.toString(),
         };
+
+        console.log(params);
 
         axios.post("/matches/vote", params).then((response) => {
             //need new match notification here
@@ -367,6 +372,9 @@ class Movie extends React.Component {
             id: movie.id,
             user: userID,
             mustWatch: true,
+            username: this.props.username,
+            title: movie.title,
+            poster: movie.poster_path,
         });
 
         const like = await fetch("/votes", {
@@ -551,7 +559,7 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
-        console.log(movieLanguage)
+        console.log(movieLanguage);
         if (this.state.selectedLanguage != 0) {
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
@@ -679,7 +687,6 @@ class Movie extends React.Component {
                     >
                         {/* <FilterListIcon /> */}
                         <Button>Genre</Button>
-
                     </ToggleButton>
                     {this.filterByGenre(this.state.showGenreOptions)}
 
@@ -687,7 +694,6 @@ class Movie extends React.Component {
                         platformCallback={this.selectedPlatformsCallback}
                     />
 
-                    
                     <ToggleButton
                         value="check"
                         selected={this.state.showDecadeOptions}
@@ -722,8 +728,6 @@ class Movie extends React.Component {
                     {this.filterByLanguage(this.state.showLanguageOptions)}
 
                     {this.applyFilteringBtn()}
-
-
                 </div>
                 {this.state.showMovie ? (
                     <div className="content">
@@ -788,8 +792,11 @@ class Movie extends React.Component {
                                             <h4>Cast</h4>
                                             <p>{this.state.cast}</p>
                                             <h4>Language</h4>
-                                            <p>{getLanguage(String(this.state.language))}</p>   
-
+                                            <p>
+                                                {getLanguage(
+                                                    String(this.state.language)
+                                                )}
+                                            </p>
                                         </div>
                                     ) : (
                                         <div className="hidden"></div>

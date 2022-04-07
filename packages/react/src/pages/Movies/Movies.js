@@ -9,12 +9,13 @@ const Movies = () => {
   const { getTokenObj } = useToken();
   const tokenObj = getTokenObj();
   const userID = tokenObj._id;
+  const userName = tokenObj.username;
 
   return (
     <div className="container">
       <Navbar />
       <div className="movie-wrapper"> 
-        <Movie _id ={userID} />
+        <Movie _id ={userID} username={userName} />
       </div>
     </div>
   )
