@@ -50,6 +50,7 @@ class UserPageData extends React.Component {
         // fetch the user likes.
         this.getUserData();
         this.getLikedList();
+
     }
 
     render() {
