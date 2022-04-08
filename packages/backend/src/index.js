@@ -9,6 +9,13 @@ const Friend = require("./database/models/friend");
 const Match = require("./database/models/match");
 const Room = require("./database/models/room");
 const Member = require("./database/models/member");
+const Avatar = require("./database/models/avatar");
+
+const multer = require("multer");
+// const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+// const upload = multer({ dest: 'uploads/' })
 
 const express = require("express");
 const _ = require("underscore");
@@ -131,15 +138,45 @@ app.post("/members", (req, res) => {
     return res.status(201).send(newMembers);
 });
 
+// for setting the user avatar.
+app.post("/avatar", upload.single("avatar"), (req, res) => {
+    // console.log("body ", req.body);
+    // console.log("files", req.file);
+
+    const userId = req.body["userId"];
+    const binImage = req.file["buffer"];
+    const imgName = req.file["originalname"];
+
+    console.log(binImage);
+    console.log(userId);
+    console.log(imgName);
+
+    const newAvatarData = {
+        userId: userId,
+        filename: imgName,
+        data: binImage,
+    };
+
+    const newAvatar = new Avatar(newAvatarData);
+
+    newAvatar
+        .save()
+        .then(() => res.send(201))
+        .catch((err) => {
+            console.log(err);
+            res.send(500);
+        });
+});
+
 //TMDB endpoints
 // sample api get request
-app.post("/movies", (req, res) => {
+app.post("/movies", upload.single("avatar"), (req, res) => {
     // make request to api
     var pageNum = req.body.pageNum;
 
     // console.log(req.body)
     const test = tmdb(req.body, (error, response) => {
-    // const test = tmdb({ pageNum }, (error, response) => {
+        // const test = tmdb({ pageNum }, (error, response) => {
         if (error) {
             console.log("Error! =(");
             return;
@@ -549,6 +586,33 @@ app.get("/users", (req, res) => {
             });
 
             res.send(usersNoPsw);
+        })
+        .catch((e) => {
+            res.status(500).send();
+        });
+});
+
+app.get("/avatars/:id", (req, res) => {
+    const userId = req.params.id;
+
+    Avatar.find({ userId })
+        .then((avatar) => {
+            // console.log(avatar[0].data)
+            const binaryData = avatar[0].data;
+
+            // res.type(data.img.contentType).send(binaryData);
+            // console.log(binaryData)
+
+            // const encodedBinary = Buffer.from(binaryData);
+
+            const b64 = binaryData.toString("base64")
+
+            const data = {
+                
+            }
+            // const encodedBinary = Buffer.from(binaryData, "binary");
+
+            res.status(201).send(b64);
         })
         .catch((e) => {
             res.status(500).send();

@@ -42,6 +42,9 @@ const Navbar = () => {
         setAnchorEl(null);
     };
 
+
+    const myid = tokenObj._id;
+
     return (
         <div>
             <div
@@ -192,11 +195,10 @@ const Navbar = () => {
                                 <MenuItem
                                     className="labels"
                                     onClick={() => {
-                                        const id = tokenObj._id;
-                                        navigate(`/UserPage/${id}`);
+                                        navigate(`/settings`);
                                     }}
                                 >
-                                    <Avatar /> {tokenObj.username}
+                                    <Avatar userId={myid} /> {tokenObj.username}
                                 </MenuItem>
                                 <Divider className="divider" />
                                 <MenuItem className="labels">
