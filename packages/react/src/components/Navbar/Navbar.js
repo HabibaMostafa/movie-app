@@ -136,11 +136,12 @@ const Navbar = () => {
                                     aria-expanded={open ? "true" : undefined}
                                 >
                                     <UserAvatar userId={myid} />
+                                    
                                     <NavLink
                                         exact
                                         to=""
                                         activeClassName="active"
-                                        className="nav-links"
+                                        className="user-link"
                                         onClick={click ? handleClick : null}
                                     >
                                         {tokenObj.username}

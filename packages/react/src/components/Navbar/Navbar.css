@@ -1,33 +1,33 @@
-
 * {
-    font-family: 'Montserrat', sans-serif;
-  }
+    font-family: "Montserrat", sans-serif;
+}
 
-  .MuiList-root, .MuiMenuItem-root{ 
+.MuiList-root,
+.MuiMenuItem-root {
     background-color: #000000;
-  }
-  
-  body {
+}
+
+body {
     margin: 0;
     background-color: #000000;
-  }
-  
-  .labels {
+}
+
+.labels {
     color: #ffffff !important;
-  }
+}
 
-  .divider {
+.divider {
     background-color: rgba(255, 255, 255, 0.308);
-  }
+}
 
-  .pages {
+.pages {
     color: #000000;
     text-align: center;
     font-size: calc(1.5rem + 2vw);
     margin-top: 10%;
-  }
-  
-  .navbar {
+}
+
+.navbar {
     background-color: #202020;
     height: 80px;
     display: flex;
@@ -37,32 +37,31 @@
     position: sticky;
     top: 0;
     z-index: 20;
-  }
-  
-  .nav-container {
+}
+
+.nav-container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 80px;
     max-width: 1500px;
-  }
-  
-  .main-container{
-    position:absolute;
-    top:0;
-    bottom:0;
-    left:0;
-    right:0;
-    background-color:#202020;
-  }
-  
-  .fa-square-user {
-    background-color: #243c64
+}
 
-  }
+.main-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #202020;
+}
 
-  .nav-logo {
+.fa-square-user {
+    background-color: #243c64;
+}
+
+.nav-logo {
     color: #ffc124;
     align-items: center;
     margin-left: 20px;
@@ -70,102 +69,110 @@
     text-decoration: none;
     font-size: 2rem;
     flex-grow: 1;
-  }
-  
-  .nav-menu {
+}
+
+.nav-menu {
     display: flex;
     list-style: none;
     text-align: center;
     margin-right: 2rem;
-  }
-  
-  .nav-links {
+}
+
+.nav-links {
     color: #fff;
     text-decoration: none;
     height: 100%;
     border-bottom: 3px solid transparent;
-  }
-  .fa-code {
-    margin-left: 1rem;
-  }
-  
-  .nav-item {
-    line-height: 40px;
-    margin-right: 1rem;
-    background-color: #202020;
-  }
+}
 
-  .nav-item-menu {
+.user-link {
+    color: #fff;
+    text-decoration: none;
+    height: 100%;
+    border-bottom: 3px solid transparent;
+    margin-left: 0.5ch;
+}
+
+.fa-code {
+    margin-left: 1rem;
+}
+
+.nav-item {
     line-height: 40px;
     margin-right: 1rem;
     background-color: #202020;
-  }
-  
-  .nav-item:after {
+}
+
+.nav-item-menu {
+    line-height: 40px;
+    margin-right: 1rem;
+    background-color: #202020;
+}
+
+.nav-item:after {
     content: "";
     display: block;
     height: 3px;
     width: 0;
     background: transparent;
     transition: width 0.7s ease, background-color 0.5s ease;
-  }
-  
-  .nav-item:hover:after {
+}
+
+.nav-item:hover:after {
     width: 100%;
     background: #ffdd40;
-  }
-  
-  .nav-item.active {
+}
+
+.nav-item.active {
     color: #ffdd40;
     border: 1px solid #ffdd40;
-  }
-  
-  .nav-icon {
+}
+
+.nav-icon {
     display: none;
-  }
-  
-  @media screen and (max-width: 960px) {
-    
+}
+
+@media screen and (max-width: 960px) {
     .nav-menu {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      border-top: 1pxsolid #fff;
-      position: absolute;
-      top: 80px;
-      left: -110%;
-      background-color: #202020;
-      opacity: 1;
-      transition: all 0.5s ease;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-top: 1pxsolid #fff;
+        position: absolute;
+        top: 80px;
+        left: -110%;
+        background-color: #202020;
+        opacity: 1;
+        transition: all 0.5s ease;
     }
-  
+
     .nav-menu.active {
-      background: #202020;
-      left: 0px;
-      opacity: 1;
-      transition: all 0.5s ease;
-      z-index: 1;
+        background: #202020;
+        left: 0px;
+        opacity: 1;
+        transition: all 0.5s ease;
+        z-index: 1;
     }
     .nav-item .active {
-      color: #ffdd40;
-      border: none;
+        color: #ffdd40;
+        border: none;
     }
     .nav-links {
-      padding: 1.5rem;
-      width: 100%;
-      display: table;
+        padding: 1.5rem;
+        width: 100%;
+        display: table;
     }
-  
-    .nav-icon {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: 0;
-      transform: translate(-100%, 60%);
-      font-size: 1.8rem;
-      cursor: pointer;
-      color: #ffdd40;
-    }
-  }
 
-  /* <p className="welcome-msg"> {tokenObj.username} </p> */
+    .nav-icon {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(-100%, 60%);
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #ffdd40;
+    }
+}
+
+/* <p className="welcome-msg"> {tokenObj.username} </p> */
