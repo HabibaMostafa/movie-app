@@ -1,0 +1,17 @@
+.circleCrop {
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.userAvatar {
+    padding-right: 0.5ch;
+}
+.spacer {
+    padding-left: 2ch;
+}

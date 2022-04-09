@@ -147,25 +147,33 @@ app.post("/avatar", upload.single("avatar"), (req, res) => {
     const binImage = req.file["buffer"];
     const imgName = req.file["originalname"];
 
-    console.log(binImage);
-    console.log(userId);
-    console.log(imgName);
-
     const newAvatarData = {
         userId: userId,
         filename: imgName,
         data: binImage,
     };
 
-    const newAvatar = new Avatar(newAvatarData);
+    Avatar.findOneAndReplace({ userId: userId }, newAvatarData)
+        .then((result) => {
+            // console.log("found....", result);
 
-    newAvatar
-        .save()
-        .then(() => res.send(201))
-        .catch((err) => {
-            console.log(err);
-            res.send(500);
-        });
+            if (result === null || result === undefined) {
+                // save the new avatar.
+                console.log("saving a new avatar");
+                const newAvatar = new Avatar(newAvatarData);
+                newAvatar
+                    .save()
+                    .then(() => res.sendStatus(201))
+                    .catch((err) => {
+                        console.log(err);
+                        res.send(500);
+                    });
+            } else {
+                console.log("editing existing avatar");
+                return res.sendStatus(200);
+            }
+        })
+        .catch((e) => res.status(500).send(e));
 });
 
 //TMDB endpoints
@@ -600,19 +608,18 @@ app.get("/avatars/:id", (req, res) => {
             // console.log(avatar[0].data)
             const binaryData = avatar[0].data;
 
-            // res.type(data.img.contentType).send(binaryData);
-            // console.log(binaryData)
+            const b64 = binaryData.toString("base64");
 
-            // const encodedBinary = Buffer.from(binaryData);
+            const filename = avatar[0].filename;
 
-            const b64 = binaryData.toString("base64")
+            const splitName = filename.split(".");
 
-            const data = {
-                
-            }
-            // const encodedBinary = Buffer.from(binaryData, "binary");
+            const extension = splitName[1];
+            const mimeType = `image/${extension}`;
 
-            res.status(201).send(b64);
+            const converedImage = `data:${mimeType};base64,${b64}`;
+
+            res.status(201).send(converedImage);
         })
         .catch((e) => {
             res.status(500).send();

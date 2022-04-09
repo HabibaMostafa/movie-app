@@ -3,10 +3,8 @@ import UserSettings from "../../components/Settings/UserSettings";
 import useToken from "../../components/App/useToken";
 import { useParams } from "react-router-dom";
 
-
-import React from 'react'
-import {useDropzone} from 'react-dropzone'
-
+import React from "react";
+import { useDropzone } from "react-dropzone";
 
 const Settings = () => {
     const { getTokenObj } = useToken();

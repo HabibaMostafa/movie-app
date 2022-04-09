@@ -27,17 +27,6 @@ class UserSettings extends React.Component {
             // server converted this back to b64
             currentAvatar = response.data;
 
-            // convertedAvatar = URL.createObjectURL(currentAvatar);
-            // console.log(currentAvatar);
-
-            // const b64 = (currentAvatar).toString("base64");
-            const mimeType = "image/png";
-
-            // console.log(currentAvatar);
-            currentAvatarPath = `data:${mimeType};base64,${currentAvatar}`;
-
-            // console.log(currentAvatarPath)
-
             this.setState({ fetchedAvatar: true });
         });
     }
@@ -75,7 +64,7 @@ class UserSettings extends React.Component {
                         <div>
                             User Selection: {fileName}
                             <br />
-                            <img src={filePath} height="300"></img>
+                            <img src={filePath} height="200"></img>
                         </div>
                     ) : (
                         <div>Click here or drag and drop your image.</div>
@@ -125,7 +114,7 @@ class UserSettings extends React.Component {
                     "Content-Type": "multipart/form-data",
                 },
             })
-            .then((response) => console.log(response));
+            .then(window.location.reload(true));
     };
 
     clearSelection = () => {
@@ -138,14 +127,14 @@ class UserSettings extends React.Component {
     render() {
         return (
             <div>
-                {console.log(this.state)}
                 <h3>Set User Avatar</h3>
 
                 {this.state.fetchedAvatar ? (
                     <div>
                         <h4>Current Avatar: </h4>
                         <br />
-                        <img src={currentAvatarPath} height="50"></img>
+                        <img src={currentAvatar} height="200"></img>
+                        <br />
                     </div>
                 ) : (
                     <div></div>
