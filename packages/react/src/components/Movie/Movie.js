@@ -279,7 +279,10 @@ class Movie extends React.Component {
 
         try {
             while (
-                filters === false 
+                // filters === false 
+                filters === false &&
+                this.state.availablePlatforms.length > 0
+                // false
 
             ) {
                 if (
@@ -287,7 +290,7 @@ class Movie extends React.Component {
                     this.genreFilter(movie) === true &&
                     this.decadeFilter(movie) === true &&
                     this.languageFilter(movie) === true &&
-                    this.dislikeFilter(movie) === true &&
+                    // this.dislikeFilter(movie) === true &&
                     this.likeFilter(movie) === true
                 ) {
                     filters = true;
