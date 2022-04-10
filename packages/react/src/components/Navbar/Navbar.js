@@ -42,6 +42,8 @@ const Navbar = () => {
         setAnchorEl(null);
     };
 
+    const myid = tokenObj._id;
+
     return (
         <div>
             <div
@@ -67,6 +69,8 @@ const Navbar = () => {
                                 Home
                             </NavLink>
                         </li>
+
+
                         <li className="nav-item">
                             <NavLink
                                 exact
@@ -76,6 +80,22 @@ const Navbar = () => {
                                 onClick={click ? handleClick : null}
                             >
                                 Movies
+                            </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink
+                                exact
+                                to={`/UserPage/${myid}`}
+                                activeClassName="active"
+                                className="nav-links"
+                                // onClick={click ? handleClick : null}
+                                onClick={() => {
+                                    const id = tokenObj._id;
+                                    navigate(`/UserPage/${id}`);
+                                    window.location.reload(true);
+                                }}
+                            >
+                                Likes
                             </NavLink>
                         </li>
                         <li className="nav-item">
@@ -189,12 +209,11 @@ const Navbar = () => {
                                     vertical: "bottom",
                                 }}
                             >
+
+                                {/* click here to access user settings */}
                                 <MenuItem
                                     className="labels"
-                                    onClick={() => {
-                                        const id = tokenObj._id;
-                                        navigate(`/UserPage/${id}`);
-                                    }}
+                                    onClick={click ? handleClick : null}
                                 >
                                     <Avatar /> {tokenObj.username}
                                 </MenuItem>
