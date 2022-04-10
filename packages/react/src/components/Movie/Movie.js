@@ -882,7 +882,7 @@ class Movie extends React.Component {
 
     handleKeyPress = (e) => {
         let key = e.key;
-        console.log(key)
+        console.log(key);
 
         if (key === "d" || key === "ArrowRight") {
             //Dislike movie
