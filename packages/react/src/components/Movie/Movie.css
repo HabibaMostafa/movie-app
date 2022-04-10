@@ -185,6 +185,10 @@ iframe {
     cursor: pointer;
 }
 
+#tags-standard {
+    color: rgb(200, 200, 200);
+}
+
 .MuiTextField-root {
     color: white;
 }
