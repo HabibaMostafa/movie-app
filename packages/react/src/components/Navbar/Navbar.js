@@ -136,7 +136,7 @@ const Navbar = () => {
                                     aria-expanded={open ? "true" : undefined}
                                 >
                                     <UserAvatar userId={myid} />
-                                    
+
                                     <NavLink
                                         exact
                                         to=""
