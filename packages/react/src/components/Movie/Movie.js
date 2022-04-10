@@ -26,8 +26,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 var movie;
-var likesList;
-var dislikesList;
+var likesList = [];
+var dislikesList = [];
 var min;
 var max;
 var page = 1;
@@ -106,7 +106,6 @@ class Movie extends React.Component {
             // selectedPlatforms: [],
             selectedDecade: 0,
 
-
             showLanguageOptions: false,
 
             selectedLanguage: 0,
@@ -121,11 +120,8 @@ class Movie extends React.Component {
             userSelectedPlatforms: [],
             showPlatformOptions: true,
 
-
             dislikes: [],
             fetchedDislikes: false,
-
-
         };
     }
 
@@ -137,17 +133,10 @@ class Movie extends React.Component {
         this.setState({ userSelectedPlatforms: [] });
         this.handleClose();
         this.getNewList();
-
-
     };
 
     componentDidMount() {
         document.addEventListener("keydown", this.handleKeyPress, false);
-
-        // need to start at the first page on every new api call
-
-        // let oldPage = page
-        // page = 1;
 
         // start at the beginning of the page because the server sent new data
         index = 0;
@@ -166,7 +155,6 @@ class Movie extends React.Component {
 
         //get a list of previously "liked" movies
 
-
         axios
             .post("/movies", params)
             .then((res) => {
@@ -178,6 +166,7 @@ class Movie extends React.Component {
                 }
             })
             .then(() => this.getLikedList())
+            .then(() => this.getDislikedList())
             .then(() => {
                 page = pageBeforeStateChange;
                 this.setMovie();
@@ -198,30 +187,31 @@ class Movie extends React.Component {
         };
         this.setState({ showDescrption: true });
 
-
         //get a list of previously "liked" movies
-
-
         // get list of disliked movies
-        this.getDislikedList();
 
-        axios.post("/movies", params).then((res) => {
-            if (res.status === 200) {
-                index = 0;
-                this.setState({ movies: res.data });
-                //create a list of movies to display in carousel
-                this.setMovieIndex();
+        // this.getLikedList();
 
+        // this.getDislikedList();
+
+        await axios
+            .post("/movies", params)
+            .then((res) => {
+                if (res.status === 200) {
+                    index = 0;
+                    this.setState({ movies: res.data });
+                    //create a list of movies to display in carousel
+                    this.setMovieIndex();
 
                     //set the next movie to display
                     // this.setMovie();
                     // console.log(movies: res.data)
-
                 } else {
                     this.setState({ movies: [] });
                 }
             })
             .then(() => this.getLikedList())
+            .then(() => this.getDislikedList())
             .then(() => {
                 page = pageBeforeStateChange;
 
@@ -284,8 +274,6 @@ class Movie extends React.Component {
         );
     };
 
-
-
     //filterByLanguage = (show) => {
 
     filterByLanguage = () => {
@@ -304,7 +292,6 @@ class Movie extends React.Component {
                 />
             </Stack>
         );
-
     };
 
     filterByDecade = () => {
@@ -374,7 +361,8 @@ class Movie extends React.Component {
     };
 
     getDislikedList = async () => {
-        axios.get(`/dislikes?user=${this.props._id}`).then((result) => {
+        await axios.get(`/dislikes?user=${this.props._id}`).then((result) => {
+
             if (result.status === 200) {
                 this.setState({ dislikes: result.data });
             }
@@ -402,23 +390,19 @@ class Movie extends React.Component {
         let elementsOnThisPage = this.state.movies.body.results.length;
         let totalPages = this.state.movies.body.total_pages;
 
-
         var filters = false;
 
         try {
             while (filters === false) {
                 movie = this.state.movies.body.results[index];
 
-
                 if (
                     this.likeFilter(movie) === true &&
                     this.genreFilter(movie) === true &&
                     this.decadeFilter(movie) === true &&
-
                     this.languageFilter(movie) === true &&
                     this.dislikeFilter(movie) === true &&
                     this.likeFilter(movie) === true
-
                 ) {
                     filters = true;
                 } else {
@@ -542,11 +526,7 @@ class Movie extends React.Component {
             voteId: like._id.toString(),
         };
 
-
         await axios.post("/matches/vote", params).then((response) => {
-          
-
-          
             //need new match notification here
             if (response.status === 201) {
                 //means new matches were made,
@@ -658,7 +638,6 @@ class Movie extends React.Component {
         });
     };
 
-
     streamFilter = (movie) => {
         // return true;
 
@@ -712,7 +691,6 @@ class Movie extends React.Component {
             });
     };
 
-
     //if movie poster is clicked then change state to display or hide description
     displayData() {
         if (this.state.showDescrption) {
@@ -749,7 +727,6 @@ class Movie extends React.Component {
     };
 
     genreFilter(movie) {
-
         var genreIDArr = movie.genre_ids;
 
         if (this.state.selectedGenre !== 0) {
@@ -767,11 +744,8 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
-      
 
         if (this.state.selectedLanguage !== 0) {
-
-          
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
             }
@@ -847,11 +821,9 @@ class Movie extends React.Component {
     likeFilter(movie) {
         likesList = this.state.likes;
 
-
         if (likesList === undefined || movie === undefined) {
             return false;
         }
-
 
         for (let i = 0; i < likesList.length; i++) {
             //check if the movie and liked movie are the same
@@ -863,17 +835,17 @@ class Movie extends React.Component {
         return true;
     }
 
-
     dislikeFilter(movie) {
-
         dislikesList = this.state.dislikes;
 
-
+        // console.log("dislike list: ",dislikesList)
 
         for (let i = 0; i < dislikesList.length; i++) {
             //check if the movie and liked movie are the same
-            if (dislikesList[i].movieId === movie.id) {
 
+            // console.log("compare", dislikesList[i].movieId,  movie.id)
+            if (dislikesList[i].movieId === movie.id) {
+                // console.log("movie has been disliked, skip")
                 return false;
             }
         }
@@ -885,7 +857,6 @@ class Movie extends React.Component {
     selectedPlatformsCallback = (selected) => {
         this.setState({ selectedPlatforms: selected });
     };
-
 
     applyFilteringBtn = () => {
         // index = 0;
@@ -903,7 +874,6 @@ class Movie extends React.Component {
     };
 
     getNewList = () => {
-
         page = 1;
 
         this.handleClose();
@@ -911,31 +881,27 @@ class Movie extends React.Component {
         this.componentDidMount();
     };
 
-
     handleKeyPress = (e) => {
         var key = e.key;
         if (key == "ArrowRight") {
             //Dislike movie
             //TODO: add mile's updated dislike features here.
             this.setMovie();
-        }
-        else if (key == "ArrowLeft") {
+        } else if (key == "ArrowLeft") {
             //Like movie
             this.likeMovie();
             this.setMovie();
-        }
-        else if (key == "ArrowDown") {
+        } else if (key == "ArrowDown") {
             //must watch movie
             this.mustWatchMovie();
             this.setMovie();
-        }
-        else if (key == "ArrowUp") {
+        } else if (key == "ArrowUp") {
             //show description
             this.displayData();
         }
-    }
+    };
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         document.removeEventListener("keydown", this.handleKeyPress, false);
     }
 
@@ -947,23 +913,17 @@ class Movie extends React.Component {
         this.setState({ filterListOpen: false });
     };
 
-
     render() {
         return (
             <section className="movie">
                 <div>
-
-
                     <ToggleButton value="check" onClick={this.handleClickOpen}>
                         <FilterListIcon />
                     </ToggleButton>
 
-
                     <Dialog
                         open={this.state.filterListOpen}
                         onClose={this.handleClose}
-
-
                     >
                         <DialogTitle sx={{ background: "#242424" }}>
                             Set Filters
@@ -977,7 +937,6 @@ class Movie extends React.Component {
                                 this.state.showPlatformOptions
                             )}
 
-
                             <p>Decade</p>
                             {this.filterByDecade(this.state.showDecadeOptions)}
 
@@ -987,13 +946,13 @@ class Movie extends React.Component {
                             )}
                         </DialogContent>
                         <DialogActions sx={{ background: "#242424" }}>
-                            <Button onClick={this.resetAllFilters}>Reset Filters</Button>
+                            <Button onClick={this.resetAllFilters}>
+                                Reset Filters
+                            </Button>
                             <Button onClick={this.handleClose}>Cancel</Button>
                             <Button onClick={this.getNewList}>Apply</Button>
                         </DialogActions>
                     </Dialog>
-
-
                 </div>
 
                 {this.state.showMovie ? (
@@ -1051,7 +1010,6 @@ class Movie extends React.Component {
                                             size="large"
                                             variant="contained"
                                             onClick={() => {
-
                                                 this.dislikeMovie();
 
                                                 this.setMovie();
