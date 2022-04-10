@@ -61,9 +61,14 @@ app.post("/matches", (req, res) => {
         ],
     };
 
-    Match.find(queryParameters).then((queryResult) => {
-        res.status(200).send(queryResult);
-    });
+    Match.find(queryParameters)
+        .then((queryResult) => {
+            res.status(200).send(queryResult);
+        })
+        .catch((e) => {
+            console.log(e);
+            res.status(500).send();
+        });
 });
 
 // creates a new room
@@ -715,6 +720,24 @@ app.get("/users/:id", (req, res) => {
     // .catch((e) => {
     //     return res.status(500).send([]);
     // });
+});
+
+// get all of a user's matches
+// id is the user's id
+app.get("/matches/:id", (req, res) => {
+    const userId = req.params.id;
+
+    const query = {
+        $or: [{ user1Id: userId }, { user2Id: userId }],
+    };
+
+    Match.find(query)
+        .then((matches) => {
+            return res.send(matches);
+        })
+        .catch((e) => {
+            return res.status(500).send();
+        });
 });
 
 //PATCH

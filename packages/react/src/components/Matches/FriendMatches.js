@@ -1,14 +1,17 @@
 import React from "react";
 import axios from "axios";
 import "./FriendMatches.css";
-import PropTypes from 'prop-types';
-import LinearProgress from '@mui/material/LinearProgress';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import PropTypes from "prop-types";
+import LinearProgress from "@mui/material/LinearProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import MovieListElement from "../../components/Movie/MovieListElement";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
+
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 class FriendMatches extends React.Component {
     constructor(props) {
@@ -25,6 +28,7 @@ class FriendMatches extends React.Component {
             friend: [],
             _id: "",
             matches: [],
+            expand: false,
         };
     }
     componentDidMount() {
@@ -37,32 +41,25 @@ class FriendMatches extends React.Component {
             this.setState({ friend: this.props.friend });
             this.setState({ _id: this.props._id });
 
-            // {/* <p>my id: {this.state._id}</p>
-            // <p>friend id: {this.state.friend.userId}</p> */}
-
-            // search for any new matches here first!
-
             // populate the list of matches here
             const matchQuery = {
                 user1: this.props._id,
                 user2: this.props.friend.userId,
             };
+
             axios.post("/matches", matchQuery).then((result) => {
                 if (result.status === 200 && result.data.length > 0) {
-                    // console.log(result.data);
                     this.setState({ matches: result.data });
                 }
             });
         }
     }
 
-    render() {
-        // just return a blank div if props is undefined...
-        // theres always an extra blank call from the matchlist render
-        // despite there being x elements in the friends array, there will always be
-        // x + 1 calls, with the 1 being an empty object
-        // this is just a band aid....
+    expandHandler = () => {
+        this.setState({ expand: !this.state.expand });
+    };
 
+    render() {
         // render nothing if there are no matches
         if (
             this.props.friend === undefined ||
@@ -73,31 +70,42 @@ class FriendMatches extends React.Component {
 
         return (
             <div className="friendMatches">
-                <h3 class="match-friend">
-                    {this.state.friendUsername} ({this.state.friendName})
-                </h3>
-                {/* <p>----------list of all movies that were matched</p> */}
-                {/* <p>my id: {this.state._id}</p>
-                <p>friend id: {this.state.friend.userId}</p> */}
+                <div className="sub-heading">
+                    <h3 class="match-friend">
+                        {this.state.friendUsername} ({this.state.friendName}) -
+                        [ {this.state.matches.length} Matches ]
+                    </h3>
 
-                {/* {this.state.matches.map((value) => (
-                    // <p>{value.movieID}</p>
-                    ))} */}
+                    <div className="expand-btn" onClick={this.expandHandler}>
+                        {this.state.expand ? (
+                            <ExpandLessIcon
+                                fontSize="large"
+                                sx={{ fill: "goldenrod" }}
+                            />
+                        ) : (
+                            <ExpandMoreIcon
+                                fontSize="large"
+                                sx={{ fill: "goldenrod" }}
+                            />
+                        )}
+                    </div>
+                </div>
 
-                <ImageList sx={{ width: 1150, height: 450 }} cols={5} rowHeight={164}>
-                {this.state.matches.map((value) => (
-                    <MovieListElement movieID={value.movieID} />
-                    // <ImageListItem key={item.img}>
-                    // <img
-                    //     src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                    //     srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                    //     alt={item.title}
-                    //     loading="lazy"
-                    // />
-                    // </ImageListItem>
-                    // <FriendMatches friend={value} _id={this.props._id} />
-                ))}
-                </ImageList>
+                {this.state.expand ? (
+                    <div className="matches-movies">
+                        <ImageList
+                            sx={{ width: 1280, height: 500 }}
+                            cols={6}
+                            rowHeight={164}
+                        >
+                            {this.state.matches.map((value) => (
+                                <MovieListElement movieID={value.movieID} />
+                            ))}
+                        </ImageList>
+                    </div>
+                ) : (
+                    <div className="matches-movies"></div>
+                )}
             </div>
         );
     }
