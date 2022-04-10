@@ -105,10 +105,18 @@ class Movie extends React.Component {
             selectedGenre: 0,
             // selectedPlatforms: [],
             selectedDecade: 0,
+
+
+            showLanguageOptions: false,
+
             selectedLanguage: 0,
 
             dataFetched: false,
             movies: [],
+
+            loadingMovie: false,
+            showTrailer: false,
+
             filterListOpen: false,
             userSelectedPlatforms: [],
             showPlatformOptions: true,
@@ -116,6 +124,7 @@ class Movie extends React.Component {
 
             dislikes: [],
             fetchedDislikes: false,
+
 
         };
     }
@@ -140,8 +149,10 @@ class Movie extends React.Component {
         // let oldPage = page
         // page = 1;
 
-        // start at the beginning of the page
+        // start at the beginning of the page because the server sent new data
         index = 0;
+
+        const pageBeforeStateChange = page;
 
         const params = {
             pageNum: page,
@@ -154,18 +165,42 @@ class Movie extends React.Component {
         this.setState({ showDescrption: true });
 
         //get a list of previously "liked" movies
-        this.getLikedList();
 
 
-//         axios
-//             .post("/movies", params)
-//             .then((res) => {
-//                 if (res.status === 200) {
-//                     index = 0;
-//                     this.setState({ movies: res.data });
+        axios
+            .post("/movies", params)
+            .then((res) => {
+                if (res.status === 200) {
+                    index = 0;
+                    this.setState({ movies: res.data });
+                } else {
+                    this.setState({ movies: [] });
+                }
+            })
+            .then(() => this.getLikedList())
+            .then(() => {
+                page = pageBeforeStateChange;
+                this.setMovie();
+            });
+    }
 
-                    //create a list of movies to display in carousel
-                    // this.setMovieIndex();
+    getNewPage = async () => {
+        index = 0;
+
+        const pageBeforeStateChange = page;
+
+        const params = {
+            pageNum: page,
+            platforms: this.state.selectedPlatforms,
+            genre: this.state.selectedGenre,
+            decade: this.state.selectedDecade,
+            language: getLanguageISO(this.state.selectedLanguage),
+        };
+        this.setState({ showDescrption: true });
+
+
+        //get a list of previously "liked" movies
+
 
         // get list of disliked movies
         this.getDislikedList();
@@ -181,15 +216,18 @@ class Movie extends React.Component {
                     //set the next movie to display
                     // this.setMovie();
                     // console.log(movies: res.data)
+
                 } else {
                     this.setState({ movies: [] });
                 }
             })
-            .then(() => this.setMovieIndex())
+            .then(() => this.getLikedList())
             .then(() => {
+                page = pageBeforeStateChange;
+
                 this.setMovie();
             });
-    }
+    };
 
     setSelectedGenre = (selection) => {
         if (selection === undefined || selection === null) {
@@ -266,6 +304,7 @@ class Movie extends React.Component {
                 />
             </Stack>
         );
+
     };
 
     filterByDecade = () => {
@@ -327,7 +366,7 @@ class Movie extends React.Component {
     }
 
     getLikedList = async () => {
-        axios.get(`/votes?user=${this.props._id}`).then((result) => {
+        await axios.get(`/votes?user=${this.props._id}`).then((result) => {
             if (result.status === 200) {
                 this.setState({ likes: result.data });
             }
@@ -351,60 +390,47 @@ class Movie extends React.Component {
     };
 
     //set a movie to display based on what the next number in the movieIndex is.
-    setMovie() {
+    setMovie = async () => {
         if (
             this.state.movies.length < 1 ||
             this.state.movies === undefined ||
             this.state.movies === []
         ) {
-            // if(!this.state.dataFetched) {
             return;
         }
 
         let elementsOnThisPage = this.state.movies.body.results.length;
         let totalPages = this.state.movies.body.total_pages;
 
-        movie = this.state.movies.body.results[index];
-
-        // movie = this.state.movies.body.results[movieIndex[index]];
 
         var filters = false;
 
         try {
-            while (
-              
-
-              
-                filters === false 
+            while (filters === false) {
+                movie = this.state.movies.body.results[index];
 
 
-//                 filters === false &&
-//                 this.state.availablePlatforms.length > 0
-
-
-
-              
-            ) {
                 if (
-                    // this.streamFilter(movie) === true <--  not needed, the post request does it already -Miles
+                    this.likeFilter(movie) === true &&
                     this.genreFilter(movie) === true &&
                     this.decadeFilter(movie) === true &&
+
                     this.languageFilter(movie) === true &&
                     this.dislikeFilter(movie) === true &&
                     this.likeFilter(movie) === true
+
                 ) {
                     filters = true;
                 } else {
-                    //get new movie
                     index++;
-                    // if (index >= max) {
+
                     if (index >= elementsOnThisPage) {
                         page++;
+                        index = 0;
+                        await this.getNewPage();
 
                         // loop to the beginning
-                        if (page > totalPages) {
-                            // console.log("out of movies" );
-                            // this.setState({ showMovie: false });
+                        if (page >= totalPages) {
                             page = 1;
                             index = 0;
                         } else {
@@ -414,18 +440,17 @@ class Movie extends React.Component {
                     }
 
                     movie = this.state.movies.body.results[index];
-                    // movie = this.state.movies.body.results[movieIndex[index]];
                 }
             }
 
-            this.setState({ title: movie.title });
-            this.setState({
+            await this.setState({ title: movie.title });
+            await this.setState({
                 poster_path:
                     "https://image.tmdb.org/t/p/w300" + movie.poster_path,
             });
-            this.setState({ overview: movie.overview });
-            this.setState({ release: movie.release_date });
-            this.setState({ language: movie.original_language });
+            await this.setState({ overview: movie.overview });
+            await this.setState({ release: movie.release_date });
+            await this.setState({ language: movie.original_language });
 
             //grab genre ids then convert and save genre names
             var genreIDArr = movie.genre_ids;
@@ -433,16 +458,38 @@ class Movie extends React.Component {
             for (let g = 0; g < genreIDArr.length; g++) {
                 genresArr.push(getGenre(genreIDArr[g]));
             }
-            this.setState({ genres: genresArr.join(", ") });
+            await this.setState({ genres: genresArr.join(", ") });
 
             //setState is called in the below function for movietrailer
-            this.getMovieTrailerID(movie.id);
 
-            this.getMovieCast(movie.id);
+            await this.getMovieTrailerID(movie.id);
+
+            await this.getMovieCast(movie.id);
+
+            // check if reached the end of the page here
+            // let elementsOnThisPage = this.state.movies.body.results.length;
+            // let totalPages = this.state.movies.body.total_pages;
+            if (index >= elementsOnThisPage) {
+                index = 0;
+
+                // check if the current page is the last page
+                if (page >= totalPages) {
+                    page = 1;
+                }
+
+                // turn the page, reset index to 0
+                else {
+                    page = page + 1;
+                    // page changes require another remount
+                    // this.componentDidMount();
+                    //grab another page
+                    this.getNewPage();
+                }
+            } else {
+                index++;
+            }
 
             this.setState({ showMovie: true });
-
-            index++;
         } catch (error) {
             // we enter this error branch if the user presses dislike or like too fast
             // leading to the page getting stuck
@@ -454,22 +501,21 @@ class Movie extends React.Component {
             let totalPages = this.state.movies.body.total_pages;
 
             if (page + 1 > totalPages) {
-                console.log(page);
-                console.log(totalPages);
-                console.log(index);
-                console.log("out of movies. Error: " + error);
                 this.setState({ showMovie: false });
+
                 page = 1;
                 index = 0;
             } else {
                 page++;
                 index = 0;
-                this.componentDidMount();
+
+                //grab another page
+                this.getNewPage();
             }
 
-            // console.log("total pages: ", this.state.movies.body.total_pages);
+            console.log(error);
         }
-    }
+    };
 
     //method for when the user "likes" the movie on display
     likeMovie = async () => {
@@ -496,9 +542,11 @@ class Movie extends React.Component {
             voteId: like._id.toString(),
         };
 
-        console.log(params);
 
-        axios.post("/matches/vote", params).then((response) => {
+        await axios.post("/matches/vote", params).then((response) => {
+          
+
+          
             //need new match notification here
             if (response.status === 201) {
                 //means new matches were made,
@@ -543,7 +591,7 @@ class Movie extends React.Component {
             voteId: like._id.toString(),
         };
 
-        axios.post("/matches/vote", params).then((response) => {
+        await axios.post("/matches/vote", params).then((response) => {
             //need new match notification here
             if (response.status === 201) {
                 //means new matches were made,
@@ -566,6 +614,8 @@ class Movie extends React.Component {
     // should proabbly throw this into the backend instead but w/e,
     // Hello Miles! :D yeah we can move this later. if it isn't broken why fix it right?
     getMovieTrailerID = async (movieId) => {
+        await this.setState({ showTrailer: false });
+
         const apiKey = "c2e4c84ff690ddf904bc717e174d2c61";
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`;
 
@@ -573,9 +623,15 @@ class Movie extends React.Component {
             // hmm results[0] is UK, and results[1] is US... i'm
             // just getting the first element to be safe
 
-            const youtubeKey = res.data.results[0].key;
+            if (res.data.results.length < 1) {
+                this.setState({ movietrailer: "" });
+                return;
+            }
+
+            let youtubeKey = res.data.results[0].key;
 
             this.setState({ movietrailer: youtubeKey });
+            this.setState({ showTrailer: true });
         });
     };
 
@@ -601,6 +657,61 @@ class Movie extends React.Component {
             this.setState({ cast: castString });
         });
     };
+
+
+    streamFilter = (movie) => {
+        // return true;
+
+        //will fix this...
+        const intersection = _.intersection(
+            this.state.selectedPlatforms,
+            this.state.availablePlatforms
+        );
+
+        if (
+            intersection.length > 0 ||
+            this.state.selectedPlatforms.length === 0
+        ) {
+            console.log(
+                movie.title,
+                "platforms: ",
+                this.state.availablePlatforms
+            );
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    getStreamProviders = async (movieId) => {
+        const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=c2e4c84ff690ddf904bc717e174d2c61`;
+        await axios
+            .get(tmdb_url)
+            .then((res) => {
+                const streamingProviders = res.data.results.CA.flatrate;
+                if (
+                    res.data.results.CA.flatrate !== undefined &&
+                    res.data.results.CA.flatrate.length > 0
+                ) {
+                    // for each provider,
+
+                    let companies = [];
+
+                    for (let company of streamingProviders) {
+                        companies.push(company.provider_id);
+                    }
+
+                    this.setState({ availablePlatforms: companies });
+                } else {
+                    this.setState({ availablePlatforms: ["None"] });
+                }
+            })
+            .catch((e) => {
+                this.setState({ availablePlatforms: ["error"] });
+                console.log(e);
+            });
+    };
+
 
     //if movie poster is clicked then change state to display or hide description
     displayData() {
@@ -639,10 +750,9 @@ class Movie extends React.Component {
 
     genreFilter(movie) {
 
-
         var genreIDArr = movie.genre_ids;
 
-        if (this.state.selectedGenre != 0) {
+        if (this.state.selectedGenre !== 0) {
             for (let i = 0; i < genreIDArr.length; i++) {
                 if (genreIDArr[i] === this.state.selectedGenre) {
                     return true;
@@ -657,8 +767,11 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
+      
 
-        if (this.state.selectedLanguage != 0) {
+        if (this.state.selectedLanguage !== 0) {
+
+          
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
             }
@@ -716,7 +829,7 @@ class Movie extends React.Component {
                 decadeEnd = null;
         }
 
-        if (this.state.selectedDecade != 0) {
+        if (this.state.selectedDecade !== 0) {
             if (
                 parseInt(movieDate[0]) <= decadeEnd &&
                 parseInt(movieDate[0]) >= decadeStart
@@ -730,8 +843,14 @@ class Movie extends React.Component {
         return false;
     }
 
+    // returns false if movie has already been liked
     likeFilter(movie) {
         likesList = this.state.likes;
+
+
+        if (likesList === undefined || movie === undefined) {
+            return false;
+        }
 
 
         for (let i = 0; i < likesList.length; i++) {
@@ -765,13 +884,10 @@ class Movie extends React.Component {
     // callback function used by PlatformFilter
     selectedPlatformsCallback = (selected) => {
         this.setState({ selectedPlatforms: selected });
-        // debugging to check that the component is returning the selected streaming platforms
-        // console.log("setPlatforms: ", this.state.selectedPlatforms);
     };
 
 
     applyFilteringBtn = () => {
-        page = 1;
         // index = 0;
         return (
             <div>
@@ -787,7 +903,11 @@ class Movie extends React.Component {
     };
 
     getNewList = () => {
+
+        page = 1;
+
         this.handleClose();
+
         this.componentDidMount();
     };
 
@@ -838,9 +958,11 @@ class Movie extends React.Component {
                         <FilterListIcon />
                     </ToggleButton>
 
+
                     <Dialog
                         open={this.state.filterListOpen}
                         onClose={this.handleClose}
+
 
                     >
                         <DialogTitle sx={{ background: "#242424" }}>
@@ -873,6 +995,7 @@ class Movie extends React.Component {
 
 
                 </div>
+
                 {this.state.showMovie ? (
                     <div className="content">
                         <div className="top">
@@ -965,31 +1088,37 @@ class Movie extends React.Component {
                         <div>
                             {this.state.showDescrption ? (
                                 <div className="bottom">
-                                    <div className="movie-trailer">
-                                        <h4>Trailer</h4>
-                                        <div className="video-player">
-                                            <YouTube
-                                                videoId={
-                                                    this.state.movietrailer
-                                                }
-                                                className="youtube"
-                                                opts={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    playerVars: {
-                                                        autoplay: 0,
-                                                        controls: 1,
-                                                        cc_load_policy: 0,
-                                                        fs: 0,
-                                                        iv_load_policy: 0,
-                                                        modestbranding: 0,
-                                                        rel: 0,
-                                                        showinfo: 0,
-                                                    },
-                                                }}
-                                            />
+                                    {this.state.showTrailer ? (
+                                        <div className="movie-trailer">
+                                            <h4>Trailer</h4>
+                                            <div className="video-player">
+                                                <YouTube
+                                                    videoId={
+                                                        this.state.movietrailer
+                                                    }
+                                                    className="youtube"
+                                                    opts={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        playerVars: {
+                                                            autoplay: 0,
+                                                            controls: 1,
+                                                            cc_load_policy: 0,
+                                                            fs: 0,
+                                                            iv_load_policy: 0,
+                                                            modestbranding: 0,
+                                                            rel: 0,
+                                                            showinfo: 0,
+                                                        },
+                                                    }}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <div className="movie-trailer">
+                                            Trailer is unavailable
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="hidden"></div>

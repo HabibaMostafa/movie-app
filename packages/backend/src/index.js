@@ -313,7 +313,6 @@ app.post("/votes", (req, res) => {
         // means a vote and save if one does not exist yet
         if (result.length === 0) {
             // make a new vote object
-
             const newVote = new Vote({
                 movieID,
                 user,

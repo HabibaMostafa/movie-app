@@ -21,7 +21,7 @@ const tmdb = (params, callback) => {
     if (params.language !== 0) {
         languageQuery = "&with_original_language=" + params.language.toString();
     }
-    console.log("The params are:", params);
+    // console.log("The params are:", params);
 
     // console.log(params.platforms.length);
 
@@ -95,7 +95,7 @@ const tmdb = (params, callback) => {
 
     const sample_url = `${tmdb_url}/discover/movie?api_key=${key}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_watch_monetization_types=flatrate${yearQuery}${genreQuery}${platformQuery}${languageQuery}`;
 
-    console.log(sample_url)
+    // console.log(sample_url)
 
     request({ url: sample_url, json: true }, (error, response) => {
         if (error) {
