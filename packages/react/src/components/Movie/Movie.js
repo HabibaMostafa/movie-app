@@ -223,6 +223,9 @@ class Movie extends React.Component {
         );
     };
 
+
+    //filterByLanguage = (show) => {
+
     filterByLanguage = () => {
         return (
             <Stack spacing={3} sx={{ width: 300 }}>
@@ -423,7 +426,13 @@ class Movie extends React.Component {
     likeMovie = async () => {
         let userID = this.props._id;
 
-        let data = JSON.stringify({ id: movie.id, user: userID });
+        let data = JSON.stringify({
+            id: movie.id,
+            user: userID,
+            username: this.props.username,
+            title: movie.title,
+            poster: movie.poster_path,
+        });
 
         const like = await fetch("/votes", {
             method: "POST",
@@ -437,6 +446,8 @@ class Movie extends React.Component {
         const params = {
             voteId: like._id.toString(),
         };
+
+        console.log(params);
 
         axios.post("/matches/vote", params).then((response) => {
             //need new match notification here
@@ -465,6 +476,9 @@ class Movie extends React.Component {
             id: movie.id,
             user: userID,
             mustWatch: true,
+            username: this.props.username,
+            title: movie.title,
+            poster: movie.poster_path,
         });
 
         const like = await fetch("/votes", {
@@ -594,6 +608,7 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
+
         if (this.state.selectedLanguage != 0) {
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
@@ -712,6 +727,7 @@ class Movie extends React.Component {
         return (
             <section className="movie">
                 <div>
+
                     <ToggleButton value="check" onClick={this.handleClickOpen}>
                         <FilterListIcon />
                     </ToggleButton>
@@ -746,6 +762,7 @@ class Movie extends React.Component {
                             <Button onClick={this.getNewList}>Apply</Button>
                         </DialogActions>
                     </Dialog>
+
                 </div>
                 {this.state.showMovie ? (
                     <div className="content">
@@ -810,7 +827,6 @@ class Movie extends React.Component {
                                             <p>{this.state.genres}</p>
                                             <h4>Cast</h4>
                                             <p>{this.state.cast}</p>
-
                                             <h4>Language</h4>
                                             <p>
                                                 {getLanguage(
