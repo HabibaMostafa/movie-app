@@ -102,7 +102,7 @@ class Movie extends React.Component {
         this.props = props;
         this.state = {
             selectedGenre: 0,
-            selectedPlatforms: [],
+            // selectedPlatforms: [],
             selectedDecade: 0,
             selectedLanguage: 0,
             dataFetched: false,
@@ -114,9 +114,10 @@ class Movie extends React.Component {
     }
 
     resetAllFilters = () => {
-        this.setState({ selectedPlatforms: [] });
+        // this.setState({ selectedPlatforms: [] });
         this.setState({ selectedDecade: 0 });
         this.setState({ selectedLanguage: 0 });
+        this.setState({ selectedGenre: 0 });
         this.setState({ userSelectedPlatforms: [] });
         this.handleClose();
         this.getNewList();
@@ -137,7 +138,8 @@ class Movie extends React.Component {
 
         const params = {
             pageNum: page,
-            platforms: this.state.selectedPlatforms,
+            platforms: this.state.userSelectedPlatforms,
+            // platforms: this.state.selectedPlatforms,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
             language: getLanguageISO(this.state.selectedLanguage),

@@ -16,7 +16,7 @@ const Movies = () => {
       <Navbar />
       <div className="movie-wrapper"> 
 
-        //<MoviePage _id ={userID} />
+      {/* <MoviePage _id ={userID} /> */}
 
         <Movie _id ={userID} username={userName} />
 
