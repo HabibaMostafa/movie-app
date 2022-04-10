@@ -24,6 +24,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 
 var movie;
 var likesList;
+var dislikesList;
 var min;
 var max;
 var page = 1;
@@ -94,6 +95,9 @@ class Movie extends React.Component {
 
             showLanguageOptions: false,
             selectedLanguage: 0,
+
+            dislikes: [],
+            fetchedDislikes: false,
         };
     }
 
@@ -106,12 +110,15 @@ class Movie extends React.Component {
             platforms: this.state.selectedPlatforms,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
-            language: getLanguageISO(this.state.selectedLanguage)
+            language: getLanguageISO(this.state.selectedLanguage),
         };
         this.setState({ showDescrption: true });
 
         //get a list of previously "liked" movies
         this.getLikedList();
+
+        // get list of disliked movies
+        this.getDislikedList();
 
         axios.post("/movies", params).then((res) => {
             if (res.status === 200) {
@@ -142,14 +149,14 @@ class Movie extends React.Component {
     };
 
     setSelectedLanguage = (selection) => {
-        if(selection === undefined || selection === null) {
+        if (selection === undefined || selection === null) {
             this.setState({ selectedLanguage: 0 }, () => {
                 return;
-              }); 
+            });
         } else {
             this.setState({ selectedLanguage: selection }, () => {
                 return;
-              }); 
+            });
         }
     };
 
@@ -186,15 +193,13 @@ class Movie extends React.Component {
     };
 
     filterByLanguage = (show) => {
-        if(show) {  
+        if (show) {
             return (
                 <Stack spacing={3} sx={{ width: 300 }}>
                     <Autocomplete
                         id="tags-standard"
                         options={languageList}
-                         getOptionLabel={(option) =>
-                            option 
-                        }
+                        getOptionLabel={(option) => option}
                         renderInput={(params) => (
                             <TextField {...params} variant="standard" />
                         )}
@@ -205,7 +210,6 @@ class Movie extends React.Component {
                 </Stack>
             );
         }
-
     };
 
     filterByDecade = (show) => {
@@ -251,6 +255,22 @@ class Movie extends React.Component {
         });
     };
 
+    getDislikedList = async () => {
+        axios.get(`/dislikes?user=${this.props._id}`).then((result) => {
+            if (result.status === 200) {
+                this.setState({ dislikes: result.data });
+            }
+        });
+    };
+
+    dislikeMovie = async () => {
+        let userId = this.props._id;
+
+        let data = { id: movie.id, user: userId };
+
+        axios.post("/dislikes", { data }).then((response) => {});
+    };
+
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
         movie = this.state.movies.body.results[movieIndex[index]];
@@ -259,14 +279,15 @@ class Movie extends React.Component {
 
         try {
             while (
-                filters === false &&
-                this.state.availablePlatforms.length > 0
+                filters === false 
+
             ) {
                 if (
                     // this.streamFilter(movie) === true <--  not needed, the post request does it already -Miles
                     this.genreFilter(movie) === true &&
                     this.decadeFilter(movie) === true &&
                     this.languageFilter(movie) === true &&
+                    this.dislikeFilter(movie) === true &&
                     this.likeFilter(movie) === true
                 ) {
                     filters = true;
@@ -532,7 +553,7 @@ class Movie extends React.Component {
     };
 
     genreFilter(movie) {
-        console.log("LOL");
+
 
         var genreIDArr = movie.genre_ids;
 
@@ -551,7 +572,7 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
-        console.log(movieLanguage)
+        console.log(movieLanguage);
         if (this.state.selectedLanguage != 0) {
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
@@ -627,9 +648,27 @@ class Movie extends React.Component {
     likeFilter(movie) {
         likesList = this.state.likes;
 
+
         for (let i = 0; i < likesList.length; i++) {
             //check if the movie and liked movie are the same
             if (likesList[i].movieID === movie.id) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    dislikeFilter(movie) {
+
+        dislikesList = this.state.dislikes;
+
+
+
+        for (let i = 0; i < dislikesList.length; i++) {
+            //check if the movie and liked movie are the same
+            if (dislikesList[i].movieId === movie.id) {
+
                 return false;
             }
         }
@@ -679,7 +718,6 @@ class Movie extends React.Component {
                     >
                         {/* <FilterListIcon /> */}
                         <Button>Genre</Button>
-
                     </ToggleButton>
                     {this.filterByGenre(this.state.showGenreOptions)}
 
@@ -687,7 +725,6 @@ class Movie extends React.Component {
                         platformCallback={this.selectedPlatformsCallback}
                     />
 
-                    
                     <ToggleButton
                         value="check"
                         selected={this.state.showDecadeOptions}
@@ -722,8 +759,6 @@ class Movie extends React.Component {
                     {this.filterByLanguage(this.state.showLanguageOptions)}
 
                     {this.applyFilteringBtn()}
-
-
                 </div>
                 {this.state.showMovie ? (
                     <div className="content">
@@ -765,10 +800,22 @@ class Movie extends React.Component {
                                         </Button>
                                         &nbsp;&nbsp;
                                         <Button
+                                            id="skip-button"
+                                            size="large"
+                                            variant="contained"
+                                            onClick={() => {
+                                                this.setMovie();
+                                            }}
+                                        >
+                                            Skip
+                                        </Button>
+                                        &nbsp;&nbsp;
+                                        <Button
                                             id="dislike-button"
                                             size="large"
                                             variant="contained"
                                             onClick={() => {
+                                                this.dislikeMovie();
                                                 this.setMovie();
                                             }}
                                         >
@@ -788,8 +835,11 @@ class Movie extends React.Component {
                                             <h4>Cast</h4>
                                             <p>{this.state.cast}</p>
                                             <h4>Language</h4>
-                                            <p>{getLanguage(String(this.state.language))}</p>   
-
+                                            <p>
+                                                {getLanguage(
+                                                    String(this.state.language)
+                                                )}
+                                            </p>
                                         </div>
                                     ) : (
                                         <div className="hidden"></div>
