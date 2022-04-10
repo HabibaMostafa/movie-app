@@ -32,7 +32,6 @@ class UserPageData extends React.Component {
         await axios
             .get(`/users/${this.props.userId}`)
             .then((result) => {
-                console.log(result);
                 if (result.status === 200) {
                     this.setState({ userData: result.data });
                 } else {
@@ -72,7 +71,8 @@ class UserPageData extends React.Component {
 
                             {this.state.fetchedLikes ? (
                                 this.state.userLikes.length > 0 ? (
-                                    <UserLikes likes={this.state.userLikes} />
+                                    <></>
+                                    // <UserLikes likes={this.state.userLikes} />
                                 ) : (
                                     <div>User has no likes...</div>
                                 )
