@@ -21,6 +21,8 @@ import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 
+import UserAvatar from "./UserAvatar";
+
 const Navbar = () => {
     const [click, setClick] = React.useState(false);
 
@@ -139,34 +141,32 @@ const Navbar = () => {
                                     textAlign: "center",
                                     backgroundColor: "#202020",
                                 }}
-                            >
-                                <Tooltip title="Account settings">
-                                    <IconButton
-                                        onClick={handleClickEvent}
-                                        size="small"
-                                        sx={{ ml: 2 }}
-                                        aria-controls={
-                                            open ? "account-menu" : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        aria-expanded={
-                                            open ? "true" : undefined
-                                        }
+                            ></Box>
+                            <Tooltip title="Account settings">
+                                <IconButton
+                                    onClick={handleClickEvent}
+                                    size="small"
+                                    sx={{ ml: 2 }}
+                                    aria-controls={
+                                        open ? "account-menu" : undefined
+                                    }
+                                    aria-haspopup="true"
+                                    aria-expanded={open ? "true" : undefined}
+                                >
+                                    <UserAvatar userId={myid} />
+
+                                    <NavLink
+                                        exact
+                                        to=""
+                                        activeClassName="active"
+                                        className="user-link"
+                                        onClick={click ? handleClick : null}
                                     >
-                                        <Avatar
-                                            sx={{
-                                                width: 32,
-                                                height: 32,
-                                                backgroundColor: "#f5b921",
-                                            }}
-                                        >
-                                            {tokenObj.username
-                                                .toUpperCase()
-                                                .charAt(0)}{" "}
-                                        </Avatar>
-                                    </IconButton>
-                                </Tooltip>
-                            </Box>
+                                        {tokenObj.username}
+                                    </NavLink>
+                                </IconButton>
+                            </Tooltip>
+
                             <Menu
                                 anchorEl={anchorEl}
                                 id="account-menu"
@@ -213,9 +213,15 @@ const Navbar = () => {
                                 {/* click here to access user settings */}
                                 <MenuItem
                                     className="labels"
-                                    onClick={click ? handleClick : null}
+
+                                    onClick={() => {
+                                        navigate(`/settings`);
+                                    }}
+
                                 >
-                                    <Avatar /> {tokenObj.username}
+                                    {/* <UserAvatar userId={myid} />  */}
+                                    {/* {tokenObj.username} */}
+                                    Settings
                                 </MenuItem>
                                 <Divider className="divider" />
                                 <MenuItem className="labels">

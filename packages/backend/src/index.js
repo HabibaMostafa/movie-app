@@ -9,6 +9,13 @@ const Friend = require("./database/models/friend");
 const Match = require("./database/models/match");
 const Room = require("./database/models/room");
 const Member = require("./database/models/member");
+const Avatar = require("./database/models/avatar");
+
+const multer = require("multer");
+// const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+// const upload = multer({ dest: 'uploads/' })
 
 const express = require("express");
 const _ = require("underscore");
@@ -131,9 +138,47 @@ app.post("/members", (req, res) => {
     return res.status(201).send(newMembers);
 });
 
+// for setting the user avatar.
+app.post("/avatar", upload.single("avatar"), (req, res) => {
+    // console.log("body ", req.body);
+    // console.log("files", req.file);
+
+    const userId = req.body["userId"];
+    const binImage = req.file["buffer"];
+    const imgName = req.file["originalname"];
+
+    const newAvatarData = {
+        userId: userId,
+        filename: imgName,
+        data: binImage,
+    };
+
+    Avatar.findOneAndReplace({ userId: userId }, newAvatarData)
+        .then((result) => {
+            // console.log("found....", result);
+
+            if (result === null || result === undefined) {
+                // save the new avatar.
+                console.log("saving a new avatar");
+                const newAvatar = new Avatar(newAvatarData);
+                newAvatar
+                    .save()
+                    .then(() => res.sendStatus(201))
+                    .catch((err) => {
+                        console.log(err);
+                        res.send(500);
+                    });
+            } else {
+                console.log("editing existing avatar");
+                return res.sendStatus(200);
+            }
+        })
+        .catch((e) => res.status(500).send(e));
+});
+
 //TMDB endpoints
 // sample api get request
-app.post("/movies", (req, res) => {
+app.post("/movies", upload.single("avatar"), (req, res) => {
     // make request to api
     var pageNum = req.body.pageNum;
 
@@ -553,6 +598,32 @@ app.get("/users", (req, res) => {
             });
 
             res.send(usersNoPsw);
+        })
+        .catch((e) => {
+            res.status(500).send();
+        });
+});
+
+app.get("/avatars/:id", (req, res) => {
+    const userId = req.params.id;
+
+    Avatar.find({ userId })
+        .then((avatar) => {
+            // console.log(avatar[0].data)
+            const binaryData = avatar[0].data;
+
+            const b64 = binaryData.toString("base64");
+
+            const filename = avatar[0].filename;
+
+            const splitName = filename.split(".");
+
+            const extension = splitName[1];
+            const mimeType = `image/${extension}`;
+
+            const converedImage = `data:${mimeType};base64,${b64}`;
+
+            res.status(201).send(converedImage);
         })
         .catch((e) => {
             res.status(500).send();

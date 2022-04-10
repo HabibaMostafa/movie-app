@@ -1,0 +1,44 @@
+.settings-wrapper {
+    padding-top: 3%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.content-wrapper {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding-bottom: 3%;
+}
+
+#settingsHeading {
+    padding-bottom: 0.5em;
+    border-bottom: 1px solid goldenrod;
+}
+
+#avatarHeading {
+    margin-bottom: 0;
+}
+
+#currentAvatar {
+    border-style: solid;
+    border-radius: 100%;
+    border-color: gray;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+#userSelection {
+    padding-top: 1em;
+}
+
+#settingsButton {
+    background-color: goldenrod;
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 10px 0px 10px;
+    cursor: pointer;
+}
