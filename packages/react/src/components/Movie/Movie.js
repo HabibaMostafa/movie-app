@@ -22,8 +22,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
-import PlatformFilter from "./PlatformFilter";
-
 //icon for the must watch button
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
@@ -105,17 +103,26 @@ class Movie extends React.Component {
         this.state = {
             selectedGenre: 0,
             selectedPlatforms: [],
-            availablePlatforms: [],
             selectedDecade: 0,
             selectedLanguage: 0,
             dataFetched: false,
             movies: [],
             filterListOpen: false,
-            platformFilterOn: false, 
             userSelectedPlatforms: [],
             showPlatformOptions: true,
         };
     }
+
+    resetAllFilters = () => {
+        this.setState({ selectedPlatforms: [] });
+        this.setState({ selectedDecade: 0 });
+        this.setState({ selectedLanguage: 0 });
+        this.setState({ userSelectedPlatforms: [] });
+        this.handleClose();
+        this.getNewList();
+
+
+    };
 
     componentDidMount() {
         // need to start at the first page on every new api call
@@ -131,7 +138,7 @@ class Movie extends React.Component {
             platforms: this.state.selectedPlatforms,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
-            language: getLanguageISO(this.state.selectedLanguage)
+            language: getLanguageISO(this.state.selectedLanguage),
         };
         this.setState({ showDescrption: true });
 
@@ -175,14 +182,14 @@ class Movie extends React.Component {
     };
 
     setSelectedLanguage = (selection) => {
-        if(selection === undefined || selection === null) {
+        if (selection === undefined || selection === null) {
             this.setState({ selectedLanguage: 0 }, () => {
                 return;
-              }); 
+            });
         } else {
             this.setState({ selectedLanguage: selection }, () => {
                 return;
-              }); 
+            });
         }
     };
 
@@ -217,61 +224,58 @@ class Movie extends React.Component {
     };
 
     filterByLanguage = () => {
-        
-            return (
-                <Stack spacing={3} sx={{ width: 300 }}>
-                    <Autocomplete
-                        id="tags-standard"
-                        options={languageList}
-                         getOptionLabel={(option) =>
-                            option 
-                        }
-                        renderInput={(params) => (
-                            <TextField {...params} variant="standard" />
-                        )}
-                        onChange={(e, selection) => {
-                            this.setSelectedLanguage(selection);
-                        }}
-                    />
-                </Stack>
-            );
+        return (
+            <Stack spacing={3} sx={{ width: 300 }}>
+                <Autocomplete
+                    id="tags-standard"
+                    options={languageList}
+                    getOptionLabel={(option) => option}
+                    renderInput={(params) => (
+                        <TextField {...params} variant="standard" />
+                    )}
+                    onChange={(e, selection) => {
+                        this.setSelectedLanguage(selection);
+                    }}
+                />
+            </Stack>
+        );
     };
 
     filterByDecade = () => {
-            return (
-                <Stack spacing={3} sx={{ width: 300 }}>
-                    <Autocomplete
-                        id="tags-standard"
-                        options={decadeList}
-                        getOptionLabel={(option) => option}
-                        renderInput={(params) => (
-                            <TextField {...params} variant="standard" />
-                        )}
-                        onChange={(e, selection) => {
-                            this.setSelectedDecade(selection);
-                        }}
-                    />
-                </Stack>
-            );
+        return (
+            <Stack spacing={3} sx={{ width: 300 }}>
+                <Autocomplete
+                    id="tags-standard"
+                    options={decadeList}
+                    getOptionLabel={(option) => option}
+                    renderInput={(params) => (
+                        <TextField {...params} variant="standard" />
+                    )}
+                    onChange={(e, selection) => {
+                        this.setSelectedDecade(selection);
+                    }}
+                />
+            </Stack>
+        );
     };
 
     filterByPlatform = () => {
-            return (
-                <Stack spacing={3} sx={{ width: 300 }}>
-                    <Autocomplete
-                        multiple
-                        id="tags-standard"
-                        options={platformList}
-                        getOptionLabel={(option) => option.name}
-                        renderInput={(params) => (
-                            <TextField {...params} variant="standard"/>
-                        )}
-                        onChange={(e, selection) => {
-                            this.platformSelectionHandler(selection);
-                        }}
-                    />
-                </Stack>
-            );
+        return (
+            <Stack spacing={3} sx={{ width: 300 }}>
+                <Autocomplete
+                    multiple
+                    id="tags-standard"
+                    options={platformList}
+                    getOptionLabel={(option) => option.name}
+                    renderInput={(params) => (
+                        <TextField {...params} variant="standard" />
+                    )}
+                    onChange={(e, selection) => {
+                        this.platformSelectionHandler(selection);
+                    }}
+                />
+            </Stack>
+        );
     };
 
     // await is needed here
@@ -314,20 +318,21 @@ class Movie extends React.Component {
             return;
         }
 
-
         let elementsOnThisPage = this.state.movies.body.results.length;
         let totalPages = this.state.movies.body.total_pages;
 
         movie = this.state.movies.body.results[index];
-        
+
         // movie = this.state.movies.body.results[movieIndex[index]];
 
         var filters = false;
 
         try {
             while (
-                filters === false &&
-                this.state.availablePlatforms.length > 0
+                filters === false 
+                // this.state.availablePlatforms.length > 0
+                // filters === false &&
+                // this.state.availablePlatforms.length > 0
             ) {
                 if (
                     // this.streamFilter(movie) === true <--  not needed, the post request does it already -Miles
@@ -534,61 +539,6 @@ class Movie extends React.Component {
         });
     };
 
-    streamFilter = (movie) => {
-        return true;
-
-        //will fix this...
-        const intersection = _.intersection(
-            this.state.selectedPlatforms,
-            this.state.availablePlatforms
-        );
-
-        if (
-            intersection.length > 0 ||
-            this.state.selectedPlatforms.length === 0
-        ) {
-            console.log(
-                movie.title,
-                "platforms: ",
-                this.state.availablePlatforms
-            );
-            console.log("selected platforms: ", this.state.selectedPlatforms);
-            console.log("intersection ", intersection);
-            return true;
-        } else {
-            return false;
-        }
-    };
-
-    getStreamProviders = async (movieId) => {
-        const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=c2e4c84ff690ddf904bc717e174d2c61`;
-        await axios
-            .get(tmdb_url)
-            .then((res) => {
-                const streamingProviders = res.data.results.CA.flatrate;
-                if (
-                    res.data.results.CA.flatrate !== undefined &&
-                    res.data.results.CA.flatrate.length > 0
-                ) {
-                    // for each provider,
-
-                    let companies = [];
-
-                    for (let company of streamingProviders) {
-                        companies.push(company.provider_id);
-                    }
-
-                    this.setState({ availablePlatforms: companies });
-                } else {
-                    this.setState({ availablePlatforms: ["None"] });
-                }
-            })
-            .catch((e) => {
-                this.setState({ availablePlatforms: ["error"] });
-                // console.log(["error"]);
-            });
-    };
-
     //if movie poster is clicked then change state to display or hide description
     displayData() {
         if (this.state.showDescrption) {
@@ -644,7 +594,6 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
-        console.log(movieLanguage)
         if (this.state.selectedLanguage != 0) {
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
@@ -730,13 +679,6 @@ class Movie extends React.Component {
         return true;
     }
 
-    // callback function used by PlatformFilter
-    selectedPlatformsCallback = (selected) => {
-        this.setState({ selectedPlatforms: selected });
-        // debugging to check that the component is returning the selected streaming platforms
-        // console.log("setPlatforms: ", this.state.selectedPlatforms);
-    };
-
     applyFilteringBtn = () => {
         page = 1;
         // index = 0;
@@ -761,48 +703,49 @@ class Movie extends React.Component {
     handleClickOpen = () => {
         this.setState({ filterListOpen: true });
     };
-    
+
     handleClose = () => {
         this.setState({ filterListOpen: false });
-    }
+    };
 
     render() {
         return (
             <section className="movie">
                 <div>
-                    <ToggleButton
-                        value="check"
-                        onClick={this.handleClickOpen}
-                    >
+                    <ToggleButton value="check" onClick={this.handleClickOpen}>
                         <FilterListIcon />
                     </ToggleButton>
 
-                    <Dialog open={this.state.filterListOpen} onClose={this.handleClose}>
+                    <Dialog
+                        open={this.state.filterListOpen}
+                        onClose={this.handleClose}
+                    >
                         <DialogTitle sx={{ background: "#242424" }}>
                             Set Filters
                         </DialogTitle>
                         <DialogContent sx={{ background: "#242424" }}>
-                           
                             <p>Genre</p>
                             {this.filterByGenre(this.state.showGenreOptions)}
 
                             <p>Platform</p>
-                            {this.filterByPlatform(this.state.showPlatformOptions)}
+                            {this.filterByPlatform(
+                                this.state.showPlatformOptions
+                            )}
 
                             <p>Decade</p>
                             {this.filterByDecade(this.state.showDecadeOptions)}
-                            
-                            <p>Language</p>
-                            {this.filterByLanguage(this.state.showLanguageOptions)}
 
-     
+                            <p>Language</p>
+                            {this.filterByLanguage(
+                                this.state.showLanguageOptions
+                            )}
                         </DialogContent>
                         <DialogActions sx={{ background: "#242424" }}>
+                            <Button onClick={this.resetAllFilters}>Reset Filters</Button>
                             <Button onClick={this.handleClose}>Cancel</Button>
                             <Button onClick={this.getNewList}>Apply</Button>
                         </DialogActions>
                     </Dialog>
-                    
                 </div>
                 {this.state.showMovie ? (
                     <div className="content">
@@ -869,9 +812,11 @@ class Movie extends React.Component {
                                             <p>{this.state.cast}</p>
 
                                             <h4>Language</h4>
-                                            <p>{getLanguage(String(this.state.language))}</p>   
-
-
+                                            <p>
+                                                {getLanguage(
+                                                    String(this.state.language)
+                                                )}
+                                            </p>
                                         </div>
                                     ) : (
                                         <div className="hidden"></div>
