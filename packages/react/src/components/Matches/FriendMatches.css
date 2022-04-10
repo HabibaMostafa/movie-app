@@ -1,9 +1,18 @@
 .friendMatches {
-    padding-bottom: 40px;
+    padding-top: 40px;
+    /* padding-bottom: 40px; */
     width: 100%;
     height: 100%;
 }
 
 .MuiImageList-root {
     width: 100%;
+}
+
+.sub-heading, .match-friend, .expand-btn {
+    display: inline;
+}
+
+.expand-btn {
+    vertical-align: middle;
 }
