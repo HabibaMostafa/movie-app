@@ -10,6 +10,17 @@ const Match = require("./database/models/match");
 const Room = require("./database/models/room");
 const Member = require("./database/models/member");
 
+const Avatar = require("./database/models/avatar");
+
+const multer = require("multer");
+// const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+// const upload = multer({ dest: 'uploads/' })
+
+const Dislike = require("./database/models/dislike");
+
+
 const express = require("express");
 const _ = require("underscore");
 
@@ -136,9 +147,47 @@ app.post("/members", (req, res) => {
     return res.status(201).send(newMembers);
 });
 
+// for setting the user avatar.
+app.post("/avatar", upload.single("avatar"), (req, res) => {
+    // console.log("body ", req.body);
+    // console.log("files", req.file);
+
+    const userId = req.body["userId"];
+    const binImage = req.file["buffer"];
+    const imgName = req.file["originalname"];
+
+    const newAvatarData = {
+        userId: userId,
+        filename: imgName,
+        data: binImage,
+    };
+
+    Avatar.findOneAndReplace({ userId: userId }, newAvatarData)
+        .then((result) => {
+            // console.log("found....", result);
+
+            if (result === null || result === undefined) {
+                // save the new avatar.
+                console.log("saving a new avatar");
+                const newAvatar = new Avatar(newAvatarData);
+                newAvatar
+                    .save()
+                    .then(() => res.sendStatus(201))
+                    .catch((err) => {
+                        console.log(err);
+                        res.send(500);
+                    });
+            } else {
+                console.log("editing existing avatar");
+                return res.sendStatus(200);
+            }
+        })
+        .catch((e) => res.status(500).send(e));
+});
+
 //TMDB endpoints
 // sample api get request
-app.post("/movies", (req, res) => {
+app.post("/movies", upload.single("avatar"), (req, res) => {
     // make request to api
     var pageNum = req.body.pageNum;
 
@@ -227,11 +276,31 @@ app.post("/users", (req, res) => {
         });
 });
 
+// create a dislike
+app.post("/dislikes", (req, res) => {
+    const movieId = req.body.data.id;
+    const user = req.body.data.user;
+
+    const dislikeData = {
+        movieId,
+        user,
+    };
+
+    const newDislike = new Dislike(dislikeData);
+
+    newDislike
+        .save()
+        .then(() => res.sendStatus(201))
+        .catch((e) => res.sendStatus(500));
+});
+
 //create a new vote (user swipes)
 app.post("/votes", (req, res) => {
     const movieID = req.body.id;
     const user = req.body.user;
     const liked = true;
+
+    const { username, poster, title } = req.body;
 
     let mustWatch = req.body.mustWatch;
 
@@ -249,12 +318,14 @@ app.post("/votes", (req, res) => {
         // means a vote and save if one does not exist yet
         if (result.length === 0) {
             // make a new vote object
-            console.log("new vote");
             const newVote = new Vote({
                 movieID,
                 user,
                 liked,
                 mustWatch,
+                username,
+                poster,
+                title,
             });
 
             newVote
@@ -268,7 +339,6 @@ app.post("/votes", (req, res) => {
         } else {
             // handle existing votes.
             res.status(200).send();
-            console.log("existing vote...");
         }
     });
 });
@@ -430,6 +500,13 @@ app.get("/votes", (req, res) => {
     });
 });
 
+app.get("/dislikes", (req, res) => {
+    let userId = req.query.user;
+    Dislike.find({ user: userId }).then((result) => {
+        res.send(result);
+    });
+});
+
 // endpoint to get movie data from the tmdb site.
 app.get("/movie", (req, res) => {
     const id = req.query.id;
@@ -560,21 +637,89 @@ app.get("/users", (req, res) => {
         });
 });
 
-// user route parameters ":id"
-app.get("/users/:id", (req, res) => {
-    const _id = req.params.id;
+app.get("/avatars/:id", (req, res) => {
+    const userId = req.params.id;
 
-    User.findById(_id)
-        .then((user) => {
-            if (!user) {
-                return res.status(404).send();
-            }
+    Avatar.find({ userId })
+        .then((avatar) => {
+            // console.log(avatar[0].data)
+            const binaryData = avatar[0].data;
 
-            res.send(user);
+            const b64 = binaryData.toString("base64");
+
+            const filename = avatar[0].filename;
+
+            const splitName = filename.split(".");
+
+            const extension = splitName[1];
+            const mimeType = `image/${extension}`;
+
+            const converedImage = `data:${mimeType};base64,${b64}`;
+
+            res.status(201).send(converedImage);
         })
         .catch((e) => {
             res.status(500).send();
         });
+});
+
+// user route parameters ":id"
+app.get("/users/:id", (req, res) => {
+    const _id = req.params.id;
+
+    // User.findById(_id, (err, doc) => {
+
+    //     console.log("returned doc", doc)
+
+    //     if (err) {
+    //         console.log("lmao")
+    //         res.status(500).send();
+    //     }
+
+    //     if (doc === undefined) {
+    //         console.log("its undefioned")
+    //         res.status(404).send();
+    //     } else {
+    //         res.status(200).send(user);
+    //     }
+    // }).then((result)=>console.log(result));
+
+    let lmao = false;
+
+    User.findById(_id)
+        .then((user) => {
+            // console.log(_id, "in then");
+            if (!user || user === null || user === undefined) {
+                return res.status(404).send([]);
+            } else {
+                return res.status(200).send(user);
+            }
+        })
+        .catch((e) => {
+            // console.log("error");
+
+            // i HAVE to set status as 200, or else server never returns anything!
+            return res.status(500).send([]);
+        });
+
+    // .catch((e) => {
+    //     console.log(lmao);
+    //     console.log(e);
+    //     // Promise.reject();
+    //     return res.status(404).send();
+    // }
+
+    // .then((user) => {
+    //     console.log(_id, "in then");
+    //     if (!user || user === null || user === undefined) {
+    //         return res.status(404).send([]);
+    //     } else {
+    //         return res.status(200).send(user);
+    //     }
+    // })
+    // .catch((e) => {
+    //     return res.status(500).send([]);
+    // });
 });
 
 // get all of a user's matches
@@ -610,7 +755,6 @@ app.patch("/friend", (req, res) => {
 
     Friend.findOneAndUpdate(idToUpdate, { status: "accepted" })
         .then((result) => {
-            // console.log(result);
             return res.status(200).send();
             // return res.status(200).send("successfully accepted friend request");
         })

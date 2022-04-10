@@ -20,17 +20,26 @@ const tmdb = (params, callback) => {
     if (params.language !== 0) {
         languageQuery = "&with_original_language=" + params.language.toString();
     }
-    console.log("The params are:", params);
+    // console.log("The params are:", params);
+
     // console.log(params.platforms.length);
 
-    const numPlatforms = params.platforms.length;
+    let numPlatforms = 0;
+
+    if (params.platforms) {
+        numPlatforms = params.platforms.length;
+    }
 
     if (numPlatforms > 0) {
         let streamProviders = "";
 
         for (let i = 0; i < numPlatforms; i++) {
             if (i === 0) {
-                streamProviders = streamProviders + params.platforms[i].id;
+                streamProviders =
+                    streamProviders +
+                    params.platforms[i].id +
+                    "|" +
+                    params.platforms[i].name;
             } else {
                 streamProviders =
                     streamProviders + "|" + params.platforms[i].id;
@@ -74,7 +83,7 @@ const tmdb = (params, callback) => {
     };
 
     const yearQuery = decadeDictionary[params.decade];
-    console.log(yearQuery);
+    // console.log(yearQuery);
 
     // console.log(genreQuery);
     // console.log(platformQuery);

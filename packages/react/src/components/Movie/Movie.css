@@ -184,3 +184,29 @@ iframe {
     margin: 10px 0px;
     cursor: pointer;
 }
+
+.MuiTextField-root {
+    color: white;
+}
+
+.MuiInputBase-root-MuiInput-root {
+    color: white !important;
+}
+
+.MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
+    color: whitesmoke;
+    background-color: #202020;
+}
+.MuiTextField-inputFocused {
+    color: whitesmoke !important;
+    background-color: #202020;
+}
+
+.MuiAutocomplete-listbox {
+    color: whitesmoke !important;
+    background-color:  #202020;
+}
+.MuiAutocomplete-focused {
+    color: whitesmoke !important;
+    background-color: goldenrod;
+}
