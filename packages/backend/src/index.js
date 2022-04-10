@@ -273,6 +273,8 @@ app.post("/votes", (req, res) => {
     const user = req.body.user;
     const liked = true;
 
+    const { username, poster, title } = req.body;
+
     let mustWatch = req.body.mustWatch;
 
     if (mustWatch === undefined || mustWatch === null) {
@@ -289,12 +291,15 @@ app.post("/votes", (req, res) => {
         // means a vote and save if one does not exist yet
         if (result.length === 0) {
             // make a new vote object
-            console.log("new vote");
+
             const newVote = new Vote({
                 movieID,
                 user,
                 liked,
                 mustWatch,
+                username,
+                poster,
+                title,
             });
 
             newVote
@@ -308,7 +313,6 @@ app.post("/votes", (req, res) => {
         } else {
             // handle existing votes.
             res.status(200).send();
-            console.log("existing vote...");
         }
     });
 });
@@ -630,17 +634,59 @@ app.get("/avatars/:id", (req, res) => {
 app.get("/users/:id", (req, res) => {
     const _id = req.params.id;
 
+    // User.findById(_id, (err, doc) => {
+
+    //     console.log("returned doc", doc)
+
+    //     if (err) {
+    //         console.log("lmao")
+    //         res.status(500).send();
+    //     }
+
+    //     if (doc === undefined) {
+    //         console.log("its undefioned")
+    //         res.status(404).send();
+    //     } else {
+    //         res.status(200).send(user);
+    //     }
+    // }).then((result)=>console.log(result));
+
+    let lmao = false;
+
     User.findById(_id)
         .then((user) => {
-            if (!user) {
-                return res.status(404).send();
+            // console.log(_id, "in then");
+            if (!user || user === null || user === undefined) {
+                return res.status(404).send([]);
+            } else {
+                return res.status(200).send(user);
             }
-
-            res.send(user);
         })
         .catch((e) => {
-            res.status(500).send();
+            // console.log("error");
+
+            // i HAVE to set status as 200, or else server never returns anything!
+            return res.status(500).send([]);
         });
+
+    // .catch((e) => {
+    //     console.log(lmao);
+    //     console.log(e);
+    //     // Promise.reject();
+    //     return res.status(404).send();
+    // }
+
+    // .then((user) => {
+    //     console.log(_id, "in then");
+    //     if (!user || user === null || user === undefined) {
+    //         return res.status(404).send([]);
+    //     } else {
+    //         return res.status(200).send(user);
+    //     }
+    // })
+    // .catch((e) => {
+    //     return res.status(500).send([]);
+    // });
 });
 
 //PATCH
@@ -658,7 +704,6 @@ app.patch("/friend", (req, res) => {
 
     Friend.findOneAndUpdate(idToUpdate, { status: "accepted" })
         .then((result) => {
-            // console.log(result);
             return res.status(200).send();
             // return res.status(200).send("successfully accepted friend request");
         })
