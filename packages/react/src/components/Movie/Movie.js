@@ -290,7 +290,7 @@ class Movie extends React.Component {
                     this.genreFilter(movie) === true &&
                     this.decadeFilter(movie) === true &&
                     this.languageFilter(movie) === true &&
-                    // this.dislikeFilter(movie) === true &&
+                    this.dislikeFilter(movie) === true &&
                     this.likeFilter(movie) === true
                 ) {
                     filters = true;
