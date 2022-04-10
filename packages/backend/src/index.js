@@ -9,6 +9,7 @@ const Friend = require("./database/models/friend");
 const Match = require("./database/models/match");
 const Room = require("./database/models/room");
 const Member = require("./database/models/member");
+
 const Avatar = require("./database/models/avatar");
 
 const multer = require("multer");
@@ -16,6 +17,9 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 // const upload = multer({ dest: 'uploads/' })
+
+const Dislike = require("./database/models/dislike");
+
 
 const express = require("express");
 const _ = require("underscore");
@@ -267,6 +271,24 @@ app.post("/users", (req, res) => {
         });
 });
 
+// create a dislike
+app.post("/dislikes", (req, res) => {
+    const movieId = req.body.data.id;
+    const user = req.body.data.user;
+
+    const dislikeData = {
+        movieId,
+        user,
+    };
+
+    const newDislike = new Dislike(dislikeData);
+
+    newDislike
+        .save()
+        .then(() => res.sendStatus(201))
+        .catch((e) => res.sendStatus(500));
+});
+
 //create a new vote (user swipes)
 app.post("/votes", (req, res) => {
     const movieID = req.body.id;
@@ -470,6 +492,13 @@ app.get("/votes", (req, res) => {
     let userId = req.query.user;
 
     Vote.find({ user: userId }).then((result) => {
+        res.send(result);
+    });
+});
+
+app.get("/dislikes", (req, res) => {
+    let userId = req.query.user;
+    Dislike.find({ user: userId }).then((result) => {
         res.send(result);
     });
 });

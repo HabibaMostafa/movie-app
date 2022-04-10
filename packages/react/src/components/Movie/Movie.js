@@ -27,6 +27,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 
 var movie;
 var likesList;
+var dislikesList;
 var min;
 var max;
 var page = 1;
@@ -105,11 +106,17 @@ class Movie extends React.Component {
             // selectedPlatforms: [],
             selectedDecade: 0,
             selectedLanguage: 0,
+
             dataFetched: false,
             movies: [],
             filterListOpen: false,
             userSelectedPlatforms: [],
             showPlatformOptions: true,
+
+
+            dislikes: [],
+            fetchedDislikes: false,
+
         };
     }
 
@@ -149,15 +156,27 @@ class Movie extends React.Component {
         //get a list of previously "liked" movies
         this.getLikedList();
 
-        axios
-            .post("/movies", params)
-            .then((res) => {
-                if (res.status === 200) {
-                    index = 0;
-                    this.setState({ movies: res.data });
+
+//         axios
+//             .post("/movies", params)
+//             .then((res) => {
+//                 if (res.status === 200) {
+//                     index = 0;
+//                     this.setState({ movies: res.data });
 
                     //create a list of movies to display in carousel
                     // this.setMovieIndex();
+
+        // get list of disliked movies
+        this.getDislikedList();
+
+        axios.post("/movies", params).then((res) => {
+            if (res.status === 200) {
+                index = 0;
+                this.setState({ movies: res.data });
+                //create a list of movies to display in carousel
+                this.setMovieIndex();
+
 
                     //set the next movie to display
                     // this.setMovie();
@@ -226,6 +245,7 @@ class Movie extends React.Component {
             </Stack>
         );
     };
+
 
 
     //filterByLanguage = (show) => {
@@ -314,6 +334,22 @@ class Movie extends React.Component {
         });
     };
 
+    getDislikedList = async () => {
+        axios.get(`/dislikes?user=${this.props._id}`).then((result) => {
+            if (result.status === 200) {
+                this.setState({ dislikes: result.data });
+            }
+        });
+    };
+
+    dislikeMovie = async () => {
+        let userId = this.props._id;
+
+        let data = { id: movie.id, user: userId };
+
+        axios.post("/dislikes", { data }).then((response) => {});
+    };
+
     //set a movie to display based on what the next number in the movieIndex is.
     setMovie() {
         if (
@@ -336,16 +372,25 @@ class Movie extends React.Component {
 
         try {
             while (
+              
+
+              
                 filters === false 
-                // this.state.availablePlatforms.length > 0
-                // filters === false &&
-                // this.state.availablePlatforms.length > 0
+
+
+//                 filters === false &&
+//                 this.state.availablePlatforms.length > 0
+
+
+
+              
             ) {
                 if (
                     // this.streamFilter(movie) === true <--  not needed, the post request does it already -Miles
                     this.genreFilter(movie) === true &&
                     this.decadeFilter(movie) === true &&
                     this.languageFilter(movie) === true &&
+                    // this.dislikeFilter(movie) === true &&
                     this.likeFilter(movie) === true
                 ) {
                     filters = true;
@@ -593,7 +638,7 @@ class Movie extends React.Component {
     };
 
     genreFilter(movie) {
-        console.log("LOL");
+
 
         var genreIDArr = movie.genre_ids;
 
@@ -688,6 +733,7 @@ class Movie extends React.Component {
     likeFilter(movie) {
         likesList = this.state.likes;
 
+
         for (let i = 0; i < likesList.length; i++) {
             //check if the movie and liked movie are the same
             if (likesList[i].movieID === movie.id) {
@@ -697,6 +743,32 @@ class Movie extends React.Component {
 
         return true;
     }
+
+
+    dislikeFilter(movie) {
+
+        dislikesList = this.state.dislikes;
+
+
+
+        for (let i = 0; i < dislikesList.length; i++) {
+            //check if the movie and liked movie are the same
+            if (dislikesList[i].movieId === movie.id) {
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // callback function used by PlatformFilter
+    selectedPlatformsCallback = (selected) => {
+        this.setState({ selectedPlatforms: selected });
+        // debugging to check that the component is returning the selected streaming platforms
+        // console.log("setPlatforms: ", this.state.selectedPlatforms);
+    };
+
 
     applyFilteringBtn = () => {
         page = 1;
@@ -761,6 +833,7 @@ class Movie extends React.Component {
             <section className="movie">
                 <div>
 
+
                     <ToggleButton value="check" onClick={this.handleClickOpen}>
                         <FilterListIcon />
                     </ToggleButton>
@@ -768,6 +841,7 @@ class Movie extends React.Component {
                     <Dialog
                         open={this.state.filterListOpen}
                         onClose={this.handleClose}
+
                     >
                         <DialogTitle sx={{ background: "#242424" }}>
                             Set Filters
@@ -780,6 +854,7 @@ class Movie extends React.Component {
                             {this.filterByPlatform(
                                 this.state.showPlatformOptions
                             )}
+
 
                             <p>Decade</p>
                             {this.filterByDecade(this.state.showDecadeOptions)}
@@ -795,6 +870,7 @@ class Movie extends React.Component {
                             <Button onClick={this.getNewList}>Apply</Button>
                         </DialogActions>
                     </Dialog>
+
 
                 </div>
                 {this.state.showMovie ? (
@@ -837,11 +913,24 @@ class Movie extends React.Component {
                                         </Button>
                                         &nbsp;&nbsp;
                                         <Button
+                                            id="skip-button"
+                                            size="large"
+                                            variant="contained"
+                                            onClick={() => {
+                                                this.setMovie();
+                                            }}
+                                        >
+                                            Skip
+                                        </Button>
+                                        &nbsp;&nbsp;
+                                        <Button
                                             id="dislike-button"
                                             size="large"
                                             variant="contained"
                                             onClick={() => {
-                                                // index++;
+
+                                                this.dislikeMovie();
+
                                                 this.setMovie();
                                             }}
                                         >
