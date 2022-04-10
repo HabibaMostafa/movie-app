@@ -141,7 +141,7 @@ class FriendsList extends React.Component {
                                         onClick={(e) => {
                                             e.preventDefault();
                                             this.props.navigate(
-                                                `/UserPages/${value.userId}`
+                                                `/UserPage/${value.userId}`
                                             );
                                             window.location.reload(true);
                                         }}

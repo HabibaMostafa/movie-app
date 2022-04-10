@@ -28,9 +28,9 @@ ReactDOM.render(
             <Route path="/matches/*" element={<Matches />} />
             <Route path="/matches/*" element={<Matches />} />
 
-            <Route path="/UserPages/" element={<Home />} />
-            <Route path="/UserPages/:id" element={<UserPage /> } />
-            <Route path="/UserPages/*" element={<UserPage /> } />
+            <Route path="/UserPage/" element={<UserPage />} />
+            <Route path="/UserPage/:id" element={<UserPage /> } />
+            <Route path="/UserPage/*" element={<UserPage /> } />
             <Route path="/settings*" element={<Settings />} />
 
             {/* <Route path="*"/> */}

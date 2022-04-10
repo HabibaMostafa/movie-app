@@ -87,13 +87,13 @@ const Navbar = () => {
                         <li className="nav-item">
                             <NavLink
                                 exact
-                                to={`/UserPages/${myid}`}
+                                to={`/UserPage/${myid}`}
                                 activeClassName="active"
                                 className="nav-links"
                                 // onClick={click ? handleClick : null}
                                 onClick={() => {
                                     const id = tokenObj._id;
-                                    navigate(`/UserPages/${id}`);
+                                    navigate(`/UserPage/${id}`);
                                     window.location.reload(true);
                                 }}
                             >
