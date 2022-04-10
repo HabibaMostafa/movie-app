@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import FormData from "form-data";
+import "./UserSettings.css";
 
 // userId={id}
 
@@ -61,13 +62,13 @@ class UserSettings extends React.Component {
                     <input {...getInputProps()} />
 
                     {this.state.validFile ? (
-                        <div>
+                        <div id="userSelection" >
                             User Selection: {fileName}
                             <br />
-                            <img src={filePath} height="200"></img>
+                            <img id="currentAvatar" src={filePath} height="200"></img>
                         </div>
                     ) : (
-                        <div>Click here or drag and drop your image.</div>
+                        <div id="settingsButton">Click here or drag and drop your image.</div>
                     )}
                 </div>
 
@@ -75,6 +76,7 @@ class UserSettings extends React.Component {
                     <div>
                         <br />
                         <Button
+                            id="settingsButton"
                             onClick={() => {
                                 this.clearSelection();
                             }}
@@ -83,6 +85,7 @@ class UserSettings extends React.Component {
                         </Button>
 
                         <Button
+                            id="settingsButton"
                             onClick={() => {
                                 this.uploadImage();
                             }}
@@ -127,13 +130,13 @@ class UserSettings extends React.Component {
     render() {
         return (
             <div>
-                <h3>Set User Avatar</h3>
+                <h3 id="settingsHeading">Set User Avatar</h3>
 
                 {this.state.fetchedAvatar ? (
                     <div>
-                        <h4>Current Avatar: </h4>
+                        <h4 id="avatarHeading" >Current Avatar: </h4>
                         <br />
-                        <img src={currentAvatar} height="200"></img>
+                        <img id="currentAvatar" src={currentAvatar} height="200"></img>
                         <br />
                     </div>
                 ) : (
