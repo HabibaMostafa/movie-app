@@ -98,6 +98,8 @@ class Movie extends React.Component {
     }
 
     componentDidMount() {
+        document.addEventListener("keydown", this.handleKeyPress, false);
+
         // need to start at the first page on every new api call
         page = 1;
 
@@ -661,6 +663,33 @@ class Movie extends React.Component {
     getNewList = () => {
         this.componentDidMount();
     };
+
+    handleKeyPress = (e) => {
+        var key = e.key;
+        if (key == "ArrowRight") {
+            //Dislike movie
+            //TODO: add mile's updated dislike features here.
+            this.setMovie();
+        }
+        else if (key == "ArrowLeft") {
+            //Like movie
+            this.likeMovie();
+            this.setMovie();
+        }
+        else if (key == "ArrowDown") {
+            //must watch movie
+            this.mustWatchMovie();
+            this.setMovie();
+        }
+        else if (key == "ArrowUp") {
+            //show description
+            this.displayData();
+        }
+    }
+
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleKeyPress, false);
+    }
 
     render() {
         return (
