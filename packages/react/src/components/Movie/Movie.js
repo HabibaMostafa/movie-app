@@ -362,7 +362,6 @@ class Movie extends React.Component {
 
     getDislikedList = async () => {
         await axios.get(`/dislikes?user=${this.props._id}`).then((result) => {
-
             if (result.status === 200) {
                 this.setState({ dislikes: result.data });
             }
@@ -883,21 +882,26 @@ class Movie extends React.Component {
 
     handleKeyPress = (e) => {
         var key = e.key;
-        if (key == "ArrowRight") {
+        console.log(key, "pressed!")
+
+        if (key == "d") {
             //Dislike movie
-            //TODO: add mile's updated dislike features here.
+            this.dislikeMovie();
             this.setMovie();
-        } else if (key == "ArrowLeft") {
+        } else if (key == "a") {
             //Like movie
             this.likeMovie();
             this.setMovie();
-        } else if (key == "ArrowDown") {
+        } else if (key == "w") {
             //must watch movie
             this.mustWatchMovie();
             this.setMovie();
-        } else if (key == "ArrowUp") {
+        } else if (key == "e") {
             //show description
             this.displayData();
+        } else if (key === "s") {
+            //skip movie
+            this.setMovie();
         }
     };
 
