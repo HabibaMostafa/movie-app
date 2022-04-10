@@ -331,9 +331,6 @@ class Movie extends React.Component {
 
                         // loop to the beginning
                         if (page >= totalPages) {
-                            // console.log("out of movies" );
-                            // this.setState({ showMovie: false });
-                            // console.log("line 329...", page);
                             page = 1;
                             index = 0;
                         } else {
@@ -345,8 +342,6 @@ class Movie extends React.Component {
                     movie = this.state.movies.body.results[index];
                 }
             }
-
-            console.log(movie.title);
 
             await this.setState({ title: movie.title });
             await this.setState({
@@ -379,7 +374,6 @@ class Movie extends React.Component {
 
                 // check if the current page is the last page
                 if (page >= totalPages) {
-                    // console.log("line 376...", page);
                     page = 1;
                 }
 
@@ -407,24 +401,19 @@ class Movie extends React.Component {
             let totalPages = this.state.movies.body.total_pages;
 
             if (page + 1 > totalPages) {
-                console.log(page);
-                console.log(totalPages);
-                console.log(index);
-                console.log("out of movies. Error: " + error);
                 this.setState({ showMovie: false });
-                console.log("line 413...", page);
+
                 page = 1;
                 index = 0;
             } else {
                 page++;
                 index = 0;
-                console.log(error);
-                // this.componentDidMount();
+
                 //grab another page
                 this.getNewPage();
             }
 
-            // console.log("total pages: ", this.state.movies.body.total_pages);
+            console.log(error);
         }
     };
 
@@ -526,15 +515,11 @@ class Movie extends React.Component {
                 return;
             }
 
-            // console.log(res.data.results)
-
             let youtubeKey = res.data.results[0].key;
 
             this.setState({ movietrailer: youtubeKey });
             this.setState({ showTrailer: true });
         });
-
-        console.log(this.state.showTrailer);
     };
 
     getMovieCast = async (movieId) => {
@@ -578,8 +563,6 @@ class Movie extends React.Component {
                 "platforms: ",
                 this.state.availablePlatforms
             );
-            console.log("selected platforms: ", this.state.selectedPlatforms);
-            console.log("intersection ", intersection);
             return true;
         } else {
             return false;
@@ -611,7 +594,7 @@ class Movie extends React.Component {
             })
             .catch((e) => {
                 this.setState({ availablePlatforms: ["error"] });
-                // console.log(["error"]);
+                console.log(e);
             });
     };
 
@@ -668,7 +651,6 @@ class Movie extends React.Component {
 
     languageFilter(movie) {
         var movieLanguage = movie.original_language;
-        // console.log(movieLanguage);
         if (this.state.selectedLanguage !== 0) {
             if (movieLanguage === getLanguageISO(this.state.selectedLanguage)) {
                 return true;
@@ -756,23 +738,15 @@ class Movie extends React.Component {
             }
         }
 
-        // console.log("Checking if this movie is liked...")
-        // console.log("Like List: ", likesList)
-        // console.log("Movie ID ", movie.id)
-
         return true;
     }
 
     // callback function used by PlatformFilter
     selectedPlatformsCallback = (selected) => {
         this.setState({ selectedPlatforms: selected });
-        // debugging to check that the component is returning the selected streaming platforms
-        // console.log("setPlatforms: ", this.state.selectedPlatforms);
     };
 
     applyFilteringBtn = () => {
-        // console.log("line 751...", page)
-
         // index = 0;
         return (
             <div>

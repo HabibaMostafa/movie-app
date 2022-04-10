@@ -244,7 +244,7 @@ app.post("/votes", (req, res) => {
         // means a vote and save if one does not exist yet
         if (result.length === 0) {
             // make a new vote object
-            console.log("new vote");
+            // console.log("new vote");
             const newVote = new Vote({
                 movieID,
                 user,
@@ -263,7 +263,7 @@ app.post("/votes", (req, res) => {
         } else {
             // handle existing votes.
             res.status(200).send();
-            console.log("existing vote...");
+            // console.log("existing vote...");
         }
     });
 });
