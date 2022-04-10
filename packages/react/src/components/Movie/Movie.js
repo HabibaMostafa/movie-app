@@ -881,22 +881,22 @@ class Movie extends React.Component {
     };
 
     handleKeyPress = (e) => {
-        var key = e.key;
-        console.log(key, "pressed!")
+        let key = e.key;
+        console.log(key)
 
-        if (key == "d") {
+        if (key === "d" || key === "ArrowRight") {
             //Dislike movie
             this.dislikeMovie();
             this.setMovie();
-        } else if (key == "a") {
+        } else if (key === "a" || key === "ArrowLeft") {
             //Like movie
             this.likeMovie();
             this.setMovie();
-        } else if (key == "w") {
+        } else if (key === "w") {
             //must watch movie
             this.mustWatchMovie();
             this.setMovie();
-        } else if (key == "e") {
+        } else if (key === "e") {
             //show description
             this.displayData();
         } else if (key === "s") {
