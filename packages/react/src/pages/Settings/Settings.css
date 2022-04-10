@@ -1,0 +1,12 @@
+.settings-wrapper {
+    padding-left: 9%;
+    padding-right: 9%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    text-align: center;
+}
+
+.MuiAutocomplete-inputRoot {
+    color: whitesmoke;
+    background-color: #202020;
+}

@@ -8,6 +8,8 @@ import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 // import CommentIcon from "@mui/icons-material/Comment";
 
+//navigate is passed in props ....
+
 import "./FriendsList.css";
 
 class FriendsList extends React.Component {
@@ -104,7 +106,7 @@ class FriendsList extends React.Component {
                             maxHeight: 500,
                             overflow: "auto",
                             maxWidth: 360,
-                            padding: '10px',
+                            padding: "10px",
                         }}
                     >
                         <List
@@ -136,6 +138,13 @@ class FriendsList extends React.Component {
                                             value.name +
                                             ")"
                                         }
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            this.props.navigate(
+                                                `/UserPage/${value.userId}`
+                                            );
+                                            window.location.reload(true);
+                                        }}
                                     />
                                 </ListItem>
                             ))}

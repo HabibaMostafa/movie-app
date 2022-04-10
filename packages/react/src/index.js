@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { Home, Friends, Movies, Matches, Rooms, UserPage } from "./pages/index";
+import { Home, Friends, Movies, Matches, Rooms, UserPage, Settings } from "./pages/index";
 
 import reportWebVitals from "./reportWebVitals";
 // test
@@ -30,6 +30,7 @@ ReactDOM.render(
 
             <Route path="/UserPage/" element={<Home />} />
             <Route path="/UserPage/:id" element={<UserPage /> } />
+            <Route path="/settings*" element={<Settings />} />
 
             {/* <Route path="*"/> */}
             <Route path="*" element={<Home />} />
