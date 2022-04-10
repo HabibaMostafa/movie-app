@@ -30,6 +30,7 @@ ReactDOM.render(
 
             <Route path="/UserPage/" element={<Home />} />
             <Route path="/UserPage/:id" element={<UserPage /> } />
+            <Route path="/UserPage/*" element={<UserPage /> } />
             <Route path="/settings*" element={<Settings />} />
 
             {/* <Route path="*"/> */}
