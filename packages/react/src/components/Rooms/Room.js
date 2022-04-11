@@ -94,49 +94,38 @@ class Room extends React.Component {
                                 aria-label="basic tabs example"
                             >
                                 <Tab
-                                    label="Nominations"
+                                    label="Matches"
                                     {...a11yProps(0)}
                                     sx={tabStyling}
                                 />
                                 <Tab
-                                    label="Matches"
+                                    label="Members"
                                     {...a11yProps(1)}
                                     sx={tabStyling}
                                 />
                                 <Tab
-                                    label="Members"
-                                    {...a11yProps(2)}
-                                    sx={tabStyling}
-                                />
-                                <Tab
                                     label="Room Details"
-                                    {...a11yProps(3)}
+                                    {...a11yProps(2)}
                                     sx={tabStyling}
                                 />
                             </Tabs>
                         </Box>
+
                         <TabPanel value={this.state.selectedTab} index={0}>
-                            <Nominations
-                                roomId={this.props.room._id}
-                                userId={this.state.userId}
-                                key={this.state.remountKey}
-                            />
-                        </TabPanel>
-                        <TabPanel value={this.state.selectedTab} index={1}>
                             <RoomMatches
                                 roomId={this.props.room._id}
                                 userId={this.state.userId}
                                 key={this.state.remountKey}
                             />
                         </TabPanel>
-                        <TabPanel value={this.state.selectedTab} index={2}>
+                        <TabPanel value={this.state.selectedTab} index={1}>
                             <Members
                                 key={this.state.remountKey}
                                 roomId={this.props.room._id}
                                 userId={this.state.userId}
                             />
                         </TabPanel>
-                        <TabPanel value={this.state.selectedTab} index={3}>
+                        <TabPanel value={this.state.selectedTab} index={2}>
                             <Details
                                 roomId={this.props.room._id}
                                 userId={this.state.userId}
