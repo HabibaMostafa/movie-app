@@ -10,14 +10,15 @@ import IconButton from "@mui/material/IconButton";
 
 //navigate is passed in props ....
 
+import loading from "../../images/loading.svg";
+
 import "./FriendsList.css";
 
 class FriendsList extends React.Component {
     constructor(props) {
         super(props);
 
-        // needs to equal [] bc react renders twice since theres component did mount...
-        this.state = { userFriends: [] };
+        this.state = { userFriends: [], loadedFriends: false };
         this.userToAdd = null;
     }
 
@@ -26,13 +27,16 @@ class FriendsList extends React.Component {
             user: this.props._id,
         };
 
-        axios.post("/friend/user-friends", params).then((res) => {
-            if (res.status === 200) {
-                this.setState({ userFriends: res.data });
-            } else {
-                this.setState({ userFriends: [] });
-            }
-        });
+        axios
+            .post("/friend/user-friends", params)
+            .then((res) => {
+                if (res.status === 200) {
+                    this.setState({ userFriends: res.data });
+                } else {
+                    this.setState({ userFriends: [] });
+                }
+            })
+            .then(() => this.setState({ loadedFriends: true }));
     }
 
     getFriendArray = () => {
@@ -101,55 +105,78 @@ class FriendsList extends React.Component {
             <div className="friendsListContainer">
                 <h3>Friends List</h3>
                 <div>
-                    <Paper
-                        style={{
-                            maxHeight: 500,
-                            overflow: "auto",
-                            maxWidth: 360,
-                            padding: "10px",
-                        }}
-                    >
-                        <List
-                            sx={{
-                                width: "100%",
-                                maxWidth: 360,
-                                bgcolor: "#FFFFFF",
-                            }}
-                        >
-                            {this.state.userFriends.map((value) => (
-                                <ListItem
-                                    key={value}
-                                    disableGutters
-                                    secondaryAction={
-                                        <IconButton
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                this.deleteButtonHandler(value);
+                    {this.state.loadedFriends ? (
+                        <div>
+                            {this.state.userFriends.length > 0 ? (
+                                <div>
+                                    <Paper
+                                        style={{
+                                            maxHeight: 500,
+                                            overflow: "auto",
+                                            maxWidth: 360,
+                                            padding: "10px",
+                                        }}
+                                    >
+                                        <List
+                                            sx={{
+                                                width: "100%",
+                                                maxWidth: 360,
+                                                bgcolor: "#FFFFFF",
                                             }}
                                         >
-                                            [X]
-                                        </IconButton>
-                                    }
-                                >
-                                    <ListItemText
-                                        primary={
-                                            value.username +
-                                            " (" +
-                                            value.name +
-                                            ")"
-                                        }
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            this.props.navigate(
-                                                `/UserPage${value.userId}`
-                                            );
-                                            window.location.reload(true);
-                                        }}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Paper>
+                                            {this.state.userFriends.map(
+                                                (value) => (
+                                                    <ListItem
+                                                        key={value}
+                                                        disableGutters
+                                                        secondaryAction={
+                                                            <IconButton
+                                                                onClick={(
+                                                                    e
+                                                                ) => {
+                                                                    e.preventDefault();
+                                                                    this.deleteButtonHandler(
+                                                                        value
+                                                                    );
+                                                                }}
+                                                            >
+                                                                [X]
+                                                            </IconButton>
+                                                        }
+                                                    >
+                                                        <ListItemText
+                                                            primary={
+                                                                value.username +
+                                                                " (" +
+                                                                value.name +
+                                                                ")"
+                                                            }
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                this.props.navigate(
+                                                                    `/UserPage${value.userId}`
+                                                                );
+                                                                window.location.reload(
+                                                                    true
+                                                                );
+                                                            }}
+                                                        />
+                                                    </ListItem>
+                                                )
+                                            )}
+                                        </List>
+                                    </Paper>
+                                </div>
+                            ) : (
+                                <div>You have no friends 😭</div>
+                            )}
+                        </div>
+                    ) : (
+                        <div>
+                            <h3>Loading user data</h3>
+                            <img src={loading} alt="loading animation"></img>
+                        </div>
+                    )}
                 </div>
             </div>
         );

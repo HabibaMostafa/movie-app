@@ -20,6 +20,7 @@ class FriendMatches extends React.Component {
         }
 
         super(props);
+        
         this.props = props;
 
         this.state = {

@@ -7,10 +7,15 @@ import "./AddFriend.css";
 import { Grid } from "@mui/material";
 import { Paper } from "@mui/material";
 
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+
+import loading from "../../images/loading.svg";
+
 class AddFriend extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { notFriends: [] };
+        this.state = { notFriends: [], dataFetched: false, expand: false };
         this.userToAdd = null;
     }
 
@@ -35,17 +40,21 @@ class AddFriend extends React.Component {
             user: this.props._id,
         };
 
-        axios.post("/friend/not-friends", params).then((res) => {
-            //"not-friends" ='(
-
-            // console.log(res.data);
-            if (res.status === 200) {
-                this.setState({ notFriends: res.data });
-            } else {
-                this.setState({ notFriends: [] });
-            }
-        });
+        axios
+            .post("/friend/not-friends", params)
+            .then((res) => {
+                if (res.status === 200) {
+                    this.setState({ notFriends: res.data });
+                } else {
+                    this.setState({ notFriends: [] });
+                }
+            })
+            .then(() => this.setState({ dataFetched: true }));
     }
+
+    expandHandler = () => {
+        this.setState({ expand: !this.state.expand });
+    };
 
     // note idk why but you gotta use this way, not just the normal function =??
     friendRequestHandler = () => {
@@ -118,44 +127,81 @@ class AddFriend extends React.Component {
     };
 
     render() {
-        if (this.state.notFriends.length > 0) {
-            return (
-                <div className="addFriendContainer">
-                    <h3>Invite a Friend</h3>
-                        <div ref={this.userListRef}>
-                        <Autocomplete
-                            size="small"
-                            disablePortal
-                            id="combo-box-users"
-                            options={this.state.notFriends} // set this to notFriends array
-                            getOptionLabel={(option) => option.username}
-                            sx={{ width: 360}}
-                            renderInput={(params) => <TextField {...params} />}
-                            onChange={(e, selectedUser) => {
-                                this.setUserToAdd(selectedUser);
-                            }}
-                            PaperComponent={({ children }) => (
-                                <Paper style={{ background: "yellow" }}>{children}</Paper>
-                              )}
-                        />
-                        </div>
-                        <div className="centered">
-                            <Button
-                            variant="contained"
-                            id="friend-request-btn"
-                            onClick={this.friendRequestHandler}
-                            >
-                            Send Friend Request
-                            </Button>
-                        </div>
-                       
-                  
-                    
+        return (
+            <div className="addFriendContainer">
+                <div className="invite-friend-header">
+                    <div className="invite-friend-header">
+                        <h3 className="invite-friend-header">
+                            Invite a Friend
+                        </h3>
+                    </div>
+                    <div className="expand-btn" onClick={this.expandHandler}>
+                        {this.state.expand ? (
+                            <ExpandLessIcon
+                                fontSize="large"
+                                sx={{ fill: "goldenrod" }}
+                            />
+                        ) : (
+                            <ExpandMoreIcon
+                                fontSize="large"
+                                sx={{ fill: "goldenrod" }}
+                            />
+                        )}
+                    </div>
                 </div>
-            );
-        } else {
-            return <div className="addFriendContainer">loading...</div>;
-        }
+
+                {this.state.expand ? (
+                    <div>
+                        {this.state.dataFetched ? (
+                            <div>
+                                <div ref={this.userListRef}>
+                                    <Autocomplete
+                                        size="small"
+                                        disablePortal
+                                        id="combo-box-users"
+                                        options={this.state.notFriends} // set this to notFriends array
+                                        getOptionLabel={(option) =>
+                                            option.username
+                                        }
+                                        sx={{ width: 360 }}
+                                        renderInput={(params) => (
+                                            <TextField {...params} />
+                                        )}
+                                        onChange={(e, selectedUser) => {
+                                            this.setUserToAdd(selectedUser);
+                                        }}
+                                        PaperComponent={({ children }) => (
+                                            <Paper
+                                                style={{ background: "yellow" }}
+                                            >
+                                                {children}
+                                            </Paper>
+                                        )}
+                                    />
+                                </div>
+                                <div className="centered">
+                                    <Button
+                                        variant="contained"
+                                        id="friend-request-btn"
+                                        onClick={this.friendRequestHandler}
+                                    >
+                                        Send Friend Request
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                <img src={loading} alt="loading animation">
+                                    {" "}
+                                </img>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="hidden"></div>
+                )}
+            </div>
+        );
     }
 }
 

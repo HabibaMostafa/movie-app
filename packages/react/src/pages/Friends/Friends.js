@@ -89,12 +89,11 @@ const Friends = () => {
                 >
                     <Grid item xs={8}>
                         <TabPanel value={value} index={0}>
-                            <AddFriend _id={userID} />
                             <FriendsList
                                 _id={userID}
                                 navigate={useNavigate()}
                             />
-                            {/* <FriendsList _id={userID}  /> */}
+                            <AddFriend _id={userID} />
                         </TabPanel>
                     </Grid>
                     <Grid item xs={8}>

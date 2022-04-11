@@ -1,4 +1,3 @@
-
 /* mui docs https://mui.com/components/autocomplete/ */
 /* mui docs https://mui.com/api/autocomplete/ */
 /* mui docs https://mui.com/api/text-field/ */
@@ -13,7 +12,7 @@
 
 .MuiAutocomplete-listbox {
     color: whitesmoke !important;
-    background-color:  #202020;
+    background-color: #202020;
 }
 .MuiAutocomplete-focused {
     color: whitesmoke !important;
@@ -35,6 +34,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
+}
 
+.invite-friend-header {
+    display: inline;
+}
 
+.addFriendContainer {
+    padding-top: 15px;
+}
