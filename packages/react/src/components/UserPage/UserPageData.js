@@ -48,7 +48,7 @@ class UserPageData extends React.Component {
     componentDidMount() {
         // fetch the user likes.
         this.getUserData();
-        this.getLikedList();
+        // this.getLikedList();
 
     }
 
@@ -71,8 +71,8 @@ class UserPageData extends React.Component {
 
                             {this.state.fetchedLikes ? (
                                 this.state.userLikes.length > 0 ? (
-                                    <></>
-                                    // <UserLikes likes={this.state.userLikes} />
+                                  
+                                    <UserLikes likes={this.state.userLikes} />
                                 ) : (
                                     <div>User has no likes...</div>
                                 )
