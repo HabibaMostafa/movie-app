@@ -25,9 +25,10 @@ ReactDOM.render(
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/rooms/*" element={<Rooms />} />
 
-            {/* <Route path="/UserPage" element={<UserPage />} /> */}
             <Route path="/UserPage/:id" element={<UserPage /> } />
-            {/* <Route path="/UserPage/*" element={<UserPage /> } /> */}
+            <Route path="/UserPage/:id*" element={<UserPage /> } />
+            <Route path="/UserPage*" element={<UserPage />} />
+            <Route path="/UserPage/*" element={<UserPage /> } />
             <Route path="/settings*" element={<Settings />} />
 
             {/* <Route path="*"/> */}

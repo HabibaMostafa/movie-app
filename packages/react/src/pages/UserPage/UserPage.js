@@ -8,23 +8,26 @@ import UserPageData from "../../components/UserPage/UserPageData";
 import useToken from "../../components/App/useToken";
 
 const UserPage = () => {
-    const { id } = useParams();
+    // const { id } = useParams();
 
-    const { token, setToken, getTokenObj } = useToken();
-    const tokenObj = getTokenObj();
-    const username = tokenObj.username
+    // const { token, setToken, getTokenObj } = useToken();
+    // const tokenObj = getTokenObj();
+    // const username = tokenObj.username
 
 
     
 
     return (
         <div className="container">
-            <Navbar />
+            hello
+            {/* {this.props} */}
+            {/* <Navbar />
+            
 
             <div className="userpage-wrapper">
                 <UserPageData accessorId={id} userId={id} username={username} />
             </div>
-            
+             */}
         </div>
     );
 };
