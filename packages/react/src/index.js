@@ -24,11 +24,13 @@ import {
 
 ReactDOM.render(
     <Router>
-
         <Routes>
-            {/* <Route path="/UserPage/:id" element={<UserPage />} /> */}
-            <Route path="/UserPage" element={<UserPage />} />
-            <Route path="/UserPage*" element={<UserPage />} />
+            <Route path="UserPage">
+                <Route path=":id" element={<UserPage />} />
+                {/* <UserPage /> */}
+            </Route>
+
+            {/* <Route path="/UserPage*" element={<UserPage />} /> */}
 
             <Route path="/" element={<Home />} />
             <Route path="/friends" element={<Friends />} />
