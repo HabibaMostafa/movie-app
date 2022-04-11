@@ -16,7 +16,6 @@ const UserPage = () => {
 
     return (
         <div className="container">
-            {/* {this.props} */}
             <Navbar />
 
             <div className="userpage-wrapper">

@@ -25,12 +25,7 @@ import {
 ReactDOM.render(
     <Router>
         <Routes>
-            {/* <Route path="UserPage"> */}
             <Route path="/UserPage:id" element={<UserPage />} />
-            {/* <UserPage /> */}
-            {/* </Route> */}
-
-            {/* <Route path="/UserPage*" element={<UserPage />} /> */}
 
             <Route path="/" element={<Home />} />
             <Route path="/friends" element={<Friends />} />
@@ -44,7 +39,6 @@ ReactDOM.render(
 
             <Route path="/settings*" element={<Settings />} />
 
-            {/* <Route path="*"/> */}
             <Route path="*" element={<Home />} />
         </Routes>
     </Router>,
