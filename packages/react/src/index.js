@@ -26,7 +26,7 @@ ReactDOM.render(
     <Router>
         <Routes>
             {/* <Route path="UserPage"> */}
-            <Route path="/UserPage/:LMAO" element={<UserPage />} />
+            <Route path="/UserPage/:id" element={<UserPage />} />
             {/* <UserPage /> */}
             {/* </Route> */}
 

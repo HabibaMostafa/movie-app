@@ -1,30 +1,27 @@
 import React from "react";
 
-// import Navbar from "../../components/Navbar/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 
-// import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-// import UserPageData from "../../components/UserPage/UserPageData";
-// import useToken from "../../components/App/useToken";
+import UserPageData from "../../components/UserPage/UserPageData";
+import useToken from "../../components/App/useToken";
 
 const UserPage = () => {
-    // const { id } = useParams();
+    const { id } = useParams();
 
-    // const { token, setToken, getTokenObj } = useToken();
-    // const tokenObj = getTokenObj();
-    // const username = tokenObj.username
+    const { token, setToken, getTokenObj } = useToken();
+    const tokenObj = getTokenObj();
+    const username = tokenObj.username;
 
     return (
         <div className="container">
-            hello
             {/* {this.props} */}
-            {/* <Navbar />
-            
+            <Navbar />
 
             <div className="userpage-wrapper">
                 <UserPageData accessorId={id} userId={id} username={username} />
             </div>
-             */}
         </div>
     );
 };

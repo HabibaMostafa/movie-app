@@ -1417,6 +1417,9 @@ const combineMovieStreams = async (roomId) => {
     return combined;
 };
 
+// app.get("/*", (req, res) => {
+//     res.sendFile(path.join(__dirname, buildPath, "index.html"));
+// });
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, buildPath, "index.html"));
 });
