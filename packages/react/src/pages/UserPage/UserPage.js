@@ -19,12 +19,12 @@ const UserPage = () => {
 
     return (
         <div className="container">
-            {/* <Navbar />
+            <Navbar />
 
             <div className="userpage-wrapper">
                 <UserPageData accessorId={id} userId={id} username={username} />
-            </div> */}
-            hi
+            </div>
+            
         </div>
     );
 };
