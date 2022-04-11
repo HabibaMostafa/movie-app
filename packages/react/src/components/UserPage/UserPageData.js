@@ -47,7 +47,9 @@ class UserPageData extends React.Component {
 
     componentDidMount() {
         // fetch the user likes.
-        this.getUserData();
+        // this.getUserData();
+
+        // next
         // this.getLikedList();
 
     }
@@ -56,7 +58,7 @@ class UserPageData extends React.Component {
         // check if authorized to see this page,
         // check if accessor and userId are the same or
         // if accessor and userId are friends.
-        console.log(this.state.userData);
+        // console.log(this.state.userData);
 
         return (
             <div className="user-page-data">
