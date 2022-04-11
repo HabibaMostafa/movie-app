@@ -83,6 +83,7 @@ export default function Login({ setToken }) {
             <ThemeProvider theme={theme}>
             <Fragment>
                 <div className="login-wrapper">
+                    <br></br><br></br><br></br>
                     <img src={logo} />
                     <div className="login-form">
                     <h1>Login</h1>
@@ -144,6 +145,7 @@ export default function Login({ setToken }) {
             <ThemeProvider theme={theme}>
             <Fragment>
                 <div className="login-wrapper">
+                    <br></br><br></br><br></br>
                     <img src={logo} />
                     <div className="login-form">
                     <h1>Sign Up</h1>
