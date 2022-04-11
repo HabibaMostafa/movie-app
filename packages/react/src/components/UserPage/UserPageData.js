@@ -47,10 +47,10 @@ class UserPageData extends React.Component {
 
     componentDidMount() {
         // fetch the user likes.
-        // this.getUserData();
+        this.getUserData();
 
         // next
-        // this.getLikedList();
+        this.getLikedList();
 
     }
 
