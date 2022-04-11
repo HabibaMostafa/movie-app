@@ -136,6 +136,7 @@ class Movie extends React.Component {
     };
 
     componentDidMount() {
+        console.log("mount");
         document.addEventListener("keydown", this.handleKeyPress, false);
 
         // start at the beginning of the page because the server sent new data
@@ -395,6 +396,54 @@ class Movie extends React.Component {
             while (filters === false) {
                 movie = this.state.movies.body.results[index];
 
+                // check if movie is valid
+                if (movie === undefined || movie === null) {
+                    index++;
+
+                    if (index >= elementsOnThisPage) {
+                        page++;
+                        index = 0;
+                        await this.getNewPage();
+
+                        // loop to the beginning
+                        if (page >= totalPages) {
+                            page = 1;
+                            index = 0;
+                        } else {
+                            index = 0;
+                            this.componentDidMount();
+                        }
+                    }
+
+                    movie = this.state.movies.body.results[index];
+                    continue;
+                }
+
+                const movieId = movie.id;
+
+                // check if the id is valid
+                if (movieId === undefined || movieId === null || movieId < 0) {
+                    index++;
+
+                    if (index >= elementsOnThisPage) {
+                        page++;
+                        index = 0;
+                        await this.getNewPage();
+
+                        // loop to the beginning
+                        if (page >= totalPages) {
+                            page = 1;
+                            index = 0;
+                        } else {
+                            index = 0;
+                            this.componentDidMount();
+                        }
+                    }
+
+                    movie = this.state.movies.body.results[index];
+                    continue;
+                }
+
                 if (
                     this.likeFilter(movie) === true &&
                     this.genreFilter(movie) === true &&
@@ -422,7 +471,7 @@ class Movie extends React.Component {
                         }
                     }
 
-                    movie = this.state.movies.body.results[index];
+                    // movie = this.state.movies.body.results[index];
                 }
             }
 
@@ -619,6 +668,18 @@ class Movie extends React.Component {
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}&language=en-US`;
 
         await axios.get(tmdb_url).then((res) => {
+            console.log(res.data);
+            const castMembers = res.data.cast.length;
+
+            if (
+                res.data === undefined ||
+                res.data === null ||
+                castMembers < 1
+            ) {
+                this.setState({ cast: "" });
+                return;
+            }
+
             const cast = res.data.cast;
             let castString = cast[0].name;
 
