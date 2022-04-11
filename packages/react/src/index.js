@@ -1,20 +1,35 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import { Home, Friends, Movies, Matches, Rooms, UserPage, Settings } from "./pages/index";
+import {
+    Home,
+    Friends,
+    Movies,
+    Matches,
+    Rooms,
+    UserPage,
+    Settings,
+} from "./pages/index";
 
 import reportWebVitals from "./reportWebVitals";
 // test
 
-
-import { BrowserRouter as Router, Route, Routes, useHistory, useParams } from "react-router-dom";
-
-
-
+import {
+    BrowserRouter as Router,
+    Route,
+    Routes,
+    useHistory,
+    useParams,
+} from "react-router-dom";
 
 ReactDOM.render(
     <Router>
+
         <Routes>
+            <Route path="/UserPage/:id" element={<UserPage />} />
+            <Route exact path="/UserPage" element={<UserPage />} />
+            <Route exact path="/UserPage*" element={<UserPage />} />
+
             <Route path="/" element={<Home />} />
             <Route path="/friends" element={<Friends />} />
             <Route path="/friends/*" element={<Friends />} />
@@ -25,10 +40,6 @@ ReactDOM.render(
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/rooms/*" element={<Rooms />} />
 
-            <Route path="/UserPage/:id" element={<UserPage /> } />
-            <Route path="/UserPage/:id*" element={<UserPage /> } />
-            <Route path="/UserPage*" element={<UserPage />} />
-            <Route path="/UserPage/*" element={<UserPage /> } />
             <Route path="/settings*" element={<Settings />} />
 
             {/* <Route path="*"/> */}
