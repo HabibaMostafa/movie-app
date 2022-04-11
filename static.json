@@ -1,0 +1,7 @@
+{
+    "root": "./packages/react/build/",
+    "clean_urls": false,
+    "routes": {
+        "/**": "index.html"
+    }
+}
