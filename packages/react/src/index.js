@@ -25,10 +25,10 @@ import {
 ReactDOM.render(
     <Router>
         <Routes>
-            <Route path="UserPage">
-                <Route path=":id" element={<UserPage />} />
-                {/* <UserPage /> */}
-            </Route>
+            {/* <Route path="UserPage"> */}
+            <Route path="/UserPage/:LMAO" element={<UserPage />} />
+            {/* <UserPage /> */}
+            {/* </Route> */}
 
             {/* <Route path="/UserPage*" element={<UserPage />} /> */}
 

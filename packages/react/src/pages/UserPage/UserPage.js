@@ -1,11 +1,11 @@
-import Navbar from "../../components/Navbar/Navbar";
-
-import { useParams } from "react-router-dom";
-
 import React from "react";
 
-import UserPageData from "../../components/UserPage/UserPageData";
-import useToken from "../../components/App/useToken";
+// import Navbar from "../../components/Navbar/Navbar";
+
+// import { useParams } from "react-router-dom";
+
+// import UserPageData from "../../components/UserPage/UserPageData";
+// import useToken from "../../components/App/useToken";
 
 const UserPage = () => {
     // const { id } = useParams();
@@ -13,9 +13,6 @@ const UserPage = () => {
     // const { token, setToken, getTokenObj } = useToken();
     // const tokenObj = getTokenObj();
     // const username = tokenObj.username
-
-
-    
 
     return (
         <div className="container">
