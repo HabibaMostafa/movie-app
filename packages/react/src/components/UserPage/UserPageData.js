@@ -74,7 +74,6 @@ class UserPageData extends React.Component {
                         this.state.userData.length !== 0 ? (
                             <div>
                                 <h1>{this.state.userData.username}'s Page</h1>
-                                
 
                                 {this.state.fetchedLikes ? (
                                     this.state.userLikes.length > 0 ? (
@@ -82,10 +81,14 @@ class UserPageData extends React.Component {
                                             likes={this.state.userLikes}
                                         />
                                     ) : (
-                                        <div>User has no likes...</div>
+                                        <div className="vote-section">
+                                            <h4>User has no likes</h4>
+                                        </div>
                                     )
                                 ) : (
-                                    <div>fetching likes...</div>
+                                    <div className="vote-section">
+                                        <h4>fetching likes...</h4>
+                                    </div>
                                 )}
 
                                 {this.state.fetchedDislikes ? (
@@ -94,18 +97,25 @@ class UserPageData extends React.Component {
                                             dislikes={this.state.userDislikes}
                                         />
                                     ) : (
-                                        <div>User has no dislikes...</div>
+                                        <div className="vote-section">
+                                            <h4>User has no dislikes</h4>
+                                        </div>
                                     )
                                 ) : (
-                                    <div>fetching dislikes...</div>
+                                    <div className="vote-section">
+                                        <h4>fetching dislikes...</h4>
+                                    </div>
                                 )}
                             </div>
                         ) : (
-                            <div>User Not Found</div>
+                            <div className="vote-section">
+                                <h4>User Not Found</h4>
+                            </div>
                         )
                     ) : (
-                        // console.log(this.state)
-                        <div>Loading user data</div>
+                        <div className="vote-section">
+                            <h4>Loading user data</h4>
+                        </div>
                     )}
                 </div>
             </div>

@@ -40,7 +40,7 @@ class UserLikes extends React.Component {
                                     )
                                 </h4>
                                 <ImageList
-                                    sx={{ width: 1280, height: 450 }}
+                                    sx={{ width: 1280, maxHeight: 450 }}
                                     cols={6}
                                     rowHeight={164}
                                 >
@@ -58,11 +58,13 @@ class UserLikes extends React.Component {
                         <div></div>
                     )}
                 </div>
+
+
                 <div className="vote-section">
                     <h4>Likes ({this.props.likes.length})</h4>
                     <div className="must-watch-votes">
                         <ImageList
-                            sx={{ width: 1280, height: 450 }}
+                            sx={{ width: 1280, maxHeight: 450 }}
                             cols={6}
                             rowHeight={164}
                         >

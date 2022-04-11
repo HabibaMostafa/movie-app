@@ -30,7 +30,7 @@ class UserDislikes extends React.Component {
                         <h4>Dislikes ({this.props.dislikes.length})</h4>
                         <ImageList
                             // sx={{ width: 80%, height: 60% }}
-                            sx={{ width: 1280, height: 450 }}
+                            sx={{ width: 1280, maxHeight: 450 }}
 
                             cols={6}
                             // rowHeight={'auto'}
