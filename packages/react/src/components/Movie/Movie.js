@@ -25,6 +25,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 //icon for the must watch button
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
+import loading from "./loading.svg";
+import { Construction } from "@mui/icons-material";
+
 var movie;
 var likesList = [];
 var dislikesList = [];
@@ -122,6 +125,7 @@ class Movie extends React.Component {
 
             dislikes: [],
             fetchedDislikes: false,
+            dataLoaded: false,
         };
     }
 
@@ -171,7 +175,8 @@ class Movie extends React.Component {
             .then(() => {
                 page = pageBeforeStateChange;
                 this.setMovie();
-            });
+            })
+            .then(() => this.setState({ dataLoaded: true }));
     }
 
     getNewPage = async () => {
@@ -979,194 +984,220 @@ class Movie extends React.Component {
     };
 
     render() {
-        return (
-            <section className="movie">
+        if (!this.state.dataLoaded) {
+            return (
                 <div>
-                    <ToggleButton value="check" onClick={this.handleClickOpen}>
-                        <FilterListIcon />
-                    </ToggleButton>
-
-                    <Dialog
-                        open={this.state.filterListOpen}
-                        onClose={this.handleClose}
-                    >
-                        <DialogTitle sx={{ background: "#242424" }}>
-                            Set Filters
-                        </DialogTitle>
-                        <DialogContent sx={{ background: "#242424" }}>
-                            <p>Genre</p>
-                            {this.filterByGenre(this.state.showGenreOptions)}
-
-                            <p>Platform</p>
-                            {this.filterByPlatform(
-                                this.state.showPlatformOptions
-                            )}
-
-                            <p>Decade</p>
-                            {this.filterByDecade(this.state.showDecadeOptions)}
-
-                            <p>Language</p>
-                            {this.filterByLanguage(
-                                this.state.showLanguageOptions
-                            )}
-                        </DialogContent>
-                        <DialogActions sx={{ background: "#242424" }}>
-                            <Button onClick={this.resetAllFilters}>
-                                Reset Filters
-                            </Button>
-                            <Button onClick={this.handleClose}>Cancel</Button>
-                            <Button onClick={this.getNewList}>Apply</Button>
-                        </DialogActions>
-                    </Dialog>
+                    <h3>Loading movies please wait</h3>
+                    <img src={loading} alt="loading animation"></img>
                 </div>
+            );
+        } else {
+            return (
+                <section className="movie">
+                    <div>
+                        <ToggleButton
+                            value="check"
+                            onClick={this.handleClickOpen}
+                        >
+                            <FilterListIcon />
+                        </ToggleButton>
 
-                {this.state.showMovie ? (
-                    <div className="content">
-                        <div className="top">
-                            <div className={this.className()}>
-                                <div className="movie-display">
-                                    <div>
-                                        <img
-                                            className="movie-poster movie-visual"
-                                            onClick={() => {
-                                                this.displayData();
-                                            }}
-                                            src={this.state.poster_path}
-                                            alt="Movie Poster"
-                                        ></img>
-                                    </div>
+                        <Dialog
+                            open={this.state.filterListOpen}
+                            onClose={this.handleClose}
+                        >
+                            <DialogTitle sx={{ background: "#242424" }}>
+                                Set Filters
+                            </DialogTitle>
+                            <DialogContent sx={{ background: "#242424" }}>
+                                <p>Genre</p>
+                                {this.filterByGenre(
+                                    this.state.showGenreOptions
+                                )}
 
-                                    <div className="like-dislike-btns">
-                                        <div className="must-watch">
-                                            <FavoriteIcon
+                                <p>Platform</p>
+                                {this.filterByPlatform(
+                                    this.state.showPlatformOptions
+                                )}
+
+                                <p>Decade</p>
+                                {this.filterByDecade(
+                                    this.state.showDecadeOptions
+                                )}
+
+                                <p>Language</p>
+                                {this.filterByLanguage(
+                                    this.state.showLanguageOptions
+                                )}
+                            </DialogContent>
+                            <DialogActions sx={{ background: "#242424" }}>
+                                <Button onClick={this.resetAllFilters}>
+                                    Reset Filters
+                                </Button>
+                                <Button onClick={this.handleClose}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={this.getNewList}>Apply</Button>
+                            </DialogActions>
+                        </Dialog>
+                    </div>
+
+                    {this.state.showMovie ? (
+                        <div className="content">
+                            <div className="top">
+                                <div className={this.className()}>
+                                    <div className="movie-display">
+                                        <div>
+                                            <img
+                                                className="movie-poster movie-visual"
                                                 onClick={() => {
-                                                    this.mustWatchMovie();
-                                                    this.setMovie();
+                                                    this.displayData();
                                                 }}
-                                                sx={{ cursor: "pointer" }}
-                                            />
+                                                src={this.state.poster_path}
+                                                alt="Movie Poster"
+                                            ></img>
                                         </div>
-                                        &nbsp;&nbsp;
-                                        <Button
-                                            id="like-button"
-                                            size="large"
-                                            variant="contained"
-                                            onClick={() => {
-                                                // this.likeMovie();
-                                                this.setMovie();
-                                            }}
-                                        >
-                                            LIKE
-                                        </Button>
-                                        &nbsp;&nbsp;
-                                        <Button
-                                            id="skip-button"
-                                            size="large"
-                                            variant="contained"
-                                            onClick={() => {
-                                                this.setMovie();
-                                            }}
-                                        >
-                                            Skip
-                                        </Button>
-                                        &nbsp;&nbsp;
-                                        <Button
-                                            id="dislike-button"
-                                            size="large"
-                                            variant="contained"
-                                            onClick={() => {
-                                                this.dislikeMovie();
 
-                                                this.setMovie();
-                                            }}
-                                        >
-                                            DISLIKE
-                                        </Button>
-                                    </div>
-                                </div>
-                                <div>
-                                    {this.state.showDescrption ? (
-                                        <div id="minfo" className="movie-info">
-                                            <h3>Description</h3>
-                                            <p>{this.state.overview}</p>
-                                            <h4>Release Date</h4>
-                                            <p>{this.state.release}</p>
-                                            <h4>Genre(s)</h4>
-                                            <p>{this.state.genres}</p>
-                                            <h4>Cast</h4>
-                                            <p>{this.state.cast}</p>
-                                            <h4>Language</h4>
-                                            <p>
-                                                {getLanguage(
-                                                    String(this.state.language)
-                                                )}
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <div className="hidden"></div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            {this.state.showDescrption ? (
-                                <div className="bottom">
-                                    {this.state.showTrailer ? (
-                                        <div className="movie-trailer">
-                                            <h4>Trailer</h4>
-                                            <div className="video-player">
-                                                <YouTube
-                                                    videoId={
-                                                        this.state.movietrailer
-                                                    }
-                                                    className="youtube"
-                                                    opts={{
-                                                        width: "100%",
-                                                        height: "100%",
-                                                        playerVars: {
-                                                            autoplay: 0,
-                                                            controls: 1,
-                                                            cc_load_policy: 0,
-                                                            fs: 0,
-                                                            iv_load_policy: 0,
-                                                            modestbranding: 0,
-                                                            rel: 0,
-                                                            showinfo: 0,
-                                                        },
+                                        <div className="like-dislike-btns">
+                                            <div className="must-watch">
+                                                <FavoriteIcon
+                                                    onClick={() => {
+                                                        this.mustWatchMovie();
+                                                        this.setMovie();
                                                     }}
+                                                    sx={{ cursor: "pointer" }}
                                                 />
                                             </div>
+                                            &nbsp;&nbsp;
+                                            <Button
+                                                id="like-button"
+                                                size="large"
+                                                variant="contained"
+                                                onClick={() => {
+                                                    // this.likeMovie();
+                                                    this.setMovie();
+                                                }}
+                                            >
+                                                LIKE
+                                            </Button>
+                                            &nbsp;&nbsp;
+                                            <Button
+                                                id="skip-button"
+                                                size="large"
+                                                variant="contained"
+                                                onClick={() => {
+                                                    this.setMovie();
+                                                }}
+                                            >
+                                                Skip
+                                            </Button>
+                                            &nbsp;&nbsp;
+                                            <Button
+                                                id="dislike-button"
+                                                size="large"
+                                                variant="contained"
+                                                onClick={() => {
+                                                    this.dislikeMovie();
+
+                                                    this.setMovie();
+                                                }}
+                                            >
+                                                DISLIKE
+                                            </Button>
                                         </div>
-                                    ) : (
-                                        <div className="movie-trailer">
-                                            Trailer is unavailable
-                                        </div>
-                                    )}
+                                    </div>
+                                    <div>
+                                        {this.state.showDescrption ? (
+                                            <div
+                                                id="minfo"
+                                                className="movie-info"
+                                            >
+                                                <h3>Description</h3>
+                                                <p>{this.state.overview}</p>
+                                                <h4>Release Date</h4>
+                                                <p>{this.state.release}</p>
+                                                <h4>Genre(s)</h4>
+                                                <p>{this.state.genres}</p>
+                                                <h4>Cast</h4>
+                                                <p>{this.state.cast}</p>
+                                                <h4>Language</h4>
+                                                <p>
+                                                    {getLanguage(
+                                                        String(
+                                                            this.state.language
+                                                        )
+                                                    )}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div className="hidden"></div>
+                                        )}
+                                    </div>
                                 </div>
-                            ) : (
-                                <div className="hidden"></div>
-                            )}
+                            </div>
+                            <div>
+                                {this.state.showDescrption ? (
+                                    <div className="bottom">
+                                        {this.state.showTrailer ? (
+                                            <div className="movie-trailer">
+                                                <h4>Trailer</h4>
+                                                <div className="video-player">
+                                                    <YouTube
+                                                        videoId={
+                                                            this.state
+                                                                .movietrailer
+                                                        }
+                                                        className="youtube"
+                                                        opts={{
+                                                            width: "100%",
+                                                            height: "100%",
+                                                            playerVars: {
+                                                                autoplay: 0,
+                                                                controls: 1,
+                                                                cc_load_policy: 0,
+                                                                fs: 0,
+                                                                iv_load_policy: 0,
+                                                                modestbranding: 0,
+                                                                rel: 0,
+                                                                showinfo: 0,
+                                                            },
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="movie-trailer">
+                                                Trailer is unavailable
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="hidden"></div>
+                                )}
+                            </div>
+                            <ToastContainer
+                                position="top-right"
+                                autoClose={5000}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                pauseOnHover
+                                theme="dark"
+                            />
                         </div>
-                        <ToastContainer
-                            position="top-right"
-                            autoClose={5000}
-                            hideProgressBar={false}
-                            newestOnTop={false}
-                            closeOnClick
-                            rtl={false}
-                            pauseOnFocusLoss
-                            draggable
-                            pauseOnHover
-                            theme="dark"
-                        />
-                    </div>
-                ) : (
-                    <div>
-                        <h2>Out of Movies, Maybe try a different filter?</h2>
-                    </div>
-                )}
-            </section>
-        );
+                    ) : (
+                        <div>
+                            <h2>
+                                {/* Out of Movies, Maybe try a different filter? */}
+                            </h2>
+                        </div>
+                    )}
+                </section>
+            );
+        }
     }
 }
 export default Movie;
