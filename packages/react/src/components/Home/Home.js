@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Home.css";
 
 var page = 1;
-var allPlatforms = [];
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -22,7 +21,7 @@ class HomePage extends React.Component {
 
         const params = {
             pageNum: page,
-            platforms: allPlatforms,
+            platform: 0,
             genre: 0,
             decade: 0,
             language: 0,

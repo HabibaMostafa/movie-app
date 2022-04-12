@@ -118,30 +118,25 @@ class Movie extends React.Component {
             selectedPlatform: 0,
 
             showLanguageOptions: false,
-
-            dataFetched: false,
-            movies: [],
-
-            loadingMovie: false,
-            showTrailer: false,
-
-            filterListOpen: false,
-            userSelectedPlatforms: [],
             showPlatformOptions: true,
 
+            movies: [],
             dislikes: [],
+
+            dataFetched: false,
+            loadingMovie: false,
+            showTrailer: false,
+            filterListOpen: false,
             fetchedDislikes: false,
             dataLoaded: false,
         };
     }
 
     resetAllFilters = () => {
-        // this.setState({ selectedPlatforms: [] });
         this.setState({ selectedDecade: 0 });
         this.setState({ selectedPlatform: 0 });
         this.setState({ selectedLanguage: 0 });
         this.setState({ selectedGenre: 0 });
-        this.setState({ userSelectedPlatforms: [] });
         this.handleClose();
         this.getNewList();
     };
@@ -153,16 +148,14 @@ class Movie extends React.Component {
         // start at the beginning of the page because the server sent new data
         index = 0;
 
-        const pageBeforeStateChange = page;
+        // const pageBeforeStateChange = page;
 
         const params = {
             pageNum: page,
-            // platforms: this.state.userSelectedPlatforms,
             platform: this.state.selectedPlatform,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
             language: this.state.selectedLanguage,
-            // language: getLanguageISO(this.state.selectedLanguage),
         };
         this.setState({ showDescrption: true });
 
@@ -181,7 +174,7 @@ class Movie extends React.Component {
             .then(() => this.getLikedList())
             .then(() => this.getDislikedList())
             .then(() => {
-                page = pageBeforeStateChange;
+                // page = pageBeforeStateChange;
                 this.setMovie();
             })
             .then(() => this.setState({ dataLoaded: true }));
@@ -190,7 +183,7 @@ class Movie extends React.Component {
     getNewPage = async () => {
         index = 0;
 
-        const pageBeforeStateChange = page;
+        // const pageBeforeStateChange = page;
 
         const params = {
             pageNum: page,
@@ -210,9 +203,6 @@ class Movie extends React.Component {
                     //create a list of movies to display in carousel
                     this.setMovieIndex();
 
-                    //set the next movie to display
-                    // this.setMovie();
-                    // console.log(movies: res.data)
                 } else {
                     this.setState({ movies: [] });
                 }
@@ -220,8 +210,7 @@ class Movie extends React.Component {
             .then(() => this.getLikedList())
             .then(() => this.getDislikedList())
             .then(() => {
-                page = pageBeforeStateChange;
-
+                // page = pageBeforeStateChange;
                 this.setMovie();
             });
     };
@@ -255,7 +244,6 @@ class Movie extends React.Component {
         } else {
             let language = getLanguageISO(selection);
             this.setState({ selectedLanguage: language }, () => {
-                // this.setState({ selectedLanguage: selection }, () => {
                 return;
             });
         }
@@ -273,7 +261,6 @@ class Movie extends React.Component {
         } else {
             let platform = getPlatformId(selection);
             this.setState({ selectedPlatform: platform }, () => {
-                // this.setState({ selectedLanguage: selection }, () => {
                 return;
             });
         }
@@ -482,7 +469,6 @@ class Movie extends React.Component {
 
                 if (
                     //server already filters this stuff
-                    // this.likeFilter(movie) === true &&
                     // this.genreFilter(movie) === true &&
                     // this.decadeFilter(movie) === true &&
                     // this.languageFilter(movie) === true &&

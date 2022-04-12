@@ -7,7 +7,12 @@ const key = "c2e4c84ff690ddf904bc717e174d2c61";
 const tmdb_url = "https://api.themoviedb.org/3";
 
 const tmdb = (params, callback) => {
+
+    console.log("The params are:", params);
+
     page = params.pageNum;
+
+
 
     let genreQuery = "";
     let platformQuery = "";
@@ -42,7 +47,7 @@ const tmdb = (params, callback) => {
         platformQuery = decadeDictionary[params.decade];
     }
 
-    console.log("The params are:", params);
+    
 
     // console.log(params.platforms.length);
 
