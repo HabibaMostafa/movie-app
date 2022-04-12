@@ -55,6 +55,7 @@ let newRelease;
 let newLanguage;
 let showTheTrailer = false;
 let dispayMovie = false;
+let noMovies = false;
 
 const genreList = [
     "Any",
@@ -220,10 +221,8 @@ class Movie extends React.Component {
                 //     );
                 //     toast.info(toastData);
                 //     this.setState({noMatchesFound: true})
-                    
+
                 // }
-
-
             } else {
                 this.tempMovies = [];
 
@@ -516,6 +515,11 @@ class Movie extends React.Component {
 
     //set a movie to display based on what the next number in the movieIndex is.
     setTheMovie = async (tempMovies) => {
+        if (this.state.noMatchesFound) {
+            this.setState({ noMatchesFound: false });
+            return this.componentDidMount();
+        }
+
         if (
             this.tempMovies.length < 1 ||
             this.tempMovies === undefined ||
@@ -525,7 +529,22 @@ class Movie extends React.Component {
         }
 
         let elementsOnThisPage = this.tempMovies.body.results.length;
+        let totalResults = this.tempMovies.body.total_results;
         let totalPages = this.tempMovies.body.total_pages;
+
+        console.log("results, ", totalResults);
+
+        if (totalResults < 3) {
+            this.setState({
+                selectedDecade: 0,
+                selectedPlatform: 0,
+                selectedLanguage: 0,
+                selectedGenre: 0,
+                noMatchesFound: true,
+            });
+
+            return this.componentDidMount();
+        }
 
         let filters = false;
 
@@ -549,6 +568,17 @@ class Movie extends React.Component {
 
                         page++;
                         index = 0;
+
+                        // const toastData = () => (
+                        //     <div>
+                        //         <p>No movies match selected filters.</p>
+                        //     </div>
+                        // );
+                        // toast.info(toastData);
+
+                        // if(this.state.noMatchesFound) {
+                        //     return;
+                        // }
 
                         // loop to the beginning
                         if (page >= totalPages) {
@@ -1051,8 +1081,18 @@ class Movie extends React.Component {
     };
 
     render() {
+        // console.log("state", this.state.noMatchesFound);
 
-        
+        // console.log(noMovies)
+        if (this.state.noMatchesFound) {
+            const toastData = () => (
+                <div>
+                    <p>No movies found, filters reset to default.</p>
+                </div>
+            );
+
+            toast.info(toastData);
+        }
 
         // console.log("render call", this.state.showTheMovie, new Date().getSeconds(), index);
         if (this.state.showTheMovie === false) {
@@ -1071,7 +1111,10 @@ class Movie extends React.Component {
                                 value="check"
                                 onClick={this.handleClickOpen}
                             >
-                                <FilterListIcon className="svg_icons" style={{ fontSize: 15 }} />
+                                <FilterListIcon
+                                    className="svg_icons"
+                                    style={{ fontSize: 15 }}
+                                />
                             </ToggleButton>
                         </Tooltip>
 
@@ -1186,7 +1229,9 @@ class Movie extends React.Component {
                                                 id="minfo"
                                                 className="movie-info"
                                             >
-                                                <h3 className="movie-title">{this.state.title}</h3>
+                                                <h3 className="movie-title">
+                                                    {this.state.title}
+                                                </h3>
                                                 <h3>Description</h3>
                                                 <p>{this.newOverVieww}</p>
                                                 {/* <p>{this.state.overview}</p> */}
