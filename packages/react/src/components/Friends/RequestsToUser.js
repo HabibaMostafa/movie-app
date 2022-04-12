@@ -87,6 +87,10 @@ class RequestsToUser extends React.Component {
                                     >
                                         {this.state.reqToUser.map((value) => (
                                             <ListItem
+                                                style={{
+                                                    outlineColor: "black",
+                                                    outlineWidth: 10
+                                                }}
                                                 key={value}
                                                 disableGutters
                                                 secondaryAction={
@@ -98,7 +102,7 @@ class RequestsToUser extends React.Component {
                                                             );
                                                         }}
                                                     >
-                                                        accept
+                                                        ✓
                                                     </IconButton>
                                                 }
                                             >

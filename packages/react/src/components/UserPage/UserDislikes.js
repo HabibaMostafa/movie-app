@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import Button from "@mui/material/Button";
 
 import MovieListElement from "../../components/Movie/MovieListElement";
 import ImageList from "@mui/material/ImageList";
@@ -26,8 +27,16 @@ class UserDislikes extends React.Component {
         return (
             <div className="vote-section">
                 {this.props.dislikes.length > 0 ? (
-                    <div>
-                        <h4>Dislikes ({this.props.dislikes.length})</h4>
+                    <div className="must-watch-votes">
+                                <h4 className="title">
+                                    Dislikes 
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <Button 
+                                        id="like-button"
+                                    >
+                                        {this.props.dislikes.length}
+                                    </Button>
+                                </h4>
                         <ImageList
                             // sx={{ width: 80%, height: 60% }}
                             sx={{ width: 1280, maxHeight: 450 }}

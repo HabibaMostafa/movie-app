@@ -3,6 +3,8 @@ import axios from "axios";
 
 import MovieListElement from "../../components/Movie/MovieListElement";
 import ImageList from "@mui/material/ImageList";
+import Button from "@mui/material/Button";
+import ToggleButton from "@mui/material/ToggleButton";
 
 import './UserPageData.css'
 
@@ -30,14 +32,18 @@ class UserLikes extends React.Component {
                         .length > 0 ? (
                         <div>
                             <div className="must-watch-votes">
-                                <h4>
-                                    Must Watch Movies (
+                                <h4 className="title">
+                                    Must Watch Movies 
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <Button 
+                                        id="like-button"
+                                    >
                                     {
                                         this.props.likes.filter(
                                             (element) => element.mustWatch
                                         ).length
                                     }
-                                    )
+                                    </Button>
                                 </h4>
                                 <ImageList
                                     sx={{ width: 1280, maxHeight: 450 }}
@@ -61,18 +67,27 @@ class UserLikes extends React.Component {
 
 
                 <div className="vote-section">
-                    <h4>Likes ({this.props.likes.length})</h4>
-                    <div className="must-watch-votes">
-                        <ImageList
-                            sx={{ width: 1280, maxHeight: 450 }}
-                            cols={6}
-                            rowHeight={164}
-                        >
-                            {this.props.likes.map((value) => (
-                                <MovieListElement movieID={value.movieID} />
-                            ))}
-                        </ImageList>
-                    </div>
+                <div className="must-watch-votes">
+                                <h4 className="title">
+                                    Likes
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <Button 
+                                        id="like-button"
+                                    >
+                                        {this.props.likes.length}
+                                    </Button>
+                                </h4>
+
+                            <ImageList
+                                sx={{ width: 1280, maxHeight: 450 }}
+                                cols={6}
+                                rowHeight={164}
+                            >
+                                {this.props.likes.map((value) => (
+                                    <MovieListElement movieID={value.movieID} />
+                                ))}
+                            </ImageList>
+                        </div>
                 </div>
             </div>
         );

@@ -40,8 +40,6 @@ class Details extends React.Component {
         if (true) {
             return (
                 <div>
-                    <p>Room Details</p>
-
                     <p>roomId: {this.props.roomId}</p>
                     <p>user: Id {this.props.userId}</p>
 

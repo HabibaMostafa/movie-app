@@ -5,6 +5,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import HomePage from "../../components/Home/Home";
 import axios from "axios";
 import "./Home.css";
+import Typography from '@mui/material/Typography';
+
 
 function Home() {
     const { token, setToken, getTokenObj } = useToken();
@@ -29,12 +31,24 @@ function Home() {
     });
 
     return (
+        
         <div className="home">
             <Navbar />
             <div className="home-wrapper">
-                <p className="welcome-msg">Welcome, {tokenObj.username}! </p>
-                <a style={{ textDecoration: "none" }} href="/friends">You have {numFriendRequests} pending friend request(s).</a>
-                <p><br></br>Check out some of the latest movies:</p>
+                        <Typography sx={{ fontSize: 40 }} color="white" gutterBottom>
+                        Welcome, {tokenObj.username}
+                        </Typography>
+                        <Typography variant="h5" component="div">
+                        </Typography>
+                        <Typography sx={{ mb: 1.5, fontSize: 20 }} color="text.secondary">
+                        <a className="title" style={{ textDecoration: "none"}} href="/friends">You have {numFriendRequests} pending friend request(s).</a>
+                        </Typography>
+                        <Typography variant="body2">
+                        <br />
+                        </Typography>
+                        <Typography sx={{ fontSize: 25 }} color="white" gutterBottom>
+                        Check out some of the latest movies
+                        </Typography>
                 <HomePage _id ={tokenObj._id} />
             </div>
         </div>

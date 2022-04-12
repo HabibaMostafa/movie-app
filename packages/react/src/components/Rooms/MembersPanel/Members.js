@@ -94,7 +94,6 @@ class Members extends React.Component {
                         memberCallback={this.addMemberCallback}
                     />
 
-                    <h3>Members</h3>
                     <div className="content-wrapper">
                         <Paper
                             style={{

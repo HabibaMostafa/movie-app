@@ -73,8 +73,6 @@ class UserPageData extends React.Component {
                     {this.state.fetchedUserData ? (
                         this.state.userData.length !== 0 ? (
                             <div>
-                                <h1>{this.state.userData.username}'s Page</h1>
-
                                 {this.state.fetchedLikes ? (
                                     this.state.userLikes.length > 0 ? (
                                         <UserLikes

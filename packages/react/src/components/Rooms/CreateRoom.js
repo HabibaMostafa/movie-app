@@ -89,7 +89,7 @@ class CreateRoom extends React.Component {
                 </Button>
                 <Dialog open={this.state.open} onClose={this.handleClose}>
                     <DialogTitle sx={{ background: "#242424" }}>
-                        Create New Room
+                        New Room
                     </DialogTitle>
                     <DialogContent sx={{ background: "#242424" }}>
                         {/* <DialogContentText>New Room Name</DialogContentText> */}

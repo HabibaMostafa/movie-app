@@ -214,3 +214,7 @@ iframe {
     color: whitesmoke !important;
     background-color: goldenrod;
 }
+
+.svg_icons {
+    transform: scale(2.8);
+}

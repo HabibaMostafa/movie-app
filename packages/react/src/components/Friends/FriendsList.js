@@ -6,6 +6,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+
 // import CommentIcon from "@mui/icons-material/Comment";
 
 //navigate is passed in props ....
@@ -20,6 +22,7 @@ class FriendsList extends React.Component {
 
         this.state = { userFriends: [], loadedFriends: false };
         this.userToAdd = null;
+        
     }
 
     componentDidMount() {
@@ -126,7 +129,13 @@ class FriendsList extends React.Component {
                                         >
                                             {this.state.userFriends.map(
                                                 (value) => (
+                                                    
+                                                    <Tooltip title="View Votes">
                                                     <ListItem
+                                                        style={{
+                                                            outlineColor: "black",
+                                                            outlineWidth: 10
+                                                        }}
                                                         key={value}
                                                         disableGutters
                                                         secondaryAction={
@@ -140,7 +149,7 @@ class FriendsList extends React.Component {
                                                                     );
                                                                 }}
                                                             >
-                                                                [X]
+                                                                x
                                                             </IconButton>
                                                         }
                                                     >
@@ -162,6 +171,7 @@ class FriendsList extends React.Component {
                                                             }}
                                                         />
                                                     </ListItem>
+                                                    </Tooltip>
                                                 )
                                             )}
                                         </List>

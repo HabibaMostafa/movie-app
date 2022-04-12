@@ -1,3 +1,28 @@
 .vote-section {
-    padding-top: 2%;
+        padding-left: 9%;
+        padding-right: 9%;
+        padding-top: 1%;
+        padding-bottom: 1%;
+        width: 70%;
 }
+
+#like-button {
+    background-color: goldenrod;
+    color: white;
+    font-size: 16px;
+    padding: 6px 6px;
+    border-radius: 40px;
+    font-weight: 600;
+    margin: 0px 0px;
+    cursor: pointer;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 25px;
+    color: white;
+}
+
+.top {
+    display: inline;
+  }

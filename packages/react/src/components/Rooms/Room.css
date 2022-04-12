@@ -36,3 +36,7 @@
     color: whitesmoke !important;
     background-color:  #202020;
 }
+
+.MuiOutlinedInput-input {
+    color: whitesmoke !important;
+}

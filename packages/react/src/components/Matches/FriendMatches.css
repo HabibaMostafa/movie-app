@@ -16,3 +16,9 @@
 .expand-btn {
     vertical-align: middle;
 }
+
+.match-friend {
+    font-weight: 600;
+    font-size: 25px;
+    color: white;
+}

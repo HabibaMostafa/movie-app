@@ -91,6 +91,10 @@ class RequestsFromUser extends React.Component {
                                     >
                                         {this.state.reqFromMe.map((value) => (
                                             <ListItem
+                                                style={{
+                                                    outlineColor: "black",
+                                                    outlineWidth: 10,
+                                                }}
                                                 key={value}
                                                 disableGutters
                                                 sx={{

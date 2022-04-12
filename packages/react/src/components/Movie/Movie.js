@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Movie.css";
 import YouTube from "react-youtube";
+import Tooltip from "@mui/material/Tooltip";
 
 import _ from "underscore";
 
@@ -995,20 +996,19 @@ class Movie extends React.Component {
             return (
                 <section className="movie">
                     <div>
-                        <ToggleButton
-                            value="check"
-                            onClick={this.handleClickOpen}
-                        >
-                            <FilterListIcon />
-                        </ToggleButton>
+                        <Tooltip title="Filter">
+                            <ToggleButton
+                                value="check"
+                                onClick={this.handleClickOpen}
+                            >
+                                <FilterListIcon className="svg_icons" style={{ fontSize: 15 }} />
+                            </ToggleButton>
+                        </Tooltip>
 
                         <Dialog
                             open={this.state.filterListOpen}
                             onClose={this.handleClose}
                         >
-                            <DialogTitle sx={{ background: "#242424" }}>
-                                Set Filters
-                            </DialogTitle>
                             <DialogContent sx={{ background: "#242424" }}>
                                 <p>Genre</p>
                                 {this.filterByGenre(
@@ -1112,6 +1112,7 @@ class Movie extends React.Component {
                                                 id="minfo"
                                                 className="movie-info"
                                             >
+                                                <h3 className="movie-title">{this.state.title}</h3>
                                                 <h3>Description</h3>
                                                 <p>{this.state.overview}</p>
                                                 <h4>Release Date</h4>
@@ -1128,6 +1129,7 @@ class Movie extends React.Component {
                                                         )
                                                     )}
                                                 </p>
+                                                <br></br>
                                             </div>
                                         ) : (
                                             <div className="hidden"></div>

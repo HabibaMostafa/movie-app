@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import MovieListElement from "../../components/Movie/MovieListElement";
 import ImageList from "@mui/material/ImageList";
@@ -29,7 +30,7 @@ class FriendMatches extends React.Component {
             friend: [],
             _id: "",
             matches: [],
-            expand: false,
+            expand: true,
         };
     }
     componentDidMount() {
@@ -73,8 +74,15 @@ class FriendMatches extends React.Component {
             <div className="friendMatches">
                 <div className="sub-heading">
                     <h3 class="match-friend">
-                        {this.state.friendUsername} ({this.state.friendName}) -
-                        [ {this.state.matches.length} Matches ]
+                        {this.state.friendUsername} 
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                            <Button 
+                                id="like-button"
+                            >
+                                {this.state.matches.length} 
+                            </Button>
+                        &nbsp;&nbsp;
+
                     </h3>
 
                     <div className="expand-btn" onClick={this.expandHandler}>
