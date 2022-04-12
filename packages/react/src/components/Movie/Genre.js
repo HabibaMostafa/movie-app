@@ -1,6 +1,6 @@
 export function getGenre(id) {
     var genre;
-    switch(id) {
+    switch (id) {
         case 28:
             genre = "Action";
             break;
@@ -58,15 +58,19 @@ export function getGenre(id) {
         case 37:
             genre = "Western";
             break;
+        case 0:
+            genre = "Any";
+            break;
         default:
             genre = "Unknown";
+            break;
     }
     return genre;
 }
 
 export function getGenreID(genre) {
     var id;
-    switch(genre) {
+    switch (genre) {
         case "Action":
             id = 28;
             break;
@@ -124,8 +128,12 @@ export function getGenreID(genre) {
         case "Western":
             id = 37;
             break;
+        case "Any":
+            id = 0;
+            break;
         default:
             id = 0;
+            break;
     }
     return id;
 }

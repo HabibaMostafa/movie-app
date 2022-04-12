@@ -8,8 +8,11 @@ import YouTube from "react-youtube";
 import _ from "underscore";
 
 import Button from "@mui/material/Button";
+
 import { getGenre, getGenreID } from "./Genre.js";
 import { getLanguage, getLanguageISO } from "./Translations.js";
+import { getPlatform, getPlatformId } from "./Platform.js";
+import { getDecade, getDecadeId } from "./Decade.js";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -39,6 +42,7 @@ var index = 0;
 var trailer = null;
 
 const genreList = [
+    "Any",
     "Action",
     "Adventure",
     "Animation",
@@ -61,6 +65,7 @@ const genreList = [
 ];
 
 const decadeList = [
+    "Any",
     "1950s",
     "1960s",
     "1970s",
@@ -72,6 +77,8 @@ const decadeList = [
 ];
 
 const languageList = [
+    "Any",
+    "English",
     "French",
     "Italian",
     "Japanese",
@@ -82,19 +89,19 @@ const languageList = [
     "Spanish",
     "Turkish",
     "Arabic",
-    "English",
     "Punjabi",
 ];
 
 const platformList = [
-    { name: "Netflix", id: 8 },
-    { name: "Disney Plus", id: 337 },
-    { name: "Amazon Prime Video", id: 119 },
-    { name: "Crave", id: 230 },
-    { name: "Crave Plus", id: 231 },
-    { name: "Crave Starz", id: 305 },
-    { name: "Google Play Movies", id: 3 },
-    { name: "Apple iTunes", id: 2 },
+    "Any",
+    "Netflix",
+    "Disney Plus",
+    "Amazon Prime Video",
+    "Crave",
+    "Crave Plus",
+    "Crave Starz",
+    "Google Play Movies",
+    "Apple iTunes",
 ];
 
 class Movie extends React.Component {
@@ -106,12 +113,11 @@ class Movie extends React.Component {
         this.props = props;
         this.state = {
             selectedGenre: 0,
-            // selectedPlatforms: [],
             selectedDecade: 0,
+            selectedLanguage: 0,
+            selectedPlatform: 0,
 
             showLanguageOptions: false,
-
-            selectedLanguage: 0,
 
             dataFetched: false,
             movies: [],
@@ -132,6 +138,7 @@ class Movie extends React.Component {
     resetAllFilters = () => {
         // this.setState({ selectedPlatforms: [] });
         this.setState({ selectedDecade: 0 });
+        this.setState({ selectedPlatform: 0 });
         this.setState({ selectedLanguage: 0 });
         this.setState({ selectedGenre: 0 });
         this.setState({ userSelectedPlatforms: [] });
@@ -140,7 +147,7 @@ class Movie extends React.Component {
     };
 
     componentDidMount() {
-        console.log("mount");
+        // console.log("mount");
         document.addEventListener("keydown", this.handleKeyPress, false);
 
         // start at the beginning of the page because the server sent new data
@@ -150,11 +157,12 @@ class Movie extends React.Component {
 
         const params = {
             pageNum: page,
-            platforms: this.state.userSelectedPlatforms,
-            // platforms: this.state.selectedPlatforms,
+            // platforms: this.state.userSelectedPlatforms,
+            platform: this.state.selectedPlatform,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
-            language: getLanguageISO(this.state.selectedLanguage),
+            language: this.state.selectedLanguage,
+            // language: getLanguageISO(this.state.selectedLanguage),
         };
         this.setState({ showDescrption: true });
 
@@ -186,19 +194,12 @@ class Movie extends React.Component {
 
         const params = {
             pageNum: page,
-            platforms: this.state.selectedPlatforms,
+            platform: this.state.selectedPlatform,
             genre: this.state.selectedGenre,
             decade: this.state.selectedDecade,
-            language: getLanguageISO(this.state.selectedLanguage),
+            language: this.state.selectedLanguage,
         };
         this.setState({ showDescrption: true });
-
-        //get a list of previously "liked" movies
-        // get list of disliked movies
-
-        // this.getLikedList();
-
-        // this.getDislikedList();
 
         await axios
             .post("/movies", params)
@@ -226,7 +227,11 @@ class Movie extends React.Component {
     };
 
     setSelectedGenre = (selection) => {
-        if (selection === undefined || selection === null) {
+        if (
+            selection === undefined ||
+            selection === null ||
+            selection === "Any"
+        ) {
             this.setState({ selectedGenre: 0 }, () => {
                 return;
             });
@@ -239,24 +244,53 @@ class Movie extends React.Component {
     };
 
     setSelectedLanguage = (selection) => {
-        if (selection === undefined || selection === null) {
+        if (
+            selection === undefined ||
+            selection === null ||
+            selection === "Any"
+        ) {
             this.setState({ selectedLanguage: 0 }, () => {
                 return;
             });
         } else {
-            this.setState({ selectedLanguage: selection }, () => {
+            let language = getLanguageISO(selection);
+            this.setState({ selectedLanguage: language }, () => {
+                // this.setState({ selectedLanguage: selection }, () => {
+                return;
+            });
+        }
+    };
+
+    setSelectedPlatform = (selection) => {
+        if (
+            selection === undefined ||
+            selection === null ||
+            selection === "Any"
+        ) {
+            this.setState({ selectedPlatform: 0 }, () => {
+                return;
+            });
+        } else {
+            let platform = getPlatformId(selection);
+            this.setState({ selectedPlatform: platform }, () => {
+                // this.setState({ selectedLanguage: selection }, () => {
                 return;
             });
         }
     };
 
     setSelectedDecade = (selection) => {
-        if (selection === undefined || selection === null) {
+        if (
+            selection === undefined ||
+            selection === null ||
+            selection === "Any"
+        ) {
             this.setState({ selectedDecade: 0 }, () => {
                 return;
             });
         } else {
-            this.setState({ selectedDecade: selection }, () => {
+            let decade = getDecadeId(selection);
+            this.setState({ selectedDecade: decade }, () => {
                 return;
             });
         }
@@ -268,6 +302,7 @@ class Movie extends React.Component {
                 <Autocomplete
                     id="tags-standard"
                     options={genreList}
+                    defaultValue={getGenre(this.state.selectedGenre)}
                     getOptionLabel={(option) => option}
                     renderInput={(params) => (
                         <TextField {...params} variant="standard" />
@@ -288,6 +323,7 @@ class Movie extends React.Component {
                 <Autocomplete
                     id="tags-standard"
                     options={languageList}
+                    defaultValue={getLanguage(this.state.selectedLanguage)}
                     getOptionLabel={(option) => option}
                     renderInput={(params) => (
                         <TextField {...params} variant="standard" />
@@ -306,6 +342,7 @@ class Movie extends React.Component {
                 <Autocomplete
                     id="tags-standard"
                     options={decadeList}
+                    defaultValue={getDecade(this.state.selectedDecade)}
                     getOptionLabel={(option) => option}
                     renderInput={(params) => (
                         <TextField {...params} variant="standard" />
@@ -322,25 +359,19 @@ class Movie extends React.Component {
         return (
             <Stack spacing={3} sx={{ width: 300 }}>
                 <Autocomplete
-                    multiple
                     id="tags-standard"
                     options={platformList}
-                    getOptionLabel={(option) => option.name}
+                    defaultValue={getPlatform(this.state.selectedPlatform)}
+                    getOptionLabel={(option) => option}
                     renderInput={(params) => (
                         <TextField {...params} variant="standard" />
                     )}
                     onChange={(e, selection) => {
-                        this.platformSelectionHandler(selection);
+                        this.setSelectedPlatform(selection);
                     }}
                 />
             </Stack>
         );
-    };
-
-    // await is needed here
-    platformSelectionHandler = async (newSelection) => {
-        await this.setState({ userSelectedPlatforms: newSelection });
-        await this.props.platformCallback(this.state.userSelectedPlatforms);
     };
 
     //create a list of movies to display in carousel
@@ -450,10 +481,12 @@ class Movie extends React.Component {
                 }
 
                 if (
-                    this.likeFilter(movie) === true &&
-                    this.genreFilter(movie) === true &&
-                    this.decadeFilter(movie) === true &&
-                    this.languageFilter(movie) === true &&
+                    //server already filters this stuff
+                    // this.likeFilter(movie) === true &&
+                    // this.genreFilter(movie) === true &&
+                    // this.decadeFilter(movie) === true &&
+                    // this.languageFilter(movie) === true &&
+
                     this.dislikeFilter(movie) === true &&
                     this.likeFilter(movie) === true
                 ) {
@@ -643,9 +676,6 @@ class Movie extends React.Component {
         });
     };
 
-    // HIIII ALEXXX 😆
-    // should proabbly throw this into the backend instead but w/e,
-    // Hello Miles! :D yeah we can move this later. if it isn't broken why fix it right?
     getMovieTrailerID = async (movieId) => {
         await this.setState({ showTrailer: false });
 
@@ -673,7 +703,7 @@ class Movie extends React.Component {
         const tmdb_url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}&language=en-US`;
 
         await axios.get(tmdb_url).then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             const castMembers = res.data.cast.length;
 
             if (
@@ -820,10 +850,6 @@ class Movie extends React.Component {
 
         return false;
     }
-
-    //platformFilter = async (movie) => {
-    //    // i need to do a separate url call, the movie data does not include the stream provider list.
-    //};
 
     decadeFilter(movie) {
         var movieDate = movie.release_date.split("-");
@@ -984,6 +1010,14 @@ class Movie extends React.Component {
     };
 
     render() {
+        console.log("-");
+        console.log("-");
+        console.log("genre", this.state.selectedGenre);
+        console.log("decade", this.state.selectedDecade);
+        console.log("language", this.state.selectedLanguage);
+        console.log("platform", this.state.selectedPlatform);
+        // console.log("platforms", this.state.userSelectedPlatforms);
+
         if (!this.state.dataLoaded) {
             return (
                 <div>
