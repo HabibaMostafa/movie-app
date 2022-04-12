@@ -52,6 +52,7 @@ let newPoster;
 let newOverView;
 let newRelease;
 let newLanguage;
+let showTheTrailer = false;
 let dispayMovie = false;
 
 const genreList = [
@@ -147,8 +148,8 @@ class Movie extends React.Component {
             dataLoaded: false,
             renderTrigger: new Date(),
 
-            showTheMovie: false
-
+            showTheMovie: false,
+            noMatchesFound: false,
         };
     }
 
@@ -166,17 +167,14 @@ class Movie extends React.Component {
         dispayMovie = false;
         this.setState({ renderTrigger: new Date(), showTheMovie: false });
         // this.setState()
-        
     };
     showMovie = () => {
         dispayMovie = true;
         this.setState({ renderTrigger: new Date(), showTheMovie: true });
         // this.setState()
-        
     };
 
     componentDidMount() {
-        // console.log("mount");
         // this.dispayMovie = false;
         //setstate here?
 
@@ -195,17 +193,44 @@ class Movie extends React.Component {
             language: this.state.selectedLanguage,
         };
 
-        // this.setState({ showDescrption: true });
-
         //get a list of previously "liked" movies
+
+        // const toastData = () => (
+        //     <div>
+        //         <p>No movies match selected filters.</p>
+        //     </div>
+        // );
+        // toast.info(toastData);
+
+        // if(this.state.noMatchesFound) {
+        //     return;
+        // }
 
         axios.post("/movies", params).then((res) => {
             if (res.status === 200) {
                 index = 0;
                 this.tempMovies = res.data;
+
+                // console.log(res.data.body.results.length);
+
+                // if (res.data.body.results.length < 1) {
+                //     const toastData = () => (
+                //         <div>No movies match selected filters.</div>
+                //     );
+                //     toast.info(toastData);
+                //     this.setState({noMatchesFound: true})
+                    
+                // }
+
+
             } else {
-                this.setState({ movies: [] });
                 this.tempMovies = [];
+
+                // notification that submitted filters
+                // const toastData = () => (
+                //     <div>No movies match selected filters.</div>
+                // );
+                // toast.info(toastData);
             }
 
             // get likes
@@ -278,33 +303,24 @@ class Movie extends React.Component {
             .then(() => {
                 page = pageBeforeStateChange;
                 this.setMovie();
-            })
-            .then(() =>
-                this.setState({
-                    dataLoaded: true,
-                    likes: tempLikes,
-                    dislikes: tempDislikes,
-                })
-            );
-
-        // await axios
-        //     .post("/movies", params)
-        //     .then((res) => {
-        //         if (res.status === 200) {
-        //             index = 0;
-        //             this.setState({ movies: res.data });
-        //             //create a list of movies to display in carousel
-        //             this.setMovieIndex();
-        //         } else {
-        //             this.setState({ movies: [] });
-        //         }
+            });
+        // .then(() =>
+        //     this.setState({
+        //         dataLoaded: true,
+        //         likes: tempLikes,
+        //         dislikes: tempDislikes,
         //     })
-        //     .then(() => this.getLikedList())
-        //     .then(() => this.getDislikedList())
-        //     .then(() => {
-        //         page = pageBeforeStateChange;
-        //         this.setMovie();
-        //     });
+        // );
+
+        // console.log(this.tempMovies)
+        // if(this.tempMovies.length < 1) {
+        //     const toastData = () => (
+        //         <div>
+        //             <p>No movies match the selected filters.</p>
+        //         </div>
+        //     );
+        //     toast.info(toastData);
+        // }
     };
 
     setSelectedGenre = (selection) => {
@@ -499,8 +515,6 @@ class Movie extends React.Component {
 
     //set a movie to display based on what the next number in the movieIndex is.
     setTheMovie = async (tempMovies) => {
-        
-
         if (
             this.tempMovies.length < 1 ||
             this.tempMovies === undefined ||
@@ -516,7 +530,6 @@ class Movie extends React.Component {
 
         try {
             while (filters === false) {
-                
                 this.dispayMovie = false;
                 movie = this.tempMovies.body.results[index];
 
@@ -625,22 +638,21 @@ class Movie extends React.Component {
                     } else {
                         // console.log(index)
                         // this.dispayMovie = false;
-    
+
                         this.newMovieTrailer = tempMovieTrailer;
                         this.newCast = finalCast;
                         this.newGenres = genresArr.join(", ");
                         this.newTitle = movie.title;
                         this.newMovies = tempMovies;
                         this.newPoster =
-                            "https://image.tmdb.org/t/p/w300" + movie.poster_path;
+                            "https://image.tmdb.org/t/p/w300" +
+                            movie.poster_path;
                         this.newOverView = movie.overview;
                         this.newRelease = movie.release_date;
                         this.newLanguage = movie.original_language;
-    
+
                         this.showMovie();
                     }
-
-
                 });
             });
         } catch (error) {
@@ -965,7 +977,7 @@ class Movie extends React.Component {
 
     dislikeCheck(movie) {
         // console.log("dislike list", dislikesList)
-        
+
         for (let i = 0; i < dislikesList.length; i++) {
             // console.log("dislike list", dislikesList)
             if (dislikesList[i].movieId === movie.id) {
@@ -1038,6 +1050,9 @@ class Movie extends React.Component {
     };
 
     render() {
+
+        
+
         // console.log("render call", this.state.showTheMovie, new Date().getSeconds(), index);
         if (this.state.showTheMovie === false) {
             return (
@@ -1203,7 +1218,8 @@ class Movie extends React.Component {
                                 {this.state.showTheMovie ? (
                                     // {this.state.showDescrption ? (
                                     <div className="bottom">
-                                        {this.showTheMovie ? (
+                                        {this.state.showTheMovie &&
+                                        this.newMovieTrailer.length > 0 ? (
                                             // {this.state.showTrailer ? (
                                             <div className="movie-trailer">
                                                 <h4>Trailer</h4>
@@ -1215,6 +1231,9 @@ class Movie extends React.Component {
                                                             //     .movietrailer
                                                         }
                                                         className="youtube"
+                                                        onError={(e) => {
+                                                            console.log(e);
+                                                        }}
                                                         opts={{
                                                             width: "100%",
                                                             height: "100%",
