@@ -1,6 +1,6 @@
 export function getLanguage(iso) {
     var language;
-    switch(iso) {
+    switch (iso) {
         case "fr":
             language = "French";
             break;
@@ -37,15 +37,20 @@ export function getLanguage(iso) {
         case "pa":
             language = "Punjabi";
             break;
+        case 0:
+            language = "Any";
+            break;
+
         default:
             language = "Other";
+            break;
     }
     return language;
 }
 
 export function getLanguageISO(language) {
     var iso;
-    switch(language) {
+    switch (language) {
         case "French":
             iso = "fr";
             break;
@@ -82,8 +87,12 @@ export function getLanguageISO(language) {
         case "Punjabi":
             iso = "pa";
             break;
+        case "Any":
+            iso = 0;
+            break;
         default:
             iso = 0;
+            break;
     }
     return iso;
 }

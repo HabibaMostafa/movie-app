@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+.movie {
+  padding: 0em 0em 1em;
+}
+
 .title {
   color: #f9bd24;
 }
@@ -24,7 +28,13 @@
 }
 
 /* Responsive layout - makes the four columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1500px) {
+  .column {
+    width: 49.5%;
+  }
+}
+
+@media screen and (max-width: 800px) {
   .column {
     width: 100%;
   }
