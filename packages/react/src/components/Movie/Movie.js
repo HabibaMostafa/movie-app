@@ -1054,6 +1054,7 @@ class Movie extends React.Component {
                                                     this.displayData();
                                                 }}
                                                 src={this.state.poster_path}
+                                                sx={{ cursor: "pointer" }}
                                                 alt="Movie Poster"
                                             ></img>
                                         </div>
@@ -1061,6 +1062,7 @@ class Movie extends React.Component {
                                         <div className="like-dislike-btns">
                                             <div className="must-watch">
                                                 <FavoriteIcon
+                                                    id="mustwatch-button"
                                                     onClick={() => {
                                                         this.mustWatchMovie();
                                                         this.setMovie();
@@ -1074,9 +1076,10 @@ class Movie extends React.Component {
                                                 size="large"
                                                 variant="contained"
                                                 onClick={() => {
-                                                    // this.likeMovie();
+                                                    this.likeMovie();
                                                     this.setMovie();
                                                 }}
+                                                sx={{ cursor: "pointer" }}
                                             >
                                                 LIKE
                                             </Button>
@@ -1088,6 +1091,7 @@ class Movie extends React.Component {
                                                 onClick={() => {
                                                     this.setMovie();
                                                 }}
+                                                sx={{ cursor: "pointer" }}
                                             >
                                                 Skip
                                             </Button>
@@ -1098,9 +1102,9 @@ class Movie extends React.Component {
                                                 variant="contained"
                                                 onClick={() => {
                                                     this.dislikeMovie();
-
                                                     this.setMovie();
                                                 }}
+                                                sx={{ cursor: "pointer" }}
                                             >
                                                 DISLIKE
                                             </Button>

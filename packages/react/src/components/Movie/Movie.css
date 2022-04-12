@@ -175,8 +175,7 @@ iframe {
     cursor: pointer;
 }
 
-#dislike-button {
-    background-color: rgb(32, 32, 32);
+#skip-button {
     color: white;
     font-size: 16px;
     padding: 8px 50px;
@@ -184,6 +183,25 @@ iframe {
     margin: 10px 0px;
     cursor: pointer;
 }
+
+#mustwatch-button {
+    height: 2em;
+    width: 2em;
+}
+
+#dislike-button {
+    background-color: rgb(60, 60, 60);
+    color: white;
+    font-size: 16px;
+    padding: 8px 50px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+
+#mustwatch-button:hover { opacity: 0.5; }
+#like-button:hover { background-color: rgb(158, 120, 23); }
+#dislike-button:hover { background-color: rgb(37, 37, 37); }
 
 #tags-standard {
     color: rgb(200, 200, 200);
