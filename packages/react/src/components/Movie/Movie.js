@@ -137,8 +137,9 @@ class Movie extends React.Component {
         this.setState({ selectedPlatform: 0 });
         this.setState({ selectedLanguage: 0 });
         this.setState({ selectedGenre: 0 });
-        this.handleClose();
-        this.getNewList();
+        // this.getNewList();
+        this.handleClose()
+        this.componentDidMount();
     };
 
     componentDidMount() {
@@ -148,7 +149,7 @@ class Movie extends React.Component {
         // start at the beginning of the page because the server sent new data
         index = 0;
 
-        // const pageBeforeStateChange = page;
+        const pageBeforeStateChange = page;
 
         const params = {
             pageNum: page,
@@ -174,7 +175,7 @@ class Movie extends React.Component {
             .then(() => this.getLikedList())
             .then(() => this.getDislikedList())
             .then(() => {
-                // page = pageBeforeStateChange;
+                page = pageBeforeStateChange;
                 this.setMovie();
             })
             .then(() => this.setState({ dataLoaded: true }));
@@ -183,7 +184,7 @@ class Movie extends React.Component {
     getNewPage = async () => {
         index = 0;
 
-        // const pageBeforeStateChange = page;
+        const pageBeforeStateChange = page;
 
         const params = {
             pageNum: page,
@@ -202,7 +203,6 @@ class Movie extends React.Component {
                     this.setState({ movies: res.data });
                     //create a list of movies to display in carousel
                     this.setMovieIndex();
-
                 } else {
                     this.setState({ movies: [] });
                 }
@@ -210,7 +210,7 @@ class Movie extends React.Component {
             .then(() => this.getLikedList())
             .then(() => this.getDislikedList())
             .then(() => {
-                // page = pageBeforeStateChange;
+                page = pageBeforeStateChange;
                 this.setMovie();
             });
     };
@@ -301,8 +301,6 @@ class Movie extends React.Component {
             </Stack>
         );
     };
-
-    //filterByLanguage = (show) => {
 
     filterByLanguage = () => {
         return (
@@ -915,14 +913,8 @@ class Movie extends React.Component {
     dislikeFilter(movie) {
         dislikesList = this.state.dislikes;
 
-        // console.log("dislike list: ",dislikesList)
-
         for (let i = 0; i < dislikesList.length; i++) {
-            //check if the movie and liked movie are the same
-
-            // console.log("compare", dislikesList[i].movieId,  movie.id)
             if (dislikesList[i].movieId === movie.id) {
-                // console.log("movie has been disliked, skip")
                 return false;
             }
         }
@@ -930,11 +922,7 @@ class Movie extends React.Component {
         return true;
     }
 
-    // callback function used by PlatformFilter
-    selectedPlatformsCallback = (selected) => {
-        this.setState({ selectedPlatforms: selected });
-    };
-
+    // not used?
     applyFilteringBtn = () => {
         // index = 0;
         return (
@@ -996,13 +984,12 @@ class Movie extends React.Component {
     };
 
     render() {
-        console.log("-");
-        console.log("-");
-        console.log("genre", this.state.selectedGenre);
-        console.log("decade", this.state.selectedDecade);
-        console.log("language", this.state.selectedLanguage);
-        console.log("platform", this.state.selectedPlatform);
-        // console.log("platforms", this.state.userSelectedPlatforms);
+        // console.log("-");
+        // console.log("-");
+        // console.log("genre", this.state.selectedGenre);
+        // console.log("decade", this.state.selectedDecade);
+        // console.log("language", this.state.selectedLanguage);
+        // console.log("platform", this.state.selectedPlatform);
 
         if (!this.state.dataLoaded) {
             return (
@@ -1051,9 +1038,9 @@ class Movie extends React.Component {
                                 )}
                             </DialogContent>
                             <DialogActions sx={{ background: "#242424" }}>
-                                <Button onClick={this.resetAllFilters}>
+                                {/* <Button onClick={this.resetAllFilters}>
                                     Reset Filters
-                                </Button>
+                                </Button> */}
                                 <Button onClick={this.handleClose}>
                                     Cancel
                                 </Button>
