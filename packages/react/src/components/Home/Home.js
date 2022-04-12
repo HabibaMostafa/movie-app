@@ -56,7 +56,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[0]
                                                 .title
@@ -79,7 +79,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[1]
                                                 .title
@@ -102,7 +102,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[2]
                                                 .title
@@ -125,7 +125,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[3]
                                                 .title
@@ -150,7 +150,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[4]
                                                 .title
@@ -173,7 +173,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[5]
                                                 .title
@@ -196,7 +196,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[6]
                                                 .title
@@ -219,7 +219,7 @@ class HomePage extends React.Component {
                                         }
                                         alt="Movie Poster"
                                     ></img>
-                                    <h4 className="title">
+                                    <h4 className="poster-title">
                                         {
                                             this.state.movies.body.results[7]
                                                 .title

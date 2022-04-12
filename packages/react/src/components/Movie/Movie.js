@@ -1223,8 +1223,7 @@ class Movie extends React.Component {
                                         </div>
                                     </div>
                                     <div>
-                                        {this.state.showTheMovie ? (
-                                            // {this.state.showDescrption ? (
+                                        {this.state.showDescrption ? (
                                             <div
                                                 id="minfo"
                                                 className="movie-info"
@@ -1262,8 +1261,7 @@ class Movie extends React.Component {
                                 </div>
                             </div>
                             <div>
-                                {this.state.showTheMovie ? (
-                                    // {this.state.showDescrption ? (
+                                {this.state.showDescrption ? (
                                     <div className="bottom">
                                         {this.state.showTheMovie &&
                                         this.newMovieTrailer.length > 0 ? (
