@@ -7,8 +7,7 @@ const Vote = mongoose.model("Vote", {
         required: true,
     },
     user: {
-
-        // get the object id string 
+        // get the object id string
         type: String,
         required: true,
     },
@@ -16,7 +15,27 @@ const Vote = mongoose.model("Vote", {
         type: Boolean,
         default: false,
         required: true,
-    }
+    },
+    mustWatch: {
+        type: Boolean,
+        default: false,
+        required: false,
+    },
+    username: {
+        type: String,
+        default: "",
+        required: false,
+    },
+    title: {
+        type: String,
+        default: "",
+        required: false,
+    },
+    poster: {
+        type: String,
+        default: "",
+        required: false,
+    },
 });
 
-module.exports = Vote
+module.exports = Vote;

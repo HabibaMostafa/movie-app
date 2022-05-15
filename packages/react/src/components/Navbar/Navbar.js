@@ -2,24 +2,26 @@ import React, { useEffect } from "react";
 import "./Navbar.css";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../logo-black.svg";
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person";
 import useToken from "../App/useToken";
-import DeleteIcon from '@mui/icons-material/Delete';
-import Icon from '@mui/material/Icon';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
-import Logout from '@mui/icons-material/Logout';
+import DeleteIcon from "@mui/icons-material/Delete";
+import Icon from "@mui/material/Icon";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import PersonAdd from "@mui/icons-material/PersonAdd";
+import Settings from "@mui/icons-material/Settings";
+import Logout from "@mui/icons-material/Logout";
+
+import UserAvatar from "./UserAvatar";
 
 const Navbar = () => {
     const [click, setClick] = React.useState(false);
@@ -36,11 +38,13 @@ const Navbar = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClickEvent = (event) => {
-      setAnchorEl(event.currentTarget);
+        setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
-      setAnchorEl(null);
+        setAnchorEl(null);
     };
+
+    const myid = tokenObj._id;
 
     return (
         <div>
@@ -67,6 +71,8 @@ const Navbar = () => {
                                 Home
                             </NavLink>
                         </li>
+
+
                         <li className="nav-item">
                             <NavLink
                                 exact
@@ -76,6 +82,22 @@ const Navbar = () => {
                                 onClick={click ? handleClick : null}
                             >
                                 Movies
+                            </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink
+                                exact
+                                to={`/UserPage/${myid}`}
+                                activeClassName="active"
+                                className="nav-links"
+                                // onClick={click ? handleClick : null}
+                                onClick={() => {
+                                    const id = tokenObj._id;
+                                    navigate(`/UserPage/${id}`);
+                                    window.location.reload(true);
+                                }}
+                            >
+                                Likes
                             </NavLink>
                         </li>
                         <li className="nav-item">
@@ -112,79 +134,116 @@ const Navbar = () => {
                             </NavLink>
                         </li>
                         <li className="nav-item-menu">
-                          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', backgroundColor: '#202020'}}>
-                            <Tooltip title="Account settings">
-                              <IconButton
-                                onClick={handleClickEvent}
-                                size="small"
-                                sx={{ ml: 2 }}
-                                aria-controls={open ? 'account-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                              >
-                                <Avatar sx={{ width: 32, height: 32, backgroundColor: "#f5b921"}}>{tokenObj.username.toUpperCase().charAt(0)} </Avatar>
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
-                          <Menu
-                            anchorEl={anchorEl}
-                            id="account-menu"
-                            open={open}
-                            onClose={handleClose}
-                            onClick={handleClose}
-                            PaperProps={{
-                              elevation: 0,
-                              sx: {
-                                overflow: 'visible',
-                                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                                mt: 1.5,
-                                '& .MuiAvatar-root': {
-                                  width: 32,
-                                  height: 32,
-                                  ml: -0.5,
-                                  mr: 1,
-                                },
-                                '&:before': {
-                                  content: '""',
-                                  display: 'block',
-                                  position: 'absolute',
-                                  top: 0,
-                                  right: 14,
-                                  width: 10,
-                                  height: 10,
-                                  bgcolor: 'black',
-                                  transform: 'translateY(-50%) rotate(45deg)',
-                                  zIndex: 0,
-                                },
-                              },
-                            }}
-                            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                          >
-                            <MenuItem className="labels">
-                              <Avatar /> {tokenObj.username}
-                            </MenuItem>
-                            <Divider className="divider" />
-                            <MenuItem className="labels">
-                              <NavLink
-                                exact
-                                to="/"
-                                activeClassName="active"
-                                className="nav-links"
-                                onClick={() => {
-                                    removeToken();
-
-                                    if (location.pathname === "/") {
-                                        window.location.reload(true);
-                                    } else {
-                                        navigate("/");
-                                    }
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    textAlign: "center",
+                                    backgroundColor: "#202020",
                                 }}
-                              >
-                               Logout
-                              </NavLink>
-                            </MenuItem>
-                          </Menu>
+                            ></Box>
+                            <Tooltip title="Account settings">
+                                <IconButton
+                                    onClick={handleClickEvent}
+                                    size="small"
+                                    sx={{ ml: 2 }}
+                                    aria-controls={
+                                        open ? "account-menu" : undefined
+                                    }
+                                    aria-haspopup="true"
+                                    aria-expanded={open ? "true" : undefined}
+                                >
+                                    <UserAvatar userId={myid} />
+
+                                    <NavLink
+                                        exact
+                                        to=""
+                                        activeClassName="active"
+                                        className="user-link"
+                                        onClick={click ? handleClick : null}
+                                    >
+                                        {tokenObj.username}
+                                    </NavLink>
+                                </IconButton>
+                            </Tooltip>
+
+                            <Menu
+                                anchorEl={anchorEl}
+                                id="account-menu"
+                                open={open}
+                                onClose={handleClose}
+                                onClick={handleClose}
+                                PaperProps={{
+                                    elevation: 0,
+                                    sx: {
+                                        overflow: "visible",
+                                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                                        mt: 1.5,
+                                        "& .MuiAvatar-root": {
+                                            width: 32,
+                                            height: 32,
+                                            ml: -0.5,
+                                            mr: 1,
+                                        },
+                                        "&:before": {
+                                            content: '""',
+                                            display: "block",
+                                            position: "absolute",
+                                            top: 0,
+                                            right: 14,
+                                            width: 10,
+                                            height: 10,
+                                            bgcolor: "black",
+                                            transform:
+                                                "translateY(-50%) rotate(45deg)",
+                                            zIndex: 0,
+                                        },
+                                    },
+                                }}
+                                transformOrigin={{
+                                    horizontal: "right",
+                                    vertical: "top",
+                                }}
+                                anchorOrigin={{
+                                    horizontal: "right",
+                                    vertical: "bottom",
+                                }}
+                            >
+
+                                {/* click here to access user settings */}
+                                <MenuItem
+                                    className="labels"
+
+                                    onClick={() => {
+                                        navigate(`/settings`);
+                                    }}
+
+                                >
+                                    {/* <UserAvatar userId={myid} />  */}
+                                    {/* {tokenObj.username} */}
+                                    Settings
+                                </MenuItem>
+                                <Divider className="divider" />
+                                <MenuItem className="labels">
+                                    <NavLink
+                                        exact
+                                        to="/"
+                                        activeClassName="active"
+                                        className="nav-links"
+                                        onClick={() => {
+                                            removeToken();
+
+                                            if (location.pathname === "/") {
+                                                window.location.reload(true);
+                                            } else {
+                                                navigate("/");
+                                            }
+                                        }}
+                                    >
+                                        Logout
+                                    </NavLink>
+                                </MenuItem>
+                            </Menu>
                         </li>
                     </ul>
                     <div className="nav-icon" onClick={handleClick}>
